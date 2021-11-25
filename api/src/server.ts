@@ -34,6 +34,10 @@ if (!process.env.LDAP_SERVER) {
 	console.log('LDAP_SERVER not specified in .env!');
 	process.exit(1);
 }
+if (!process.env.JWT_SECRET) {
+	console.log('JsonWebToken secret not specified in .env!');
+	process.exit(1);
+}
 console.log('Initialising backend...');
 
 const app: express.Application = express();
