@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "target": "es6",
+      "moduleResolution": "node",
+      "sourceMap": false,
+      "outDir": "./build",
+      "strict": true,
+      "noImplicitAny": false,
+      "resolveJsonModule": true,
+      "experimentalDecorators": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "lib": ["es2015"],
+    "types": [ "node" ],
+    "typeRoots": [ "../node_modules/@types" ]
+  }
