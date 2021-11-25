@@ -30,6 +30,10 @@ if (!process.env.MYSQL_DATABASE) {
 	console.log('MYSQL_DATABASE not specified in .env!');
 	process.exit(1);
 }
+if (!process.env.LDAP_SERVER) {
+	console.log('LDAP_SERVER not specified in .env!');
+	process.exit(1);
+}
 console.log('Initialising backend...');
 
 const app: express.Application = express();
