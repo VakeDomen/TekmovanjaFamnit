@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrate": "node_modules/db-migrate/bin/db-migrate up",
+    "migrate-down": "node_modules/db-migrate/bin/db-migrate down",
     "start": "tsc && node build/server.js"
   },
   "author": "Domen Vake",

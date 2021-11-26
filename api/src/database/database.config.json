@@ -1,4 +1,12 @@
 {
-    "tables": {},
+    "tables": {
+      "users": "users",
+      "games": "games",
+      "contestants": "contestants",
+      "competitions": "competitions",
+      "matches": "matches",
+      "submissions": "submissions",
+      "round_types": "round_types"
+    },
     "log": true
   }
