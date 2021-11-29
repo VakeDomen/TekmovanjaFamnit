@@ -6,6 +6,7 @@
       "competitions": "competitions",
       "matches": "matches",
       "submissions": "submissions",
+      "rounds": "rounds",
       "round_types": "round_types"
     },
     "log": true
