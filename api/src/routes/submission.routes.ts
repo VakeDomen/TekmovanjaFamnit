@@ -35,10 +35,10 @@ router.post("/api/submission", isValidAuthToken, async (req: express.Request, re
 
 router.post("/api/submission/upload/:contestant_id/:version", isValidAuthToken, async (req: any, resp: express.Response) => {
     if(!req.files) {
-        return new ErrorResponse(400, "No file uploaded!")
+        return new ErrorResponse(400, "No file uploaded!").send(resp);
     }
     if (!req.params['contestant_id'] || !req.params['version']) {
-        return new ErrorResponse(400, "Invalid submission!")
+        return new ErrorResponse(400, "Invalid submission!").send(resp);
     }
     const file = new File({path: `resources/submissions/${req.params['contestant_id']}/${req.params['version']}`});
     file.generateId();

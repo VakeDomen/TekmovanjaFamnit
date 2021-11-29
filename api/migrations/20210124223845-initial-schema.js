@@ -245,6 +245,10 @@ const file = {
     path: {
       type: 'string',
     },
+    created: {
+      type: 'timestamp',
+      defaultValue: new String('CURRENT_TIMESTAMP')
+    },
   },
   ifNotExists: true
 }
