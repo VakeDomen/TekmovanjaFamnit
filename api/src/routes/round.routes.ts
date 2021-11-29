@@ -17,7 +17,7 @@ router.get("//round", isValidAuthToken, async (req: express.Request, resp: expre
 
 router.get("//round/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        new SuccessResponse(404, 'No ticks found!').send(resp);
+        new SuccessResponse(404, 'No entries found!').send(resp);
     }
     const data = await fetch(conf.tables.rounds, new Round({id: req.params['id']}));
     new SuccessResponse().setData(data).send(resp);

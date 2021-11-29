@@ -17,7 +17,7 @@ router.get("//contestant", isValidAuthToken, async (req: express.Request, resp: 
 
 router.get("//contestant/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        new SuccessResponse(404, 'No ticks found!').send(resp);
+        new SuccessResponse(404, 'No entries found!').send(resp);
     }
     const data = await fetch(conf.tables.contestants, new Contestant({id: req.params['id']}));
     new SuccessResponse().setData(data).send(resp);
