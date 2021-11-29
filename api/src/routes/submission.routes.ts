@@ -5,6 +5,7 @@ import * as conf from '../database/database.config.json';
 import { fetch, insert, update } from '../database/database.handler';
 import { Submission } from '../models/submission.model';
 import { ErrorResponse } from '../models/core/error.response';
+import { File } from '../models/file.model';
 
 const router: express.Router = express.Router();
 
@@ -30,6 +31,21 @@ router.post("/api/submission", isValidAuthToken, async (req: express.Request, re
         return new ErrorResponse().setError(err).send(resp);
     });
     return new SuccessResponse().setData(submission).send(resp);
+});
+
+router.post("/api/submission/upload/:contestant_id/:version", isValidAuthToken, async (req: any, resp: express.Response) => {
+    if(!req.files) {
+        return new ErrorResponse(400, "No file uploaded!")
+    }
+    if (!req.params['contestant_id'] || !req.params['version']) {
+        return new ErrorResponse(400, "Invalid submission!")
+    }
+    const file = new File({path: `resources/submissions/${req.params['contestant_id']}/${req.params['version']}`});
+    file.generateId();
+    await insert(conf.tables.files, file);
+    const submission = req.files.submission;
+    submission.mv(file.path);
+    return new SuccessResponse().setData(file).send(resp);
 });
 
 router.patch("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {

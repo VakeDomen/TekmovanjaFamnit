@@ -5,6 +5,7 @@ require('dotenv').config();
 import express = require('express');
 
 const bodyParser = require('body-parser');
+const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const path = require('path');
 
@@ -42,7 +43,8 @@ console.log('Initialising backend...');
 
 const app: express.Application = express();
 
-// app.use(myCors);
+app.use(myCors);
+app.use(fileUpload({ createParentPath: true }));
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 

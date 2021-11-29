@@ -187,9 +187,6 @@ const submission = {
     contestant_id: {
       type: 'string',
     },
-    created: {
-      type: 'string',
-    },
     version: {
       type: 'int'
     },
@@ -198,6 +195,10 @@ const submission = {
     },
     additional_data: {
       type: 'text',
+    },
+    created: {
+      type: 'timestamp',
+      defaultValue: new String('CURRENT_TIMESTAMP')
     },
   },
   ifNotExists: true
