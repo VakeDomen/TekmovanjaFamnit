@@ -1,5 +1,5 @@
 import { DbItem } from './core/db.item';
-export class Round extends DbItem {
+export class RoundType extends DbItem {
 	
     type: string;
 
