@@ -74,7 +74,7 @@ const game = {
     name: {
       type: 'string',
     },
-    evaluator_path: {
+    image_path: {
       type: 'string',
     },
     game_pack_path: {
