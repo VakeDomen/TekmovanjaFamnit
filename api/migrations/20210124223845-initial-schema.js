@@ -56,8 +56,9 @@ const user = {
     name: {
       type: 'string',
     },
-    registered: {
-      type: 'string',
+    created: {
+      type: 'timestamp',
+      defaultValue: new String('CURRENT_TIMESTAMP')
     },
   },
   ifNotExists: true
@@ -96,8 +97,9 @@ const contestant = {
     game_id: {
       type: 'string',
     },
-    started: {
-      type: 'string',
+    created: {
+      type: 'timestamp',
+      defaultValue: new String('CURRENT_TIMESTAMP')
     },
     active_submission_id: {
       type: 'string'
@@ -130,6 +132,10 @@ const competition = {
     },
     active_round_type_id: {
       type: 'string'
+    },
+    created: {
+      type: 'timestamp',
+      defaultValue: new String('CURRENT_TIMESTAMP')
     }
   },
   ifNotExists: true
@@ -177,7 +183,7 @@ const submission = {
     contestant_id: {
       type: 'string',
     },
-    timestamp: {
+    created: {
       type: 'string',
     },
     version: {

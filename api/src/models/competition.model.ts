@@ -8,6 +8,7 @@ export class Competition extends DbItem {
     end: string;
     allowed_submissions: number;
     active_round_type_id: string;
+    created: string;
 	
 	constructor(data: any) {
 		super(data);
@@ -17,5 +18,6 @@ export class Competition extends DbItem {
         this.end = data.end;
         this.allowed_submissions = data.allowed_submissions;
         this.active_round_type_id = data.active_round_type_id;
+        this.created = data.created;
 	}
 }
