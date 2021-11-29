@@ -1,0 +1,33 @@
+<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" (click)="activeTab='clients'; tab.emit('clients')" [routerLink]="['/']">
+            <!-- <img src="../../../assets/logo.png" width="35" height="35"> -->
+            <h1 class="title is-1">FTP</h1>
+        </a>
+
+        <a (click)="toggleNavbar()" role="button" #navBurger class="navbar-burger burger" aria-label="menu"
+            aria-expanded="false" data-target="navMenu">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div #navMenu id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" [ngClass]="{'is-active': activeTab==='games'}"
+                (click)="activeTab='games'; tab.emit('games')" [routerLink]="['/']"
+                routerLinkActive="router-link-active">
+                Games
+            </a>
+        </div>
+
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    <app-local-auth [isPage]=false></app-local-auth>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
