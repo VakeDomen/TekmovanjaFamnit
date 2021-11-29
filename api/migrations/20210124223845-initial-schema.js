@@ -77,6 +77,9 @@ const game = {
     image_path: {
       type: 'string',
     },
+    game_description: {
+      type: 'text',
+    },
     game_pack_path: {
       type: 'string',
     },
