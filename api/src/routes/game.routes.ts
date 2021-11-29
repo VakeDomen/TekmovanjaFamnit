@@ -10,12 +10,12 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("//game", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/game", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.games, new Game(req.query));
     return new SuccessResponse().setData(data).send(resp);
 });
 
-router.get("//game/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/game/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
@@ -23,7 +23,7 @@ router.get("//game/:id", isValidAuthToken, async (req: express.Request, resp: ex
     new SuccessResponse().setData(data).send(resp);
 });
 
-router.post("//game", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.post("/api/game", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const game = new Game(req.body);
     game.generateId();
     await insert(conf.tables.games, game).catch(err => {
@@ -32,7 +32,7 @@ router.post("//game", isValidAuthToken, async (req: express.Request, resp: expre
     return new SuccessResponse().setData(game).send(resp);
 });
 
-router.patch("//game", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.patch("/api/game", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await update(conf.tables.games, new Game(req.body)).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });

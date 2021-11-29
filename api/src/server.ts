@@ -61,7 +61,6 @@ fs.readdir(absPath + '/routes/', async (err: Error, files: string[]) => {
 		next(error);
 	});
 	app.use((error: any, req: express.Request, res: express.Response, next: any) => {
-		console.log(req)
 		res.status(error.status || 500);
 		res.json({message: error.message});
 	});

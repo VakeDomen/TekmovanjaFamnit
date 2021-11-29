@@ -10,12 +10,12 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("//round", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/round", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.rounds, new Round(req.query));
     return new SuccessResponse().setData(data).send(resp);
 });
 
-router.get("//round/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/round/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
@@ -23,7 +23,7 @@ router.get("//round/:id", isValidAuthToken, async (req: express.Request, resp: e
     new SuccessResponse().setData(data).send(resp);
 });
 
-router.post("//round", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.post("/api/round", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const round = new Round(req.body);
     round.generateId();
     await insert(conf.tables.rounds, round).catch(err => {
@@ -32,7 +32,7 @@ router.post("//round", isValidAuthToken, async (req: express.Request, resp: expr
     return new SuccessResponse().setData(round).send(resp);
 });
 
-router.patch("//round", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.patch("/api/round", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await update(conf.tables.rounds, new Round(req.body)).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });

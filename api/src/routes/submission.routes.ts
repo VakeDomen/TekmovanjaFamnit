@@ -10,12 +10,12 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("//submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.submissions, new Submission(req.query));
     return new SuccessResponse().setData(data).send(resp);
 });
 
-router.get("//submission/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/submission/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
@@ -23,7 +23,7 @@ router.get("//submission/:id", isValidAuthToken, async (req: express.Request, re
     new SuccessResponse().setData(data).send(resp);
 });
 
-router.post("//submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.post("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const submission = new Submission(req.body);
     submission.generateId();
     await insert(conf.tables.submissions, submission).catch(err => {
@@ -32,7 +32,7 @@ router.post("//submission", isValidAuthToken, async (req: express.Request, resp:
     return new SuccessResponse().setData(submission).send(resp);
 });
 
-router.patch("//submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.patch("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await update(conf.tables.submissions, new Submission(req.body)).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });

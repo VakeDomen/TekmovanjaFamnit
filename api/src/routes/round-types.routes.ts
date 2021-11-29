@@ -9,7 +9,7 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("//round-type", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/round-type", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.round_types, new RoundType(req.query));
     return new SuccessResponse().setData(data).send(resp);
 });

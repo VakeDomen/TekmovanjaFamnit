@@ -10,12 +10,12 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("//competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.competitions, new Competition(req.query));
     return new SuccessResponse().setData(data).send(resp);
 });
 
-router.get("//competition/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/competition/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
@@ -23,7 +23,7 @@ router.get("//competition/:id", isValidAuthToken, async (req: express.Request, r
     new SuccessResponse().setData(data).send(resp);
 });
 
-router.post("//competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.post("/api/competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const competition = new Competition(req.body);
     competition.generateId();
     await insert(conf.tables.competitions, competition).catch(err => {
@@ -32,7 +32,7 @@ router.post("//competition", isValidAuthToken, async (req: express.Request, resp
     return new SuccessResponse().setData(competition).send(resp);
 });
 
-router.patch("//competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.patch("/api/competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await update(conf.tables.competitions, new Competition(req.body)).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });

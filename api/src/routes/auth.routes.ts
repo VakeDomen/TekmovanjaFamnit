@@ -11,7 +11,7 @@ const router: express.Router = express.Router();
 module.exports = router;
 
 
-router.post('//auth/ldap', async (req: any, resp: any) => {
+router.post('/api/auth/ldap', async (req: any, resp: any) => {
     const ldapResp: any = await authenticateLDAP(req.body['username'], req.body['password']).catch(err => {
         return new ErrorResponse().setError(err).send(resp) 
     });
