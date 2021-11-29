@@ -4,7 +4,7 @@ export class Submission extends DbItem {
     contestant_id: string;
     created: string;
     version: number;
-    path: string;
+    file_id: string;
     additional_data: string;
 
 
@@ -13,7 +13,7 @@ export class Submission extends DbItem {
         this.contestant_id = data.contestant_id;
         this.created = data.created;
         this.version = data.version;
-        this.path = data.path;
+        this.file_id = data.file_id;
         this.additional_data = data.additional_data;
     }
 }

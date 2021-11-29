@@ -2,15 +2,15 @@ import { DbItem } from './core/db.item';
 export class Game extends DbItem {
 	
     name: string;
-    image_path: string;
-    game_pack_path: string;
+    image_file_id: string;
+    game_pack_file_id: string;
     game_description: string;
 
 	constructor(data: any) {
 		super(data);
         this.name = data.name;
-        this.image_path = data.image_path;
-        this.game_pack_path = data.game_pack_path;
+        this.image_file_id = data.image_file_id;
+        this.game_pack_file_id = data.game_pack_file_id;
         this.game_description = data.game_description;
     }
 }

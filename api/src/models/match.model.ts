@@ -6,7 +6,7 @@ export class Match extends DbItem {
     sumission_id_1: string;
     submission_id_2: string;
     submission_id_winner: string;
-    log_path: string;
+    log_file_id: string;
     additional_data: string;
 	
 	constructor(data: any) {
@@ -16,7 +16,7 @@ export class Match extends DbItem {
         this.sumission_id_1 = data.sumission_id_1;
         this.submission_id_2 = data.submission_id_2;
         this.submission_id_winner = data.submission_id_winner;
-        this.log_path = data.log_path;
+        this.log_file_id = data.log_file_id;
         this.additional_data = data.additional_data;
 	}
 }

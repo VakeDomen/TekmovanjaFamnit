@@ -42,7 +42,7 @@ console.log('Initialising backend...');
 
 const app: express.Application = express();
 
-app.use(myCors);
+// app.use(myCors);
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
 

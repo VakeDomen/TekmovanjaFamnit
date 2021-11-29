@@ -22,7 +22,7 @@ exports.up = function(db, callback) {
     db.createTable.bind(db, 'submissions', submission),
     db.createTable.bind(db, 'rounds', round),
     db.createTable.bind(db, 'round_types', roundType),
-    
+    db.createTable.bind(db, 'files', file),
   ], callback);
 };
 
@@ -36,6 +36,7 @@ exports.down = function(db, callback) {
     db.dropTable.bind(db, 'submissions'),
     db.dropTable.bind(db, 'rounds'),
     db.dropTable.bind(db, 'round_types'),
+    db.dropTable.bind(db, 'files'),
   ], callback);
 };
 
@@ -74,13 +75,13 @@ const game = {
     name: {
       type: 'string',
     },
-    image_path: {
-      type: 'string',
-    },
     game_description: {
       type: 'text',
     },
-    game_pack_path: {
+    image_file_id: {
+      type: 'string',
+    },
+    game_pack_file_id: {
       type: 'string',
     },
   },
@@ -166,7 +167,7 @@ const match = {
     submission_id_winner: {
       type: 'string',
     },
-    log_path: {
+    log_file_id: {
       type: 'string',
     },
     additional_data: {
@@ -192,7 +193,7 @@ const submission = {
     version: {
       type: 'int'
     },
-    path: {
+    file_id: {
       type: 'string'
     },
     additional_data: {
@@ -227,6 +228,20 @@ const roundType = {
       autoIncrement: false
     },
     type: {
+      type: 'string',
+    },
+  },
+  ifNotExists: true
+}
+
+const file = {
+  columns: {
+    id: {
+      type: 'string',
+      primaryKey: true,
+      autoIncrement: false
+    },
+    path: {
       type: 'string',
     },
   },
