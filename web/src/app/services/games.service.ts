@@ -20,6 +20,10 @@ export class GamesService {
     return this.http.get<ApiResponse<Game[]>>(this.apiUrl);
   }
 
+  getGame(id: string): Observable<ApiResponse<Game[]>> {
+    return this.http.get<ApiResponse<Game[]>>(this.apiUrl + "/" + id);
+  }
+
   submitGame(game: Game): Observable<ApiResponse<Game>> {
     return this.http.post<ApiResponse<Game>>(this.apiUrl, game);
   }

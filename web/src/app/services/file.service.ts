@@ -39,4 +39,8 @@ export class FileService {
   getOpenFileUrl(fileId: string): string {
     return `${this.apiUrl}/open/serve/${fileId}`;
   }
+
+  getOpenFileDownloadUrl(fileId: string): string {
+    return `${this.apiUrl}/open/download/${fileId}`;
+  }
 }

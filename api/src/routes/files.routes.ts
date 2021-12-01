@@ -52,7 +52,6 @@ router.get("/api/download/:id", isValidAuthToken, async (req: express.Request, r
     if (files.length != 1) {
         return new ErrorResponse(400, "Invalid image").send(resp);
     }
-    console.log("heyhes")
     resp.download(path.resolve(`${__dirname}/../../${files[0].path}`));
 });
 
@@ -90,6 +89,5 @@ router.get("/api/open/download/:id", async (req: express.Request, resp: express.
     if (files.length != 1 || files[0].open == 0) {
         return new ErrorResponse(400, "Invalid image").send(resp);
     }
-    console.log("heyhes")
     resp.download(path.resolve(`${__dirname}/../../${files[0].path}`));
 });
