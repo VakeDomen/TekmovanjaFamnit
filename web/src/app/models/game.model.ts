@@ -1,6 +1,7 @@
 export interface Game {
-	id?: string
+	id?: string;
     name: string;
-    evaluator_path: string;
-    game_pack_path: string;
+    image_file_id: string;
+    game_pack_file_id: string;
+    game_description: string;
 }
