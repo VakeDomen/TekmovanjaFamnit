@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-local-auth',
@@ -13,9 +14,11 @@ export class LocalAuthComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
+    private toastr: ToastrService,
   ) { }
 
   ngOnInit() {
+    console.log(this.isPage)
   }
 
   handleLoginAttempt(success: any): void {
@@ -28,6 +31,11 @@ export class LocalAuthComponent implements OnInit {
     if (success) {
       this.modalOpen = false;
     }
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.toastr.success("Logged out!", "Success");
   }
 
 }

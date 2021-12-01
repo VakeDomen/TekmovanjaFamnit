@@ -2,6 +2,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +14,10 @@ import { FileInputComponent } from './components/file-input/file-input.component
 import { Router } from '@angular/router';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { AuthService } from './services/auth.service';
+import { CommonModule } from '@angular/common';
+import { ToastrModule } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
+import { GameComponent } from './pages/game/game.component';
 
 @NgModule({
   declarations: [
@@ -21,9 +26,13 @@ import { AuthService } from './services/auth.service';
     NavbarComponent,
     LocalAuthComponent,
     GamesComponent,
-    FileInputComponent
+    FileInputComponent,
+    GameComponent
   ],
   imports: [
+    CommonModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot(),
     BrowserModule,
     AppRoutingModule,
     FormsModule,
@@ -32,11 +41,11 @@ import { AuthService } from './services/auth.service';
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useFactory: function(router: Router, auth: AuthService) {
-        return new AuthInterceptor(router, auth);
+      useFactory: function(router: Router, auth: AuthService, toastr: ToastrService) {
+        return new AuthInterceptor(router, auth, toastr);
       },
       multi: true,
-      deps: [Router, AuthService]
+      deps: [Router, AuthService, ToastrService]
    },
   ],
   bootstrap: [AppComponent]

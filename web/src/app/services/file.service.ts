@@ -35,4 +35,8 @@ export class FileService {
     formData.append('thumbnail', fileToUpload, fileToUpload.name);
     return this.http.post<ApiResponse<FileModel>>(`${this.apiUrl}/game/upload/thumbnail/${gameName}`, formData);
   }
+
+  getOpenFileUrl(fileId: string): string {
+    return `${this.apiUrl}/open/serve/${fileId}`;
+  }
 }

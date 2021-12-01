@@ -1,8 +1,9 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { catchError, Observable, of, throwError } from "rxjs";
+import { catchError, Observable, of } from "rxjs";
 import { AuthService } from "./auth.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -10,6 +11,7 @@ export class AuthInterceptor implements HttpInterceptor {
     constructor(
         private router: Router,
         private auth: AuthService,    
+        private toastr: ToastrService,
     ) { }
     
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -24,6 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
         if (err.status === 401 || err.status === 403) {
             //navigate /delete cookies or whatever
             this.auth.logout();
+            this.toastr.error('Redirecting to login!', 'Authentication session invalid!');
             this.router.navigateByUrl(`/login`);
             // if you've caught / handled the error, you don't want to rethrow it unless you also want downstream consumers to have to handle it as well.
         }

@@ -1,5 +1,5 @@
 <button class="button is-primary" (click)="modalOpen = true" *ngIf="!authService.isLoggedIn() && !isPage">Login</button>
-<button class="button is-primary" (click)="authService.logout()" *ngIf="authService.isLoggedIn() && !isPage">Logout</button>
+<button class="button is-primary" (click)="logout()" *ngIf="authService.isLoggedIn() && !isPage">Logout</button>
 
 <div class="container" *ngIf="isPage">
         <!-- tab content -->

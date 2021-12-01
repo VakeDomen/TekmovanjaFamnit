@@ -1,65 +1,68 @@
 <div class="container mt-3">
-    <div class="level">
-        <div class="level-left"><h1 class="title is-1">Games</h1></div>
-        <div class="level-right"><button class="button is-primary" (click)="modalOpen=true">Add</button></div>
+  <div class="level">
+    <div class="level-left">
+      <h1 class="title is-1">Games</h1>
     </div>
-    <div class="block">
-        <div class="has-text-centered" *ngIf="!games.length">
-            <h1 class="title is-3">No games avalible!</h1>
+    <div class="level-right"><button class="button is-primary" (click)="modalOpen=true">Add</button></div>
+  </div>
+  <div class="block">
+    <div class="has-text-centered" *ngIf="!games.length">
+      <h1 class="title is-3">No games avalible!</h1>
+    </div>
+  </div>
+
+
+  <div class="block task-container columns is-multiline is-centered">
+      <div class="card column is-narrow ml-3 hoverable" *ngFor="let game of games" (click)="cardSelected(game)">
+        <div class="card-image">
+          <figure class="image is-4by3">
+            <img src="{{ getThumbnailUrl(game) }}" alt="Placeholder image">
+          </figure>
         </div>
-        
+        <div class="card-content">
+          <div class="media">
+            <div class="media-left"></div>
+            <div class="media-content">
+              <p class="title is-4">{{ game.name }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 </div>
 
 
 <div class="modal" [ngClass]="{'is-active': modalOpen}">
-    <div class="modal-background" (click)="modalOpen=false"></div>
-    <div class="modal-card">
-      <header class="modal-card-head">
-        <p class="modal-card-title">Add new game</p>
-        <button class="delete" aria-label="close" (click)="modalOpen=false"></button>
-      </header>
-      <section class="modal-card-body">
-        <div class="control block">
-          <label for="game-name-input title it-5">Name</label>
-          <input 
-            id="game-name-input" 
-            class="input" 
-            type="text" 
-            placeholder="Name of the game" 
-            [(ngModel)]="newGame.name"
-          >
-        </div>
-        <div class="control block">
-          <label for="game-image-input title it-5">Thumbnail</label>
-          <app-file-input 
-            [label]="'Choose a thumbnail...'"
-            (fileSelected)="prepareThumbnail($event)"
-            [fileName]="thumbnail?.name ?? ''"
-          ></app-file-input>
-        </div>
-        <div class="control block">
-          <label for="game-image-input title it-5">Game pack (downloadable for participants of competitions)</label>
-          <app-file-input 
-            [label]="'Choose a game pack...'"
-            (fileSelected)="prepareGamePack($event)"
-            [fileName]="gamePack?.name ?? ''"
-          ></app-file-input>
-        </div>
-        <div class="control block">
-          <label for="game-name-input title it-5">Description</label>
-          <textarea 
-            class="textarea" 
-            placeholder="HTML template" 
-            rows="10" 
-            name="description" 
-            (change)="prepareDescription($event)"
-          ></textarea>
-        </div>
-      </section>
-      <footer class="modal-card-foot">
-        <button class="button is-primary" (click)="saveGame(); modalOpen=false">Save</button>
-        <button class="button" (click)="modalOpen=false">Cancel</button>
-      </footer>
-    </div>
+  <div class="modal-background" (click)="modalOpen=false"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Add new game</p>
+      <button class="delete" aria-label="close" (click)="modalOpen=false"></button>
+    </header>
+    <section class="modal-card-body">
+      <div class="control block">
+        <label for="game-name-input title it-5">Name</label>
+        <input id="game-name-input" class="input" type="text" placeholder="Name of the game" [(ngModel)]="newGame.name">
+      </div>
+      <div class="control block">
+        <label for="game-image-input title it-5">Thumbnail</label>
+        <app-file-input [label]="'Choose a thumbnail...'" (fileSelected)="prepareThumbnail($event)"
+          [fileName]="thumbnail?.name ?? ''"></app-file-input>
+      </div>
+      <div class="control block">
+        <label for="game-image-input title it-5">Game pack (downloadable for participants of competitions)</label>
+        <app-file-input [label]="'Choose a game pack...'" (fileSelected)="prepareGamePack($event)"
+          [fileName]="gamePack?.name ?? ''"></app-file-input>
+      </div>
+      <div class="control block">
+        <label for="game-name-input title it-5">Description template</label>
+        <textarea class="textarea" placeholder="HTML template" rows="10" name="description"
+          (change)="prepareDescription($event)"></textarea>
+      </div>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-primary" (click)="saveGame()">Save</button>
+      <button class="button" (click)="modalOpen=false">Cancel</button>
+    </footer>
   </div>
+</div>
