@@ -30,6 +30,9 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
+    if (!this.isLoggedIn()) {
+      return false;
+    }
     const val = localStorage.getItem(this.isAdminString);
     if (!val) {
       return false;

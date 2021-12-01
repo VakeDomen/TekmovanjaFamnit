@@ -18,6 +18,9 @@ import { CommonModule } from '@angular/common';
 import { ToastrModule } from 'ngx-toastr';
 import { ToastrService } from 'ngx-toastr';
 import { GameComponent } from './pages/game/game.component';
+import { CompetitionsComponent } from './pages/competitions/competitions.component';
+import { CompetitionComponent } from './pages/competition/competition.component';
+import { ContestantComponent } from './pages/contestant/contestant.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +30,10 @@ import { GameComponent } from './pages/game/game.component';
     LocalAuthComponent,
     GamesComponent,
     FileInputComponent,
-    GameComponent
+    GameComponent,
+    CompetitionsComponent,
+    CompetitionComponent,
+    ContestantComponent
   ],
   imports: [
     CommonModule,

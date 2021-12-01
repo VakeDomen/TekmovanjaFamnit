@@ -17,9 +17,15 @@
         <div class="navbar-start">
             <a class="navbar-item" [ngClass]="{'is-active': activeTab==='games'}"
                 (click)="activeTab='games'; tab.emit('games') ; toggleNavbar();" [routerLink]="['/']"
-                routerLinkActive="router-link-active">
+                routerLinkActive="router-link-active" *ngIf="isAdmin()">
                 Games
             </a>
+            <a class="navbar-item" [ngClass]="{'is-active': activeTab==='competitions'}"
+                (click)="activeTab='competitions'; tab.emit('competitions') ; toggleNavbar();" [routerLink]="['/competitions']"
+                routerLinkActive="router-link-active">
+                Competitions
+            </a>
+            
         </div>
 
         <div class="navbar-end">
