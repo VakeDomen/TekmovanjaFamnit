@@ -3,15 +3,12 @@
         <div class="level-left"><h1 class="title is-1">Games</h1></div>
         <div class="level-right"><button class="button is-primary" (click)="modalOpen=true">Add</button></div>
     </div>
-
-
     <div class="block">
         <div class="has-text-centered" *ngIf="!games.length">
             <h1 class="title is-3">No games avalible!</h1>
         </div>
         
     </div>
-    
 </div>
 
 
@@ -25,7 +22,13 @@
       <section class="modal-card-body">
         <div class="control block">
           <label for="game-name-input title it-5">Name</label>
-          <input id="game-name-input" class="input" type="text" placeholder="Name of the game" [(ngModel)]="newGame.name">
+          <input 
+            id="game-name-input" 
+            class="input" 
+            type="text" 
+            placeholder="Name of the game" 
+            [(ngModel)]="newGame.name"
+          >
         </div>
         <div class="control block">
           <label for="game-image-input title it-5">Thumbnail</label>
@@ -45,7 +48,13 @@
         </div>
         <div class="control block">
           <label for="game-name-input title it-5">Description</label>
-          <textarea class="textarea" placeholder="HTML template" rows="10" name="description" (change)="prepareDescription($event)"></textarea>
+          <textarea 
+            class="textarea" 
+            placeholder="HTML template" 
+            rows="10" 
+            name="description" 
+            (change)="prepareDescription($event)"
+          ></textarea>
         </div>
       </section>
       <footer class="modal-card-foot">
