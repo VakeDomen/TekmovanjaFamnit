@@ -245,6 +245,9 @@ const file = {
     path: {
       type: 'string',
     },
+    open: {
+      type: 'int',
+    },
     created: {
       type: 'timestamp',
       defaultValue: new String('CURRENT_TIMESTAMP')

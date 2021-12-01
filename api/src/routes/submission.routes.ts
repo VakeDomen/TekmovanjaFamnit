@@ -40,7 +40,7 @@ router.post("/api/submission/upload/:contestant_id/:version", isValidAuthToken, 
     if (!req.params['contestant_id'] || !req.params['version']) {
         return new ErrorResponse(400, "Invalid submission!").send(resp);
     }
-    const file = new File({path: `resources/submissions/${req.params['contestant_id']}/${req.params['version']}`});
+    const file = new File({path: `resources/submissions/${req.params['contestant_id']}/${req.params['version']}`, open: 0});
     file.generateId();
     await insert(conf.tables.files, file);
     const submission = req.files.submission;

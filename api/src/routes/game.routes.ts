@@ -48,7 +48,7 @@ router.post("/api/game/upload/pack/:name", isValidAuthToken, async (req: any, re
         return new ErrorResponse(400, "Invalid submission!").send(resp);
     }
     const submission = req.files.pack;
-    const file = new File({path: `resources/games/packs/${req.params['name']}/${submission.name}`});
+    const file = new File({path: `resources/games/packs/${req.params['name']}/${submission.name}`, open: 1});
     file.generateId();
     submission.mv(file.path);
     await insert(conf.tables.files, file);
@@ -63,7 +63,7 @@ router.post("/api/game/upload/thumbnail/:name", isValidAuthToken, async (req: an
         return new ErrorResponse(400, "Invalid submission!").send(resp);
     }
     const submission = req.files.thumbnail;
-    const file = new File({path: `resources/games/thumbnails/${req.params['name']}/${submission.name}`});
+    const file = new File({path: `resources/games/thumbnails/${req.params['name']}/${submission.name}`, open: 1});
     file.generateId();
     submission.mv(file.path);
     await insert(conf.tables.files, file);

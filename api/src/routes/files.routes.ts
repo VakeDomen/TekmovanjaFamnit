@@ -19,6 +19,10 @@ const options = {
     }
 };
 
+
+/*
+    with auth
+*/
 router.get("/api/serve/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         return new ErrorResponse(400, "Invalid request").send(resp);
@@ -46,6 +50,44 @@ router.get("/api/download/:id", isValidAuthToken, async (req: express.Request, r
     const files: File[] = (await fetch<File>(conf.tables.files, new File({id: req.params['id']})));
 
     if (files.length != 1) {
+        return new ErrorResponse(400, "Invalid image").send(resp);
+    }
+    console.log("heyhes")
+    resp.download(path.resolve(`${__dirname}/../../${files[0].path}`));
+});
+
+
+/*
+    no auth
+*/
+
+router.get("/api/open/serve/:id", async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        return new ErrorResponse(400, "Invalid request").send(resp);
+    }
+    const images: File[] = (await fetch<File>(conf.tables.files, new File({id: req.params['id']})));
+
+    if (images.length != 1 || images[0].open == 0) {
+        return new ErrorResponse(400, "Invalid image").send(resp);
+    }
+
+    resp.sendFile(path.resolve(`${__dirname}/../../${images[0].path}`), options, function (err) {
+        if (err) {
+            console.log("error sending image " + req.params['id'], err);
+        } else {
+            console.log('Sent:', req.params['id']);
+        }
+    });
+});
+
+
+router.get("/api/open/download/:id", async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        return new ErrorResponse(400, "Invalid request").send(resp);
+    }
+    const files: File[] = (await fetch<File>(conf.tables.files, new File({id: req.params['id']})));
+
+    if (files.length != 1 || files[0].open == 0) {
         return new ErrorResponse(400, "Invalid image").send(resp);
     }
     console.log("heyhes")
