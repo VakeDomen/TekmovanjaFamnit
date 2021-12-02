@@ -62,8 +62,11 @@ export class GameComponent implements OnInit {
     if (!this.game) {
       return;
     }
-    this.game.game_description = this.decriptionEdit ?? '';
+    this.game.game_description = escape(this.decriptionEdit ?? '');
     this.gameService.updateGame(this.game).subscribe((resp: ApiResponse<Game>) => {
+      if (this.game) {
+        this.game.game_description = unescape(this.game.game_description);
+      }
       this.toastr.success('Updated template', 'Success');
     }, err => {
       console.log(err);
