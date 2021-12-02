@@ -6,5 +6,5 @@ export interface Competition {
     end: string;
     allowed_submissions: number;
     active_round_type_id: string;
-    created: string;
+    created?: string;
 }

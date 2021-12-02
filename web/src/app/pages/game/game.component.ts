@@ -5,6 +5,7 @@ import { ApiResponse } from 'src/app/models/response';
 import { GamesService } from 'src/app/services/games.service';
 import { ToastrService } from 'ngx-toastr';
 import { FileService } from 'src/app/services/file.service';
+import { Competition } from 'src/app/models/competition.model';
 
 @Component({
   selector: 'app-game',
@@ -16,9 +17,18 @@ export class GameComponent implements OnInit {
   public game: Game | undefined;
   public dataUndefined: boolean = false;
   public dataReady: boolean = false;
-  public modalOpen: boolean = false;
+  public previewModalOpen: boolean = false;
+  public competitionModalOpen: boolean = false;
 
   public decriptionEdit: string | undefined;
+  public newCompetition: Competition = {
+    game_id: '',
+    competition_name: '',
+    start: '',
+    end: '',
+    allowed_submissions: 0,
+    active_round_type_id: ''
+  }
 
   public tab: 'competitions' | 'description' = 'description';
 
@@ -72,6 +82,10 @@ export class GameComponent implements OnInit {
       console.log(err);
       this.toastr.error('Oops, something went wrong!', 'Error updating template!');
     })
+  }
+
+  createCompetition(): void {
+    
   }
 
 }
