@@ -16,6 +16,9 @@ export class GameComponent implements OnInit {
   public game: Game | undefined;
   public dataUndefined: boolean = false;
   public dataReady: boolean = false;
+  public modalOpen: boolean = false;
+
+  public decriptionEdit: string | undefined;
 
   public tab: 'competitions' | 'description' = 'description';
 
@@ -39,6 +42,7 @@ export class GameComponent implements OnInit {
       }
       this.game = game.data[0];
       this.game.game_description = unescape(this.game.game_description);
+      this.decriptionEdit = this.game.game_description;
       this.dataReady = true;
     }, err => {
       this.toastr.error("Oops, something went wrong!", "Invalid game");
@@ -52,6 +56,19 @@ export class GameComponent implements OnInit {
 
   downloadPack(): void {
     window.location.assign(this.fileService.getOpenFileDownloadUrl(this.game?.game_pack_file_id ?? ''));
+  }
+
+  saveDecriptionTemplate(): void {
+    if (!this.game) {
+      return;
+    }
+    this.game.game_description = this.decriptionEdit ?? '';
+    this.gameService.updateGame(this.game).subscribe((resp: ApiResponse<Game>) => {
+      this.toastr.success('Updated template', 'Success');
+    }, err => {
+      console.log(err);
+      this.toastr.error('Oops, something went wrong!', 'Error updating template!');
+    })
   }
 
 }

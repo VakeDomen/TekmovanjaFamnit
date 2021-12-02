@@ -27,4 +27,8 @@ export class GamesService {
   submitGame(game: Game): Observable<ApiResponse<Game>> {
     return this.http.post<ApiResponse<Game>>(this.apiUrl, game);
   }
+
+  updateGame(game: Game): Observable<ApiResponse<Game>> {
+    return this.http.patch<ApiResponse<Game>>(this.apiUrl, game);
+  }
 }
