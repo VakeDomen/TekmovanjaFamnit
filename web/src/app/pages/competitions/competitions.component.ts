@@ -15,6 +15,11 @@ import { GamesService } from 'src/app/services/games.service';
 })
 export class CompetitionsComponent implements OnInit {
 
+  /*
+    AUTO ROUTE TO RUNNING COMPETITION
+  */
+  private autoRoute: boolean = true;
+
   private games: Game[] = [];
   public competitions: Competition[] = [];
 
@@ -36,7 +41,10 @@ export class CompetitionsComponent implements OnInit {
     this.gameService.getGames().subscribe((resp: ApiResponse<Game[]>) => {
       this.games = resp.data;
       this.competitionService.getCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
-        this.competitions = this.filterOnRole(resp.data);
+        this.competitions = this.filterOnRunning(resp.data);
+        if (this.autoRoute && this.competitions.length == 1) {
+          this.router.navigate(['competition', this.competitions[0].id ]);
+        }
         this.dataReady = true;
       }, err => {
         this.toastr.error("Oops, something went wrong!", "Failed fetching round types");
@@ -61,11 +69,8 @@ export class CompetitionsComponent implements OnInit {
     this.router.navigate(['competition', competition.id]);
   }
 
-  filterOnRole(competitions: Competition[]) {
-    if (!this.authService.isAdmin()) {
-      return competitions.filter((com: Competition) => this.isCompetitionRunning(com));
-    }
-    return competitions;
+  filterOnRunning(competitions: Competition[]) {
+    return competitions.filter((com: Competition) => this.isCompetitionRunning(com));
   }
 
   isCompetitionRunning(competition: Competition): boolean {
