@@ -1,1 +1,57 @@
-<p>competition works!</p>
+<div class="container">
+    <div *ngIf="dataReady && competition">
+        <div class="level">
+            <div class="level-left">
+                <h1 class="title is-1">{{ competition.competition_name }}</h1>
+            </div>
+            <div class="level-right">
+                <button class="button is-primary">Join</button>
+            </div>
+        </div>
+
+        <div class="level has-text-centered">
+            <div class="level-item">
+                <div class="box">
+                    <div class="title is-3">Contestants</div>
+                    <br>
+                    <div class="subtitle">{{ contestants.length }}</div>
+                </div>
+            </div>
+            <div class="level-item">
+                <div class="box">
+                    <div class="title is-3">Start</div>
+                    <br>
+                    <div class="subtitle">{{ competition.start | date: 'dd.MM.yyyy' }}</div>
+                </div>
+            </div>
+            <div class="level-item">
+                <div class="box">
+                    <div class="title is-3">End</div>
+                    <br>
+                    <div class="subtitle">{{ competition.end | date: 'dd.MM.yyyy' }}</div>
+                </div>
+            </div>
+
+            <div class="level-item">
+                <div class="box">
+                    <div class="title is-3">Game</div>
+                    <br>
+                    <div class="title is-3">
+                        <a (click)="routeToGame()">{{ game?.name }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div *ngIf="!dataReady && !dataUnavalible">
+        <div class="level has-text-centered">
+            <progress class="progress is-medium is-primary" max="100"></progress>
+        </div>
+    </div>
+    <div *ngIf="dataReady && dataUnavalible">
+        <div class="has-text-centered">
+            <h1 class="title is-3">No competition found!</h1>
+        </div>
+    </div>
+</div>

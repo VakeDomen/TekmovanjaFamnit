@@ -76,6 +76,20 @@
                         <button class="button is-primary" (click)="competitionModalOpen=true">Create new</button>
                     </div>
                 </div>
+
+                <div class="has-text-centered" *ngIf="!competitions.length">
+                    No competitions for the game!
+                </div>
+
+                <div class="hat-text-centered" *ngIf="competitions.length">
+                    <app-competition-card 
+                        class="block" 
+                        *ngFor="let competition of competitions" 
+                        [competition]="competition" 
+                        [game]="game"
+                        (click)="routeToCompetition(competition)"
+                    ></app-competition-card>                
+                </div>
             </div>
         </div>
     </div>
@@ -107,7 +121,6 @@
                 </h1>
             </div>
             <div class="level-right has-text-centered">
-
                 <button class="delete is-large" (click)="previewModalOpen=false"></button>
             </div>
         </div>

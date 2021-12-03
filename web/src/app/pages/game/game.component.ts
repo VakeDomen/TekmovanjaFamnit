@@ -1,12 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Game } from 'src/app/models/game.model';
 import { ApiResponse } from 'src/app/models/response';
 import { GamesService } from 'src/app/services/games.service';
 import { ToastrService } from 'ngx-toastr';
 import { FileService } from 'src/app/services/file.service';
 import { Competition } from 'src/app/models/competition.model';
-import { DatePipe } from '@angular/common';
 import { RoundTypesService } from 'src/app/services/round-types.service';
 import { RoundType } from 'src/app/models/round-type.model';
 import { CompetitionService } from 'src/app/services/competition.service';
@@ -48,9 +47,14 @@ export class GameComponent implements OnInit {
     private roundservice: RoundTypesService,
     private competitionService: CompetitionService,
     private authService: AuthService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
+    this.init();
+  }
+
+  init(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.dataUndefined = true;
@@ -63,19 +67,26 @@ export class GameComponent implements OnInit {
       }
       this.game = game.data[0];
       this.game.game_description = unescape(this.game.game_description);
+      this.newCompetition.game_id = this.game.id ?? '';
       this.decriptionEdit = this.game.game_description;
+
       this.roundservice.getRoundTypes().subscribe((resp: ApiResponse<RoundType[]>) => {
+        
         this.roundTypes = resp.data;
-        this.competitionService.getCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
+        this.newCompetition.active_round_type_id = this.roundTypes[0].id ?? '';
+
+        this.competitionService.getCompetitionsByGame(this.game?.id ?? '').subscribe((resp: ApiResponse<Competition[]>) => {
+        
           this.competitions = resp.data;
           this.dataReady = true;
+        
         }, err => {
-          this.toastr.error("Oops, something went wrong!", "Failed fething comptetitions");
+          this.toastr.error("Oops, something went wrong!", "Failed fetching comptetitions");
           console.log(err)  
           this.dataUndefined = true;
         });
       }, err => {
-        this.toastr.error("Oops, something went wrong!", "Failed fething round types");
+        this.toastr.error("Oops, something went wrong!", "Failed fetching round types");
         console.log(err)  
         this.dataUndefined = true;
       });
@@ -85,6 +96,7 @@ export class GameComponent implements OnInit {
       this.dataUndefined = true;
     });
   }
+
 
   getThumbnailUrl(): string {
     return this.fileService.getOpenFileUrl(this.game?.image_file_id ?? '');
@@ -112,16 +124,17 @@ export class GameComponent implements OnInit {
 
   activeCompetitions(): number {
     let count = 0;
-    let date = new Date();
     for (const competition of this.competitions) {
-      if (
-        date.getTime() >= new Date(competition.start).getTime() && 
-        date.getTime() <= new Date(competition.end).getTime()
-      ) {
+      if (this.isCompetitionRunning(competition)) {
         count++;
       }
     }
     return count;
+  }
+
+  isCompetitionRunning(competition: Competition): boolean {
+    return new Date().getTime() >= new Date(competition.start).getTime() && 
+      new Date().getTime() <= new Date(competition.end).getTime();
   }
 
   isAdmin(): boolean {
@@ -132,21 +145,25 @@ export class GameComponent implements OnInit {
     console.log(this.newCompetition);
     if (!this.newCompetition.competition_name) {
       this.toastr.error("Name missing", "Can not submit");
+      return;
     }
     if (!this.newCompetition.start) {
       this.toastr.error("Competition start missing", "Can not submit");
+      return;
     }
     if (!this.newCompetition.end) {
       this.toastr.error("Competition end missing", "Can not submit");
+      return;
     }
     if (!this.newCompetition.active_round_type_id) {
       this.toastr.error("Round type missing", "Can not submit");
+      return;
     }
     this.competitionService.submitCompetition(this.newCompetition).subscribe((resp: ApiResponse<Competition>) => {
       this.competitions.push(resp.data);
       this.competitionModalOpen = false;
       this.newCompetition = {
-        game_id: '',
+        game_id: this.game?.id ?? '',
         competition_name: '',
         start: '',
         end: '',
@@ -170,5 +187,9 @@ export class GameComponent implements OnInit {
 
   formatEndDate(event: any): void {
     this.newCompetition.end = event.target.value;
+  }
+
+  routeToCompetition(competition: Competition): void {
+    this.router.navigate(['competition', competition.id]);
   }
 }

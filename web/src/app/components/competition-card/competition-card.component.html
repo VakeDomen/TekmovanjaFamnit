@@ -1,0 +1,54 @@
+<article class="media hoverable box" *ngIf="competition">
+    <figure class="media-left">
+        <div class="image is-128x128 is-vcentered">
+            <img class="is-rounded is-vcentered" src="{{ getThumbnailUrl() }}">
+        </div>
+    </figure>
+    <div class="media-content">
+        <h1 class="title is-3">
+            {{ competition.competition_name }} - {{ game?.name }}
+        </h1>
+        <div class="columns">
+            <!-- author -->
+            <div class="column is-one-third">
+                <div class="columns">
+                    <div class="column has-text-centered is-one-fifth">
+                        <i class="fas fa-user fa-3x icon-center"></i>
+                    </div>
+                    <div class="column">
+                        <p class="heading">Contestants</p>
+                        <p class="title is-5">{{ contestants }}</p>
+                    </div>
+                </div>
+            </div>
+            <!-- git -->
+            <div class="column is-one-third">
+                <div class="columns">
+                    <div class="column has-text-centered is-one-fifth">
+                        <i class="fab fa-github fa-3x icon-center"></i>
+                    </div>
+                    <div class="column">
+                        <p class="heading">Start</p>
+                        <p class="title is-5">
+                            {{ competition.start | date: 'dd.MM.yyyy'}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- url -->
+            <div class="column is-one-third">
+                <div class="columns">
+                    <div class="column has-text-centered is-one-fifth">
+                        <i class="fas fa-link fa-3x icon-center"></i>
+                    </div>
+                    <div class="column">
+                        <p class="heading">End</p>
+                        <p class="title is-5">
+                            {{ competition.end | date: 'dd.MM.yyyy'}}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>

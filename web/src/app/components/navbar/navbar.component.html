@@ -16,7 +16,7 @@
     <div #navMenu id="navMenu" class="navbar-menu">
         <div class="navbar-start">
             <a class="navbar-item" [ngClass]="{'is-active': activeTab==='games'}"
-                (click)="activeTab='games'; tab.emit('games') ; toggleNavbar();" [routerLink]="['/']"
+                (click)="activeTab='games'; tab.emit('games') ; toggleNavbar();" [routerLink]="['/games']"
                 routerLinkActive="router-link-active" *ngIf="isAdmin()">
                 Games
             </a>

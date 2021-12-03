@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { CompetitionComponent } from './pages/competition/competition.component';
 import { CompetitionsComponent } from './pages/competitions/competitions.component';
 import { GameComponent } from './pages/game/game.component';
@@ -8,11 +8,17 @@ import { LoginComponent } from './pages/login/login.component';
 import { AdminGuard } from './services/admin.guard';
 import { AuthGuard } from './services/auth.guard';
 
+const routerOptions: ExtraOptions = {
+  useHash: false,
+  anchorScrolling: 'enabled',
+  // ...any other options you'd like to use
+};
+
 const routes: Routes = [
   {
     path: '',
-    component: GamesComponent,
-    canActivate: [AdminGuard],
+    component: CompetitionsComponent,
+    canActivate: [AuthGuard],
   },
   {
     path: 'competitions',
@@ -41,7 +47,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, routerOptions)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

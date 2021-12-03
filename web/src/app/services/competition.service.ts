@@ -19,6 +19,10 @@ export class CompetitionService {
     return this.http.get<ApiResponse<Competition[]>>(this.apiUrl);
   }
 
+  getCompetitionsByGame(gameId: string): Observable<ApiResponse<Competition[]>> {
+    return this.http.get<ApiResponse<Competition[]>>(this.apiUrl + '?game_id=' + gameId);
+  }
+
   getCompetition(id: string): Observable<ApiResponse<Competition[]>> {
     return this.http.get<ApiResponse<Competition[]>>(this.apiUrl + "/" + id);
   }

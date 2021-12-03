@@ -21,6 +21,7 @@ import { GameComponent } from './pages/game/game.component';
 import { CompetitionsComponent } from './pages/competitions/competitions.component';
 import { CompetitionComponent } from './pages/competition/competition.component';
 import { ContestantComponent } from './pages/contestant/contestant.component';
+import { CompetitionCardComponent } from './components/competition-card/competition-card.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ContestantComponent } from './pages/contestant/contestant.component';
     GameComponent,
     CompetitionsComponent,
     CompetitionComponent,
-    ContestantComponent
+    ContestantComponent,
+    CompetitionCardComponent
   ],
   imports: [
     CommonModule,
