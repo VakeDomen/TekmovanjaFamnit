@@ -1,0 +1,1 @@
+forever start build/server.js
