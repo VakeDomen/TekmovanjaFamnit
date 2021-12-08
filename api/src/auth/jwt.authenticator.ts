@@ -13,6 +13,15 @@ export function signIn(user: User) {
     return token;
 }
 
+export async function isRequestAdmin(req: any): Promise<[boolean, string]> {
+    const token = extractToken(req);
+    if (!token) {
+        return [false, ""];
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    return [decoded.data.ldap_dn == 'Admin', decoded.data.id];
+}
+
 /*
     AUTH MIDDLEWARE 
 */
@@ -33,14 +42,19 @@ export function isValidAuthToken(req, resp, next) {
     })
 }
 
-
-const getAuthToken = (req, res, next) => {
+const extractToken = (req: any): string | null => {
     if (
         req.headers.authorization &&
         req.headers.authorization.split(' ')[0] === 'Bearer'
     ) {
-        req.authToken = req.headers.authorization.split(' ')[1];
-    } else {
+        return req.authToken = req.headers.authorization.split(' ')[1];
+    }
+    return null;
+}
+
+const getAuthToken = (req, res, next) => {
+    const token = extractToken(req);
+    if (!token) {
         return new ErrorResponse(401, 'Unauthorized').send(res);
     }
     next(req.authToken);

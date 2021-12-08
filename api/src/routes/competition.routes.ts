@@ -5,6 +5,7 @@ import * as conf from '../database/database.config.json';
 import { fetch, insert, update } from '../database/database.handler';
 import { Competition } from '../models/competition.model';
 import { ErrorResponse } from '../models/core/error.response';
+import { Contestant } from '../models/contestant.model';
 
 const router: express.Router = express.Router();
 
@@ -19,8 +20,12 @@ router.get("/api/competition/:id", isValidAuthToken, async (req: express.Request
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
-    const data = await fetch(conf.tables.competitions, new Competition({id: req.params['id']}));
-    new SuccessResponse().setData(data).send(resp);
+    const data = await fetch<any>(conf.tables.competitions, new Competition({id: req.params['id']}));
+    const contestants = await fetch(conf.tables.contestants, new Contestant({competition_id: req.params['id']}));
+    if (data.length) {
+        data[0].contestants = contestants.length;
+    }
+    return new SuccessResponse().setData(data).send(resp);
 });
 
 router.post("/api/competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {

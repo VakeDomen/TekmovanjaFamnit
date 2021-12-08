@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './local-auth.component.html',
   styleUrls: ['./local-auth.component.sass']
 })
-export class LocalAuthComponent implements OnInit {
+export class LocalAuthComponent implements OnChanges {
 
   modalOpen: boolean = false;
   @Input() isPage: boolean = true;
@@ -17,8 +17,8 @@ export class LocalAuthComponent implements OnInit {
     private toastr: ToastrService,
   ) { }
 
-  ngOnInit() {
-    console.log(this.isPage)
+  ngOnChanges() {
+    console.log('ispage', this.isPage)
   }
 
   handleLoginAttempt(success: any): void {

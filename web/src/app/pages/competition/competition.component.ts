@@ -92,5 +92,8 @@ export class CompetitionComponent implements OnInit {
   contestantJoined(contestant: Contestant): void {
     this.myContestant = contestant;
     this.contestants.push(contestant);
+    if (this.competition && this.competition.contestants) {
+      this.competition.contestants++;
+    }
   }
 }

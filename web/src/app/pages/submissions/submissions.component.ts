@@ -25,7 +25,7 @@ export class SubmissionsComponent implements OnInit {
   private autoRoute: boolean = true;
 
   private games: Game[] = [];
-  private contestants: Contestant[] = [];
+  public contestants: Contestant[] = [];
   public competitions: Competition[] = [];
 
   public dataReady: boolean = false;
@@ -73,17 +73,29 @@ export class SubmissionsComponent implements OnInit {
     return competitions.filter((comp: Competition) => contestants.map((cont: Contestant) => cont.competition_id).includes(comp.id ?? ''));
   }
 
-  getGameByCompetition(competition: Competition): Game | undefined {
-    for (const game of this.games) {
-      if (game.id == competition.game_id) {
-        return game;
+  getGameByContestant(contestant: Contestant): Game | undefined {
+    for (const comp of this.competitions) {
+      if (contestant.competition_id != comp.id) {
+        continue;
+      }
+      for (const game of this.games) {
+        if (game.id == comp.game_id) {
+          return game;
+        }
       }
     }
     return;
   }
-
-  routeToSubmission(competition: Competition): void {
-    this.router.navigate(['submission', competition.id]);
+  getCompetitionByContestant(contestant: Contestant): Competition | undefined {
+    for (const comp of this.competitions) {
+      if (contestant.competition_id == comp.id) {
+        return comp;
+      }
+    }
+    return;
+  }
+  routeToSubmission(cont: Contestant): void {
+    this.router.navigate(['contestant', cont.id]);
   }
 
   filterOnRunning(competitions: Competition[]) {

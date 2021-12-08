@@ -5,10 +5,15 @@
                 No competitions running
             </h1>
         </div>
-        <div class="hat-text-centered" *ngIf="competitions.length">
-            <app-competition-card class="block" *ngFor="let competition of competitions" [competition]="competition"
-                [game]="getGameByCompetition(competition)" (click)="routeToSubmission(competition)">
-            </app-competition-card>
+        <div class="hat-text-centered" *ngIf="contestants.length">
+            <app-contestant-card 
+                class="block" 
+                *ngFor="let contestant of contestants" 
+                [competition]="getCompetitionByContestant(contestant)"
+                [game]="getGameByContestant(contestant)" 
+                [contestant]="contestant"
+                (click)="routeToSubmission(contestant)"
+            ></app-contestant-card>
         </div>
     </div>
 

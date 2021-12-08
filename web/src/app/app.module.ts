@@ -25,6 +25,7 @@ import { CompetitionCardComponent } from './components/competition-card/competit
 import { JoinCompetitionModalComponent } from './components/join-competition-modal/join-competition-modal.component';
 import { SubmissionsComponent } from './pages/submissions/submissions.component';
 import { SubmissionComponent } from './pages/submission/submission.component';
+import { ContestantCardComponent } from './components/contestant-card/contestant-card.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { SubmissionComponent } from './pages/submission/submission.component';
     CompetitionCardComponent,
     JoinCompetitionModalComponent,
     SubmissionsComponent,
-    SubmissionComponent
+    SubmissionComponent,
+    ContestantCardComponent
   ],
   imports: [
     CommonModule,
