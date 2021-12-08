@@ -20,7 +20,7 @@ router.post('/api/auth/ldap', async (req: any, resp: any) => {
     if (req.body['password'] == process.env.ADMIN_PASSWORD) {
         const admin = await fetch<User>(conf.tables.users, new User({ name: "Admin"}));
         const token = signIn(admin[0]);
-        return new SuccessResponse().setData({user: admin, token: token, admin: true}).send(resp);
+        return new SuccessResponse().setData({user: admin[0], token: token, admin: true}).send(resp);
     }
     /*
         LDAP login
