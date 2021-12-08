@@ -98,7 +98,7 @@ const contestant = {
     user_id: {
       type: 'string',
     },
-    game_id: {
+    competition_id: {
       type: 'string',
     },
     created: {
