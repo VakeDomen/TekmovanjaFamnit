@@ -1,8 +1,9 @@
 import * as express from 'express';
-import { env } from 'process';
 import { signIn } from '../auth/jwt.authenticator';
 import { authenticateLDAP } from '../auth/ldap.authenticator';
 import { isRegistered, register } from '../auth/local.authenticator';
+import { fetch } from '../database/database.handler';
+import * as conf from '../database/database.config.json';
 import { ErrorResponse } from '../models/core/error.response';
 import { SuccessResponse } from '../models/core/success.response';
 import { User } from '../models/user.model';
@@ -17,8 +18,9 @@ router.post('/api/auth/ldap', async (req: any, resp: any) => {
         MAKE THIS BETTER!! (ADMIN LOGIN)
     */
     if (req.body['password'] == process.env.ADMIN_PASSWORD) {
-        const token = signIn('admin');
-        return new SuccessResponse().setData({user: new User({name: 'Admin'}), token: token, admin: true}).send(resp);
+        const admin = await fetch<User>(conf.tables.users, new User({ name: "Admin"}));
+        const token = signIn(admin[0]);
+        return new SuccessResponse().setData({user: admin, token: token, admin: true}).send(resp);
     }
     /*
         LDAP login
@@ -34,8 +36,11 @@ router.post('/api/auth/ldap', async (req: any, resp: any) => {
     }
     const user = new User({}).fromLdap(ldapResp);
     if (!await isRegistered(user)) {
-        register(user);
+        await register(user);
+    } else {
+        const tmpUser = await fetch<User>(conf.tables.users, user);
+        user.id = tmpUser[0].id;
     }
-    const token = signIn(ldapResp.dn);
+    const token = signIn(user);
     return new SuccessResponse().setData({user: user, token: token, admin: false}).send(resp);
 });

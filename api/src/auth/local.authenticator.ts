@@ -3,7 +3,7 @@ import { fetch, insert } from "../database/database.handler";
 import { User } from "../models/user.model";
 
 
-export async function isRegistered(user: User) {
+export async function isRegistered(user: User): Promise<boolean> {
     return !!(await fetch(conf.tables.users, user)).length;
 }
 

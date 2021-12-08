@@ -1,9 +1,10 @@
 import { decode } from "punycode";
 import { ErrorResponse } from "../models/core/error.response";
+import { User } from "../models/user.model";
 
 var jwt = require('jsonwebtoken');
 
-export function signIn(user: string) {
+export function signIn(user: User) {
     const token = jwt.sign({
         exp: Math.floor(Date.now() / 1000) + (60 * 60),
         data: user
@@ -20,7 +21,7 @@ export function isValidAuthToken(req, resp, next) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             if (decoded && decoded.data) {
-                console.log(`[Verify auth middleware] Request made by user: ${decoded.data}`);
+                console.log(`[Verify auth middleware] Request made by user: ${decoded.data.name}`);
                 return next();
             } else {
                 console.log(`[Verify auth middleware] Client not authorized to make a request (token: ${token})`);
