@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="block" *ngIf="dataReady">
+        <div class="block has-text-centered" *ngIf="!competitions.length">
+            <h1 class="title is-3">
+                No competitions running
+            </h1>
+        </div>
+        <div class="hat-text-centered" *ngIf="competitions.length">
+            <app-competition-card class="block" *ngFor="let competition of competitions" [competition]="competition"
+                [game]="getGameByCompetition(competition)" (click)="routeToSubmission(competition)">
+            </app-competition-card>
+        </div>
+    </div>
+
+    <div class="block" *ngIf="!dataReady">
+        <div class="level has-text-centered">
+            <progress class="progress is-medium is-primary" max="100"></progress>
+        </div>
+    </div>
+</div>

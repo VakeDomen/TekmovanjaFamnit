@@ -5,6 +5,8 @@ import { CompetitionsComponent } from './pages/competitions/competitions.compone
 import { GameComponent } from './pages/game/game.component';
 import { GamesComponent } from './pages/games/games.component';
 import { LoginComponent } from './pages/login/login.component';
+import { SubmissionComponent } from './pages/submission/submission.component';
+import { SubmissionsComponent } from './pages/submissions/submissions.component';
 import { AdminGuard } from './services/admin.guard';
 import { AuthGuard } from './services/auth.guard';
 
@@ -28,6 +30,16 @@ const routes: Routes = [
   {
     path: 'competition/:id',
     component: CompetitionComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'contestants',
+    component: SubmissionsComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'contestant/:id',
+    component: SubmissionComponent,
     canActivate: [AuthGuard],
   },
   {

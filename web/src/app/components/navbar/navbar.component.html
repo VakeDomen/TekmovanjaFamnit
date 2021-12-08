@@ -1,6 +1,6 @@
 <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <a class="navbar-item" (click)="activeTab='clients'; tab.emit('clients')" [routerLink]="['/']">
+        <a class="navbar-item" (click)="activeTab='competitions'; tab.emit('competitions')" [routerLink]="['/']">
             <!-- <img src="../../../assets/logo.png" width="35" height="35"> -->
             <h1 class="title is-1">FTP</h1>
         </a>
@@ -24,6 +24,12 @@
                 (click)="activeTab='competitions'; tab.emit('competitions') ; toggleNavbar();" [routerLink]="['/competitions']"
                 routerLinkActive="router-link-active">
                 Competitions
+            </a>
+
+            <a class="navbar-item" [ngClass]="{'is-active': activeTab==='submissions'}"
+                (click)="activeTab='submissions'; tab.emit('submissions') ; toggleNavbar();" [routerLink]="['/contestants']"
+                routerLinkActive="router-link-active">
+                Submissions
             </a>
             
         </div>

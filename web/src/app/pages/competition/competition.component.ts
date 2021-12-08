@@ -74,7 +74,6 @@ export class CompetitionComponent implements OnInit {
 
   findMyContestant(contestants: Contestant[]): Contestant | undefined {
     for (const con of contestants) {
-      console.log('i', this.authService.getId(), con.user_id, con.user_id == this.authService.getId());
       if (con.user_id == this.authService.getId()) {
         return con;
       }

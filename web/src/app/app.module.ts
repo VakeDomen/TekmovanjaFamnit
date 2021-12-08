@@ -23,6 +23,8 @@ import { CompetitionComponent } from './pages/competition/competition.component'
 import { ContestantComponent } from './pages/contestant/contestant.component';
 import { CompetitionCardComponent } from './components/competition-card/competition-card.component';
 import { JoinCompetitionModalComponent } from './components/join-competition-modal/join-competition-modal.component';
+import { SubmissionsComponent } from './pages/submissions/submissions.component';
+import { SubmissionComponent } from './pages/submission/submission.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,9 @@ import { JoinCompetitionModalComponent } from './components/join-competition-mod
     CompetitionComponent,
     ContestantComponent,
     CompetitionCardComponent,
-    JoinCompetitionModalComponent
+    JoinCompetitionModalComponent,
+    SubmissionsComponent,
+    SubmissionComponent
   ],
   imports: [
     CommonModule,

@@ -57,7 +57,6 @@ export class AuthService {
     if (!val) {
       return null;
     }
-    console.log('val', val);
     return (JSON.parse(val) as User).id ?? null;
   }
 
