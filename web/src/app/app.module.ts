@@ -1,5 +1,5 @@
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,6 +22,7 @@ import { CompetitionsComponent } from './pages/competitions/competitions.compone
 import { CompetitionComponent } from './pages/competition/competition.component';
 import { ContestantComponent } from './pages/contestant/contestant.component';
 import { CompetitionCardComponent } from './components/competition-card/competition-card.component';
+import { JoinCompetitionModalComponent } from './components/join-competition-modal/join-competition-modal.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { CompetitionCardComponent } from './components/competition-card/competit
     CompetitionsComponent,
     CompetitionComponent,
     ContestantComponent,
-    CompetitionCardComponent
+    CompetitionCardComponent,
+    JoinCompetitionModalComponent
   ],
   imports: [
     CommonModule,

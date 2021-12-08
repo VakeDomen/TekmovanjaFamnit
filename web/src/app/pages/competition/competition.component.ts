@@ -5,8 +5,10 @@ import { Competition } from 'src/app/models/competition.model';
 import { Contestant } from 'src/app/models/contestant.model';
 import { Game } from 'src/app/models/game.model';
 import { ApiResponse } from 'src/app/models/response';
+import { AuthService } from 'src/app/services/auth.service';
 import { CompetitionService } from 'src/app/services/competition.service';
 import { ContestantService } from 'src/app/services/contestant.service';
+import { FileService } from 'src/app/services/file.service';
 import { GamesService } from 'src/app/services/games.service';
 
 @Component({
@@ -30,7 +32,9 @@ export class CompetitionComponent implements OnInit {
     private tostr: ToastrService,
     private contestatnService: ContestantService,
     private gameService: GamesService,
-    private router: Router
+    private router: Router,
+    private fileService: FileService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
@@ -40,9 +44,11 @@ export class CompetitionComponent implements OnInit {
         this.competition = resp.data[0];
         this.contestatnService.getContestantsByCompetition(this.competition.id ?? '').subscribe((resp: ApiResponse<Contestant[]>) => {
           this.contestants = resp.data;
+          this.myContestant = this.findMyContestant(this.contestants);
           this.gameService.getGame(this.competition?.game_id ?? '').subscribe((resp: ApiResponse<Game[]>) => {
             if (resp.data.length) {
               this.game = resp.data[0];
+              this.game.game_description = unescape(this.game.game_description);
               this.dataReady = true;
             }
           }, err => {
@@ -66,8 +72,26 @@ export class CompetitionComponent implements OnInit {
     });
   }
 
-
+  findMyContestant(contestants: Contestant[]): Contestant | undefined {
+    for (const con of contestants) {
+      console.log('i', this.authService.getId(), con.user_id, con.user_id == this.authService.getId());
+      if (con.user_id == this.authService.getId()) {
+        return con;
+      }
+    }
+    return undefined;
+  }
+ 
   routeToGame(): void {
     this.router.navigate(['game', this.game?.id ?? '']);
+  }
+
+  downloadPack(): void {
+    window.location.assign(this.fileService.getOpenFileDownloadUrl(this.game?.game_pack_file_id ?? ''));
+  }
+
+  contestantJoined(contestant: Contestant): void {
+    this.myContestant = contestant;
+    this.contestants.push(contestant);
   }
 }

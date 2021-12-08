@@ -46,11 +46,11 @@
             <div class="description" *ngIf="tab=='description'">
                 
                 <div class="columns">
-                    <div class="column">
+                    <div class="column is-half">
                         <div [innerHTML]="decriptionEdit ?? ''"></div>
                     </div>
                     <div class="is-divider-vertical" data-content="OR"  *ngIf="isAdmin()"></div>
-                    <div class="column box "  *ngIf="isAdmin()">
+                    <div class="column is-half box "  *ngIf="isAdmin()">
                         <div class="block" *ngIf="isAdmin()">
                             <div class="level">
                                 <div class="level-item has-text-centered"><button class="button is-warning"

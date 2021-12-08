@@ -2,10 +2,14 @@
     <div *ngIf="dataReady && competition">
         <div class="level">
             <div class="level-left">
-                <h1 class="title is-1">{{ competition.competition_name }}</h1>
+                <h1 class="title is-1 has-text-centered">{{ competition.competition_name }}</h1>
             </div>
-            <div class="level-right">
-                <button class="button is-primary">Join</button>
+            <div class="level-right has-text-centered">
+                <app-join-competition-modal 
+                    *ngIf="!myContestant" 
+                    [competition]="competition" 
+                    (newContestant)="contestantJoined($event)"
+                ></app-join-competition-modal>
             </div>
         </div>
 
@@ -37,9 +41,23 @@
                     <div class="title is-3">Game</div>
                     <br>
                     <div class="title is-3">
-                        <a (click)="routeToGame()">{{ game?.name }}</a>
+                        {{ game?.name }}
                     </div>
                 </div>
+            </div>
+
+            <div class="level-item">
+                <div class="box">
+                    <div class="title is-3">Game pack</div>
+                    <br>
+                    <button class="button is-primary" (click)="downloadPack()">Download</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <div [innerHTML]="game?.game_description ?? ''"></div>
             </div>
         </div>
 

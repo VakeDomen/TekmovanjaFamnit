@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { catchError, Observable, of } from "rxjs";
+import { catchError, Observable, of, throwError } from "rxjs";
 import { AuthService } from "./auth.service";
 import { ToastrService } from 'ngx-toastr';
 
@@ -18,7 +18,7 @@ export class AuthInterceptor implements HttpInterceptor {
         // Clone the request to add the new header.
         const authReq = req.clone(this.generateAuthorizationHeader());
         // Pass on the cloned request instead of the original request.
-        return next.handle(authReq).pipe(catchError(x => this.handleAuthError(x)));;
+        return next.handle(authReq).pipe(catchError(x => this.handleAuthError(x)));
     }
 
     private handleAuthError(err: HttpErrorResponse): Observable<any> {
@@ -30,7 +30,7 @@ export class AuthInterceptor implements HttpInterceptor {
             this.router.navigateByUrl(`/login`);
             // if you've caught / handled the error, you don't want to rethrow it unless you also want downstream consumers to have to handle it as well.
         }
-        return of (err)
+        return throwError(err)
     }
 
 

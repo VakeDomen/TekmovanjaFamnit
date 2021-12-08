@@ -52,6 +52,15 @@ export class AuthService {
     return (JSON.parse(val) as User).name;
   }
 
+  getId(): string | null {
+    const val = localStorage.getItem(this.userString);
+    if (!val) {
+      return null;
+    }
+    console.log('val', val);
+    return (JSON.parse(val) as User).id ?? null;
+  }
+
   logout(): void {
     localStorage.removeItem(this.token);
     this.router.navigate(['/login'])
