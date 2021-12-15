@@ -19,8 +19,8 @@ export class SubmissionsService {
     return this.http.get<ApiResponse<Submission[]>>(this.apiUrl);
   }
 
-  getSubmissionsByCompetition(competitionId: string): Observable<ApiResponse<Submission[]>> {
-    return this.http.get<ApiResponse<Submission[]>>(this.apiUrl + '?competition_id=' + competitionId);
+  getSubmissionsByContestant(contestantId: string): Observable<ApiResponse<Submission[]>> {
+    return this.http.get<ApiResponse<Submission[]>>(this.apiUrl + '?contestant_id=' + contestantId);
   }
 
   getSubmission(id: string): Observable<ApiResponse<Submission[]>> {

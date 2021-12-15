@@ -23,6 +23,7 @@ export class GamesComponent implements OnInit {
     image_file_id: '',
     game_pack_file_id: '',
     game_description: '',
+    submission_description: '',
   }
 
   constructor(

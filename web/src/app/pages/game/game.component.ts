@@ -25,9 +25,11 @@ export class GameComponent implements OnInit {
   public dataUndefined: boolean = false;
   public dataReady: boolean = false;
   public previewModalOpen: boolean = false;
+  public sPreviewModalOpen: boolean = false;
   public competitionModalOpen: boolean = false;
 
   public decriptionEdit: string | undefined;
+  public sDecriptionEdit: string | undefined;
   public newCompetition: Competition = {
     game_id: '',
     competition_name: '',
@@ -37,7 +39,7 @@ export class GameComponent implements OnInit {
     active_round_type_id: ''
   }
 
-  public tab: 'competitions' | 'description' = 'description';
+  public tab: 'competitions' | 'description' | 's_description' = 'description';
 
   constructor(
     private route: ActivatedRoute,
@@ -67,8 +69,10 @@ export class GameComponent implements OnInit {
       }
       this.game = game.data[0];
       this.game.game_description = unescape(this.game.game_description);
+      this.game.submission_description = unescape(this.game.submission_description);
       this.newCompetition.game_id = this.game.id ?? '';
       this.decriptionEdit = this.game.game_description;
+      this.sDecriptionEdit = this.game.submission_description;
 
       this.roundservice.getRoundTypes().subscribe((resp: ApiResponse<RoundType[]>) => {
         
@@ -111,9 +115,11 @@ export class GameComponent implements OnInit {
       return;
     }
     this.game.game_description = escape(this.decriptionEdit ?? '');
+    this.game.submission_description = escape(this.sDecriptionEdit ?? '');
     this.gameService.updateGame(this.game).subscribe((resp: ApiResponse<Game>) => {
       if (this.game) {
         this.game.game_description = unescape(this.game.game_description);
+        this.game.submission_description = unescape(this.game.submission_description);
       }
       this.toastr.success('Updated template', 'Success');
     }, err => {

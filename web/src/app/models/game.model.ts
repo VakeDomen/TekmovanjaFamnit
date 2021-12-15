@@ -4,4 +4,5 @@ export interface Game {
     image_file_id: string;
     game_pack_file_id: string;
     game_description: string;
+    submission_description: string;
 }
