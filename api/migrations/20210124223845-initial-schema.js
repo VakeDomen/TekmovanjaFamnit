@@ -78,6 +78,9 @@ const game = {
     game_description: {
       type: 'text',
     },
+    submission_description: {
+      type: 'text',
+    },
     image_file_id: {
       type: 'string',
     },
