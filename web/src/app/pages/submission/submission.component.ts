@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { forkJoin } from 'rxjs';
 import { Competition } from 'src/app/models/competition.model';
@@ -38,6 +38,7 @@ export class SubmissionComponent implements OnInit {
     private contestantService: ContestantService,
     private submissionService: SubmissionsService,
     private route: ActivatedRoute,
+    private router: Router,
     private toastr: ToastrService,
     private authService: AuthService,
   ) { }
@@ -50,6 +51,9 @@ export class SubmissionComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       return;
+    }
+    if (id != this.authService.getId() && !this.authService.isAdmin()) {
+      this.router.navigate(["contestant", this.authService.getId()]);
     }
     this.contestantService.getContestant(id).subscribe((resp: ApiResponse<Contestant[]>) => {
       if (!resp.data[0]) {
