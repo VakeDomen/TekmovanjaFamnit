@@ -7,7 +7,6 @@ import { ApiResponse } from 'src/app/models/response';
 import { AuthService } from 'src/app/services/auth.service';
 import { CompetitionService } from 'src/app/services/competition.service';
 import { GamesService } from 'src/app/services/games.service';
-import { Submission } from 'src/app/models/submission.model';
 import { Contestant } from 'src/app/models/contestant.model';
 import { ContestantService } from 'src/app/services/contestant.service';
 

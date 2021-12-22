@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { forkJoin } from 'rxjs';
 import { Competition } from 'src/app/models/competition.model';
 import { Contestant } from 'src/app/models/contestant.model';
+import { FileModel } from 'src/app/models/file.model';
 import { Game } from 'src/app/models/game.model';
 import { Match } from 'src/app/models/match.model';
 import { ApiResponse } from 'src/app/models/response';
@@ -11,6 +12,7 @@ import { Submission } from 'src/app/models/submission.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { CompetitionService } from 'src/app/services/competition.service';
 import { ContestantService } from 'src/app/services/contestant.service';
+import { FileService } from 'src/app/services/file.service';
 import { GamesService } from 'src/app/services/games.service';
 import { SubmissionsService } from 'src/app/services/submissions.service';
 
@@ -31,6 +33,14 @@ export class SubmissionComponent implements OnInit {
   public matches: Match[] = [];
 
   public openSubmissionAccordion: string | undefined;
+  public openNewSubmissionModal: boolean = false;
+
+  public newSubmission: Submission = {
+    contestant_id: '',
+    version: 0,
+    file_id: '',
+  };
+  public newSubmissionFiles: File | undefined;
 
   constructor(
     private gameService: GamesService,
@@ -41,6 +51,7 @@ export class SubmissionComponent implements OnInit {
     private router: Router,
     private toastr: ToastrService,
     private authService: AuthService,
+    private filesService: FileService,
   ) { }
 
   ngOnInit(): void {
@@ -52,13 +63,14 @@ export class SubmissionComponent implements OnInit {
     if (!id) {
       return;
     }
-    if (id != this.authService.getId() && !this.authService.isAdmin()) {
-      this.router.navigate(["contestant", this.authService.getId()]);
-    }
+
     this.contestantService.getContestant(id).subscribe((resp: ApiResponse<Contestant[]>) => {
       if (!resp.data[0]) {
         this.handleError(null, "Failed fetching contestant");
         return;
+      }
+      if (resp.data[0].user_id != this.authService.getId() && !this.authService.isAdmin()) {
+        this.router.navigate(["contestants"]);
       }
       this.contestant = resp.data[0];
 
@@ -73,7 +85,7 @@ export class SubmissionComponent implements OnInit {
         }
         
         this.competition = compeitionsResponse.data[0];
-        this.submissions = submissionsResponse.data;
+        this.submissions = this.sortSubmissions(submissionsResponse.data);
 
         this.gameService.getGame(this.competition.game_id ?? '').subscribe((gameResp: ApiResponse<Game[]>) => {
           if (!gameResp.data.length) {
@@ -81,6 +93,7 @@ export class SubmissionComponent implements OnInit {
             return;
           }
           this.game = gameResp.data[0];
+          this.game.submission_description = unescape(this.game.submission_description);
           this.dataReady = true;
 
         }, err => this.handleError(err, "Failed fetching game"));
@@ -118,5 +131,103 @@ export class SubmissionComponent implements OnInit {
     const diff = Math.abs(date1.getTime() - date2.getTime());
     const diffDays = Math.ceil(diff / (1000 * 3600 * 24)); 
     return diffDays;
+  }
+
+  prepareSubmission(file: File) {
+    this.newSubmissionFiles = file;
+  }
+
+  saveSubmission(): void {
+    if (!this.newSubmissionFiles) {
+      this.toastr.error("No files to submit!", "Error!");
+      return;
+    }
+    if (!this.contestant || !this.contestant.id) {
+      this.toastr.error("Invalid contestant!", "Error!");
+      return;
+    }
+    this.newSubmission.contestant_id = this.contestant?.id;
+    this.newSubmission.version = this.getNextVersion();
+  
+    this.filesService.postSubmission(this.newSubmissionFiles, this.newSubmission.contestant_id, this.newSubmission.version).subscribe((resp: ApiResponse<FileModel>) => {
+      if (!resp.data.id) {
+        this.toastr.error("Error uploading file!", "Error!");
+        return;
+      }
+      this.newSubmission.file_id = resp.data.id;
+      this.submissionService.submitSubmission(this.newSubmission).subscribe((resp: ApiResponse<Submission>) => {
+        this.submissions.push(resp.data);
+        this.newSubmission = {
+          contestant_id: '',
+          version: 0,
+          file_id: '',
+        };
+      });
+    }, (err: any) => {
+      this.toastr.error("Oops, something went wrong!", "Error uploading submission!");
+    });
+  }
+
+  getNextVersion(): number {
+    return this.submissions.length;
+  }
+
+  accordionToggle(id: string | undefined) {
+    if (this.openSubmissionAccordion == id) {
+      this.openSubmissionAccordion = undefined;
+    } else { 
+      this.openSubmissionAccordion = id;
+    }
+  }
+
+  downloadSubmission(id: string | undefined) {
+    window.location.assign(this.filesService.getFileDownloadUrl(id ?? ''));
+  }
+
+  sortSubmissions(arr: Submission[]): Submission[] {
+    return arr.sort((a: Submission, b: Submission) => a.version < b.version ? 1 : -1);
+  }
+
+  findSubmissionByVersion(version: string): Submission | null {
+    for (const sub of this.submissions) {
+      if (`${sub.version}` == version) {
+        return sub;
+      }
+    }
+    return null;
+  }
+
+  findSubmissionById(id: string): Submission | null {
+    for (const sub of this.submissions) {
+      if (`${sub.id}` == id) {
+        return sub;
+      }
+    }
+    return null;
+  }
+
+  selectVersion(version: string) {
+    if (!this.contestant) {
+      return;
+    }
+    const sub = this.findSubmissionByVersion(version);
+    if (!sub) {
+      return;
+    }
+    this.contestant.active_submission_id = sub.id;
+    delete this.contestant.created;
+    this.contestantService.updateContestant(this.contestant).subscribe((resp: ApiResponse<Contestant>) => {
+      this.toastr.success("Updated active version!", "Success!");
+    }, err => {
+      console.log(err)
+      this.toastr.error("Oops, somthing went wrong!", "Failed updating active version!");
+    })
+  }
+
+  getActiveSubValue() {
+    if (!this.contestant || !this.contestant.active_submission_id) {
+      return 0;
+    }
+    return this.findSubmissionById(this.contestant.active_submission_id)?.version;
   }
 }

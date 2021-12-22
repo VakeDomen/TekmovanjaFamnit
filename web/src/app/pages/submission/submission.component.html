@@ -5,7 +5,7 @@
                 <h1 class="title is-1 has-text-centered">Submissions - {{ "Blalb" }}</h1>
             </div>
             <div class="level-right has-text-centered">
-                
+
             </div>
         </div>
 
@@ -34,11 +34,26 @@
                 </div>
             </div>
 
+            <div class="level-item" *ngIf="submissions.length">
+                <div class="box">
+                    <div class="title is-3">Currently active</div>
+                    <br>
+                    <select
+                        class="select"
+                        #versionSelect
+                        (change)='selectVersion(versionSelect.value)'
+                        [value]="getActiveSubValue() ?? 0"
+                    >
+                        <option *ngFor="let submission of submissions">{{submission.version}}</option>
+                    </select>
+                </div>
+            </div>
+            
             <div class="level-item">
                 <div class="box">
                     <div class="title is-3">Submit new version</div>
                     <br>
-                    <button class="button is-primary">Submit</button>
+                    <button class="button is-primary" (click)="openNewSubmissionModal = true;">Submit</button>
                 </div>
             </div>
         </div>
@@ -57,16 +72,26 @@
                 <div *ngIf="submissions.length" class="box has-text-centered">
                     <section class="accordions" *ngFor="let submission of submissions">
                         <article class="accordion" [ngClass]="{'is-active': openSubmissionAccordion == submission.id}">
-                          <div class="accordion-header toggle">
-                            <p>Hello World</p>
-                          </div>
-                          <div class="accordion-body">
-                            <div class="accordion-content">
-                              Lorem ipsum dolor sit amet, consectetur adipiscing elit. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur. Aenean ac <em>eleifend lacus</em>, in mollis lectus. Donec sodales, arcu et sollicitudin porttitor, tortor urna tempor ligula, id porttitor mi magna a neque. Donec dui urna, vehicula et sem eget, facilisis sodales sem.
+                            <div class="accordion-header toggle" (click)="accordionToggle(submission.id)">
+                                <p>version {{submission.version}}</p>
                             </div>
-                          </div>
+                            <div class="accordion-body">
+                                <div class="level">
+                                    <div class="level-item">
+                                        <h1 class="title is-3 mt-2">Submission errors: </h1>
+                                    </div>
+                                    <div class="level-item"></div>
+                                    <div class="level-item">
+                                        <button class="button is-primary is-outlined mt-1"
+                                            (click)="downloadSubmission(submission.id)">Download submission</button>
+                                    </div>
+                                </div>
+                                <div class="accordion-content">
+                                    {{ submission.additional_data ?? 'No aditional data! (no errors)' }}
+                                </div>
+                            </div>
                         </article>
-                      </section>
+                    </section>
                 </div>
             </div>
         </div>
@@ -79,7 +104,32 @@
     </div>
     <div *ngIf="dataReady && dataUnavalible">
         <div class="has-text-centered">
-            <h1 class="title is-3">No competition found!</h1>
+            <h1 class="title is-3">No contestant found!</h1>
         </div>
+    </div>
+</div>
+
+
+
+<!--new submission modal-->
+
+<div class="modal" [ngClass]="{'is-active': openNewSubmissionModal}">
+    <div class="modal-background" (click)="openNewSubmissionModal=false"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Submit a new version</p>
+            <button class="delete" aria-label="close" (click)="openNewSubmissionModal=false"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="control block">
+                <label for="game-image-input title it-5">Submission files zip:</label>
+                <app-file-input [label]="'Choose a submission...'" (fileSelected)="prepareSubmission($event)"
+                    [fileName]="newSubmissionFiles?.name ?? ''"></app-file-input>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button class="button is-primary" (click)="saveSubmission()">Submit</button>
+            <button class="button" (click)="openNewSubmissionModal=false">Cancel</button>
+        </footer>
     </div>
 </div>

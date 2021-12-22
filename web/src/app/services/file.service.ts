@@ -18,10 +18,10 @@ export class FileService {
     private auth: AuthService,
   ) { }
 
-  postSubmission(fileToUpload: File, contestant: string): Observable<ApiResponse<FileModel>> {
+  postSubmission(fileToUpload: File, contestant: string, version: number): Observable<ApiResponse<FileModel>> {
     const formData: FormData = new FormData();
     formData.append('submission', fileToUpload, fileToUpload.name);
-    return this.http.post<ApiResponse<FileModel>>(`${this.apiUrl}/submission/upload/${this.auth.getName()}/${fileToUpload.name}`, formData);
+    return this.http.post<ApiResponse<FileModel>>(`${this.apiUrl}/submission/upload/${this.auth.getName()}${contestant}/${version}-${fileToUpload.name}`, formData);
   }
   
   postGamePack(fileToUpload: File, gameName: string): Observable<ApiResponse<FileModel>> {
@@ -42,5 +42,9 @@ export class FileService {
 
   getOpenFileDownloadUrl(fileId: string): string {
     return `${this.apiUrl}/open/download/${fileId}`;
+  }
+
+  getFileDownloadUrl(fileId: string): string {
+    return `${this.apiUrl}/download/${fileId}`;
   }
 }

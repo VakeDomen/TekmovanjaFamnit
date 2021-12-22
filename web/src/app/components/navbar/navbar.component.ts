@@ -33,4 +33,8 @@ export class NavbarComponent implements OnInit {
   isAdmin(): boolean {
     return this.auth.isAdmin();
   }
+
+  isLoggedIn(): boolean {
+    return this.auth.isLoggedIn();
+  }
 }

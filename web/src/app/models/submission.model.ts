@@ -1,8 +1,8 @@
 export interface Submission {
 	id?: string;
     contestant_id: string;
-    created: string;
+    created?: string;
     version: number;
-    path: string;
-    additional_data: string;
+    file_id: string;
+    additional_data?: string;
 }
