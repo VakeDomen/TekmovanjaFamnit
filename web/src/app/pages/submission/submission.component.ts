@@ -86,14 +86,6 @@ export class SubmissionComponent implements OnInit {
           this.handleError(null, "Failed fetching competition!");
           return;
         }
-        if (!submissionsResponse.data.length) {
-          this.handleError(null, "Failed fetching submissions!");
-          return;
-        }
-        if (!matchesResponse.data.length) {
-          this.handleError(null, "Failed fetching matches!");
-          return;
-        }
         
         this.competition = compeitionsResponse.data[0];
         this.submissions = this.sortSubmissions(submissionsResponse.data);

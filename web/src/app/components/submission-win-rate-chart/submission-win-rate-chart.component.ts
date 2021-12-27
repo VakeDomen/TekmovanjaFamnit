@@ -69,7 +69,7 @@ export class SubmissionWinRateChartComponent implements OnChanges {
         floating: true,
         fontSize: "16px",
         position: "left",
-        offsetX: 50,
+        offsetX: -30,
         offsetY: 10,
         labels: {
           useSeriesColors: true
@@ -87,12 +87,12 @@ export class SubmissionWinRateChartComponent implements OnChanges {
     if (!this.submissions)  {
       return;
     }
-    let i = 0
-    while (i < this.MAX_RADIALS && i < this.submissions.length) {
+    let i = 0;
+    while (this.chartOptions.series.length < this.MAX_RADIALS && i < this.submissions.length) {
       const label = `Version ${this.submissions[i].version}`;
       const value = this.getWinRate(i);
 
-      if (value > -1) {
+      if (value != -1) {
         this.chartOptions.labels.push(label);
         this.chartOptions.series.push(value);
       }
@@ -101,7 +101,13 @@ export class SubmissionWinRateChartComponent implements OnChanges {
   }  
 
   private getWinRate(index: number): number {
-    if (!this.submissions || index >= this.submissions.length || !this.matches || !this.matches.length) {
+    if (
+      !this.submissions || 
+      !this.submissions.length || 
+      index >= this.submissions.length || 
+      !this.matches || 
+      !this.matches.length
+    ) {
       return -1;
     }
     const sub = this.submissions[index];

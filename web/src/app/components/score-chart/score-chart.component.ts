@@ -6,6 +6,7 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexFill,
+  ApexPlotOptions,
   ApexXAxis
 } from "ng-apexcharts";
 
@@ -17,6 +18,7 @@ export type ChartOptions = {
   fill: ApexFill,
   stroke: any; // ApexStroke;
   dataLabels: any; // ApexDataLabels;
+  plotOptions: ApexPlotOptions;
 };
 
 @Component({
@@ -60,7 +62,20 @@ export class ScoreChartComponent implements OnChanges {
         enabledOnSeries: [1]
       },
       labels: [],
-      xaxis: {
+      xaxis: {},
+      plotOptions: {
+        bar: {
+          colors: {
+            ranges: [
+              {
+                from: -1000,
+                to: 0,
+                color: "#F15B46"
+              }
+            ]
+          },
+          columnWidth: "80%"
+        }
       },
     };
   }
@@ -68,7 +83,6 @@ export class ScoreChartComponent implements OnChanges {
     if (!this.submissions || !this.submissions.length || !this.matches || !this.matches.length) {
       return;
     }
-    console.log(this.matches)
     const roundData: any = {};
     this.matches.sort((m1: Match, m2: Match) => m1.round < m2.round ? -1 : 1);
     for (const match of this.matches) {

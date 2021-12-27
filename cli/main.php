@@ -54,9 +54,15 @@ foreach ($players as $id => $player) {
     for ($i=0; $i < $gamesPerPlayer; $i++) { 
         $opponent = $players[array_rand($players)];
         $gameFolder = $playerFolder. "/" . $opponent["contestant_id"];
+        if (!file_exists($gameFolder)) {
         mkdir($gameFolder);
+        }
+        if (!file_exists($gameFolder."/A")) {
         mkdir($gameFolder."/A");
+        }
+        if (!file_exists($gameFolder."/B")) {
         mkdir($gameFolder."/B");
+        }
         //copy player
         copy($resourcePrefix ."/".$player["path"], $gameFolder."/A/A.zip");
         //unzip player
@@ -78,18 +84,19 @@ foreach ($players as $id => $player) {
         //run the game
         $output=null;
              $result = array(
-            "round" => $roundId,
-            "submission_id_1" => $player["contestant_id"],
-            "submission_id_2" => $opponent["contestant_id"],
-            "competition_id" => $competitionData["id"];
+            "round" => $currentRound,
+            "submission_id_1" => $player["active_submission_id"],
+            "submission_id_2" => $opponent["active_submission_id"],
+            "competition_id" => $competitionData["data"][0]["id"]
         );
         colorLog("Running game between : " . $result["submission_id_1"] . " vs " . $result["submission_id_2"],"d");
         exec("java -jar Evaluator.jar SpaceBattleship ". $gameFolder."/A " . $gameFolder."/B", $output);
         $lastLine =explode(" ", $output[count($output)-1]);
-        if(substr($lastLine[1], -1) == "A"){
-            $result["submission_id_winner"] =$player["contestant_id"];
+        colorLog(trim(substr($lastLine[1], -1)),"e");
+        if(trim(substr($lastLine[1], -1)) == "A"){
+            $result["submission_id_winner"] =$player["active_submission_id"];
         }else{
-            $result["submission_id_winner"] =$opponent["contestant_id"];
+            $result["submission_id_winner"] =$opponent["active_submission_id"];
         }
         colorLog("Winner: " . $result["submission_id_winner"],"d");
         sendResult($result);
