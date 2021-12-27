@@ -14,6 +14,7 @@ import { CompetitionService } from 'src/app/services/competition.service';
 import { ContestantService } from 'src/app/services/contestant.service';
 import { FileService } from 'src/app/services/file.service';
 import { GamesService } from 'src/app/services/games.service';
+import { MatchesService } from 'src/app/services/matches.service';
 import { SubmissionsService } from 'src/app/services/submissions.service';
 
 @Component({
@@ -50,8 +51,9 @@ export class SubmissionComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService,
-    private authService: AuthService,
+    public authService: AuthService,
     private filesService: FileService,
+    private matchesService: MatchesService,
   ) { }
 
   ngOnInit(): void {
@@ -75,17 +77,27 @@ export class SubmissionComponent implements OnInit {
       this.contestant = resp.data[0];
 
       forkJoin({
-        compeitionsResponse: this.competitionService.getCompetition(this.contestant.competition_id),
-        submissionsResponse: this.submissionService.getSubmissionsByContestant(this.contestant.id ?? ''),
-      }).subscribe(({compeitionsResponse, submissionsResponse}) => {
+        compeitionsResponse:  this.competitionService.getCompetition(this.contestant.competition_id),
+        submissionsResponse:  this.submissionService.getSubmissionsByContestant(this.contestant.id ?? ''),
+        matchesResponse:      this.matchesService.getMatches(this.contestant.id ?? ''),
+      }).subscribe(({compeitionsResponse, submissionsResponse, matchesResponse}) => {
         
         if (!compeitionsResponse.data.length) {
-          this.handleError(null, "Failed fetching competition");
+          this.handleError(null, "Failed fetching competition!");
+          return;
+        }
+        if (!submissionsResponse.data.length) {
+          this.handleError(null, "Failed fetching submissions!");
+          return;
+        }
+        if (!matchesResponse.data.length) {
+          this.handleError(null, "Failed fetching matches!");
           return;
         }
         
         this.competition = compeitionsResponse.data[0];
         this.submissions = this.sortSubmissions(submissionsResponse.data);
+        this.matches = matchesResponse.data;
 
         this.gameService.getGame(this.competition.game_id ?? '').subscribe((gameResp: ApiResponse<Game[]>) => {
           if (!gameResp.data.length) {
@@ -97,7 +109,7 @@ export class SubmissionComponent implements OnInit {
           this.dataReady = true;
 
         }, err => this.handleError(err, "Failed fetching game"));
-      }, err => this.handleError(err, "Failed fetching competition and submissions"));
+      }, err => this.handleError(err, "Failed fetching competition, submissions or matches"));
     }, err => this.handleError(err, "Failed fetching contestant"));
   }
 
@@ -113,7 +125,7 @@ export class SubmissionComponent implements OnInit {
     }
     let score = 0;
     for (const match of this.matches) {
-      if (match.submission_id_winner == this.authService.getId()) {
+      if (match.submission_id_winner == match.submission_id_1) {
         score++;
       } else {
         score--;
@@ -156,12 +168,14 @@ export class SubmissionComponent implements OnInit {
       }
       this.newSubmission.file_id = resp.data.id;
       this.submissionService.submitSubmission(this.newSubmission).subscribe((resp: ApiResponse<Submission>) => {
-        this.submissions.push(resp.data);
+        this.submissions = [resp.data, ...this.submissions];
         this.newSubmission = {
           contestant_id: '',
           version: 0,
           file_id: '',
         };
+        this.selectVersion(`${resp.data.version}`);
+        this.openNewSubmissionModal = false;
       });
     }, (err: any) => {
       this.toastr.error("Oops, something went wrong!", "Error uploading submission!");

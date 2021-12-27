@@ -161,7 +161,7 @@ const match = {
     round: {
       type: 'string',
     },
-    sumission_id_1: {
+    submission_id_1: {
       type: 'string',
     },
     submission_id_2: {

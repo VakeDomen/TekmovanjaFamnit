@@ -3,7 +3,7 @@ export class Match extends DbItem {
 	
     competition_id: string;
     round: string;
-    sumission_id_1: string;
+    submission_id_1: string;
     submission_id_2: string;
     submission_id_winner: string;
     log_file_id: string;
@@ -13,7 +13,7 @@ export class Match extends DbItem {
 		super(data);
         this.competition_id = data.competition_id;
         this.round = data.round;
-        this.sumission_id_1 = data.sumission_id_1;
+        this.submission_id_1 = data.submission_id_1;
         this.submission_id_2 = data.submission_id_2;
         this.submission_id_winner = data.submission_id_winner;
         this.log_file_id = data.log_file_id;

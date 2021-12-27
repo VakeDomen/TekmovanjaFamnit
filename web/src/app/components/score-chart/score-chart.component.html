@@ -1,0 +1,17 @@
+<apx-chart
+    *ngIf="submissions && submissions.length"
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [xaxis]="chartOptions.xaxis"
+    [labels]="chartOptions.labels"
+    [stroke]="chartOptions.stroke"
+    [dataLabels]="chartOptions.dataLabels"
+    [fill]="chartOptions.fill"
+></apx-chart>
+
+<div 
+    class="title is-3"
+    *ngIf="!submissions || !submissions.length" 
+>
+    No data to chart!
+</div>

@@ -26,6 +26,10 @@ import { JoinCompetitionModalComponent } from './components/join-competition-mod
 import { SubmissionsComponent } from './pages/submissions/submissions.component';
 import { SubmissionComponent } from './pages/submission/submission.component';
 import { ContestantCardComponent } from './components/contestant-card/contestant-card.component';
+import { ChartsPanelComponent } from './components/charts-panel/charts-panel.component';
+import { SubmissionWinRateChartComponent } from './components/submission-win-rate-chart/submission-win-rate-chart.component';
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { ScoreChartComponent } from './components/score-chart/score-chart.component';
 
 @NgModule({
   declarations: [
@@ -43,13 +47,17 @@ import { ContestantCardComponent } from './components/contestant-card/contestant
     JoinCompetitionModalComponent,
     SubmissionsComponent,
     SubmissionComponent,
-    ContestantCardComponent
+    ContestantCardComponent,
+    ChartsPanelComponent,
+    SubmissionWinRateChartComponent,
+    ScoreChartComponent
   ],
   imports: [
     CommonModule,
     BrowserAnimationsModule, // required animations module
     ToastrModule.forRoot(),
     BrowserModule,
+    NgApexchartsModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,

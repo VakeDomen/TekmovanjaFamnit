@@ -2,7 +2,7 @@ import * as express from 'express';
 import { isValidAuthToken } from '../auth/jwt.authenticator';
 import { SuccessResponse } from '../models/core/success.response';
 import * as conf from '../database/database.config.json';
-import { fetch, insert, update } from '../database/database.handler';
+import { fetch, insert, update, query } from '../database/database.handler';
 import { Match } from '../models/match.model';
 import { ErrorResponse } from '../models/core/error.response';
 
@@ -15,12 +15,23 @@ router.get("/api/match", isValidAuthToken, async (req: express.Request, resp: ex
     return new SuccessResponse().setData(data).send(resp);
 });
 
+router.get("/api/match/contestant/:id", async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        return new SuccessResponse(404, 'No entries found!').send(resp);
+    }
+    
+    const data = await query<any>(constestantMatchQuery(req.params['id'])).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    return new SuccessResponse().setData(data).send(resp); 
+});
+
 router.get("/api/match/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        new SuccessResponse(404, 'No entries found!').send(resp);
+        return new SuccessResponse(404, 'No entries found!').send(resp);
     }
     const data = await fetch(conf.tables.matches, new Match({id: req.params['id']}));
-    new SuccessResponse().setData(data).send(resp);
+    return new SuccessResponse().setData(data).send(resp);
 });
 
 router.post("/api/match", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
@@ -38,3 +49,18 @@ router.patch("/api/match", isValidAuthToken, async (req: express.Request, resp: 
     });
     return new SuccessResponse().setData(data).send(resp);
 });
+
+const constestantMatchQuery = (contestantId: string) => {
+    return `
+    SELECT DISTINCT m.*
+    FROM matches m
+    INNER JOIN (
+        SELECT s.id
+        FROM contestants c
+        INNER JOIN submissions s
+        ON s.contestant_id = c.id
+        WHERE c.id = "${contestantId}"
+    ) s
+    ON s.id=m.submission_id_1
+    `;
+}

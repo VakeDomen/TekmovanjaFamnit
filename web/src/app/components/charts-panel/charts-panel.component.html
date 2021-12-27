@@ -1,0 +1,21 @@
+<div class="columns is-mobile is-multiline">
+    <div
+        class="column"
+    >
+        <h1 class="title is-3">Win rate</h1>
+        <app-submission-win-rate-chart
+            [matches]=matches
+            [submissions]=submissions
+        ></app-submission-win-rate-chart>
+    </div>
+
+    <div
+        class="column"
+    >
+        <h1 class="title is-3">Score</h1>
+        <app-score-chart
+            [matches]=matches
+            [submissions]=submissions
+        ></app-score-chart>
+    </div>
+</div>

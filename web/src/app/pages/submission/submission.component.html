@@ -2,7 +2,7 @@
     <div *ngIf="dataReady && !dataUnavalible">
         <div class="level">
             <div class="level-left">
-                <h1 class="title is-1 has-text-centered">Submissions - {{ "Blalb" }}</h1>
+                <h1 class="title is-1 has-text-centered">{{ competition?.competition_name ?? 'Unknown' }} - {{ authService.getName() ?? 'Unknown' }}</h1>
             </div>
             <div class="level-right has-text-centered">
 
@@ -63,6 +63,14 @@
                 <div class="box" *ngIf="game">
                     <div [innerHTML]="game.submission_description ?? ''"></div>
                 </div>
+
+                <div class="box">
+                    <app-charts-panel
+                        [matches]=matches
+                        [submissions]=submissions
+                    ></app-charts-panel>
+                </div>
+
 
                 <div *ngIf="!submissions.length" class="box has-text-centered">
                     <div class="title is-3">
