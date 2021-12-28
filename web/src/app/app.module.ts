@@ -30,6 +30,7 @@ import { ChartsPanelComponent } from './components/charts-panel/charts-panel.com
 import { SubmissionWinRateChartComponent } from './components/submission-win-rate-chart/submission-win-rate-chart.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { ScoreChartComponent } from './components/score-chart/score-chart.component';
+import { RadarStatsChartComponent } from './components/radar-stats-chart/radar-stats-chart.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { ScoreChartComponent } from './components/score-chart/score-chart.compon
     ContestantCardComponent,
     ChartsPanelComponent,
     SubmissionWinRateChartComponent,
-    ScoreChartComponent
+    ScoreChartComponent,
+    RadarStatsChartComponent
   ],
   imports: [
     CommonModule,

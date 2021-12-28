@@ -176,6 +176,10 @@ const match = {
     additional_data: {
       type: 'text',
     },
+    created: {
+      type: 'timestamp',
+      defaultValue: new String('CURRENT_TIMESTAMP')
+    },
   },
   ifNotExists: true
 };

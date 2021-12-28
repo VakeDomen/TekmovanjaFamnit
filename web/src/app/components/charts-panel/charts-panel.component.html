@@ -1,7 +1,5 @@
 <div class="columns is-desktop is-multiline" *ngIf="submissions && submissions.length && matches && matches.length" >
-    <div
-        class="column"
-    >
+    <div class="column">
         <h1 class="title is-3">Win rate</h1>
         <app-submission-win-rate-chart
             [matches]=matches
@@ -9,9 +7,15 @@
         ></app-submission-win-rate-chart>
     </div>
 
-    <div
-        class="column is-full"
-    >
+    <div class="column">
+        <h1 class="title is-3">Average submission metrics</h1>
+        <app-radar-stats-chart
+            [matches]=matches
+            [submissions]=submissions
+        ></app-radar-stats-chart>
+    </div>
+
+    <div class="column is-full">
         <h1 class="title is-3">Score</h1>
         <app-score-chart
             [matches]=matches
