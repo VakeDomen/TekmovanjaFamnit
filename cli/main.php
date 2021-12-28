@@ -75,7 +75,7 @@ foreach ($players as $id => $player) {
         //copy opponent
         copy($resourcePrefix ."/".$opponent["path"], $gameFolder."/B/B.zip");
         //unzip opponent
-        $zip = new ZipArchive;
+        $zip = new ZipArchive;  
         $zip->open($gameFolder."/B/B.zip");
         $zip->extractTo($gameFolder."/B/");
         $zip->close();
@@ -92,12 +92,14 @@ foreach ($players as $id => $player) {
         colorLog("Running game between : " . $result["submission_id_1"] . " vs " . $result["submission_id_2"],"d");
         exec("java -jar Evaluator.jar SpaceBattleship ". $gameFolder."/A " . $gameFolder."/B", $output);
         $lastLine =explode(" ", $output[count($output)-1]);
-        colorLog(trim(substr($lastLine[1], -1)),"e");
-        if(trim(substr($lastLine[1], -1)) == "A"){
+        colorLog($lastLine[1],"e");
+        if(strcmp(trim(substr($lastLine[1], -1)),"A")==0){
             $result["submission_id_winner"] =$player["active_submission_id"];
         }else{
             $result["submission_id_winner"] =$opponent["active_submission_id"];
         }
+        
+        $result["additional_data"] = json_encode(parseLog($output));
         colorLog("Winner: " . $result["submission_id_winner"],"d");
         sendResult($result);
         colorLog("Results submitted", "s");
@@ -122,16 +124,51 @@ class Stats{
     public $fleets, $lostShipsRed, $lostShipsBlue, $lostPlanetsRed, $lostPlanetsBlue;
 }
 
+
 function compilePlayer($playerPath){
     $output=null;
     exec("javac ". $playerPath ."/*.java", $output);
     return $output;
 }
 
-
 function parseLog($log){
+    $stats=array();
+    $myColor="blue";
+    $planets = array();
+    $fleets = array();
+    foreach($log as $key => $line) {
+        $tokens = explode(" ", $line);
+        switch($tokens[0]){
+            case "U":
+            break;
+            case "P":
+                $planets[$tokens[1]] = array("size" => $tokens[4], "color" => $tokens[6] , "fleet" => $tokens[4]);
+            break;
+            case "F":
+                $fleets[$tokens[1]] = array("color" => $planets[$tokens[4]]["color"], "size" => $tokens[2]);
+            break;
+            case "E":
+                $planets = array();
+            break;
+        }
+    }
+    $stats["myFleetSize"] =0;
+    $stats["hisFleetSize"] =0;
+    $stats["numFleetsMine"] =0;
+    $stats["FleetsTotalSize"]=0;
+    foreach($fleets as $key => $fleet){
+        if($fleet["color"] == $myColor){
+            $stats["myFleetSize"] += $fleet["size"];
+            $stats["numFleetsMine"] +=1;
+        }else{
+            $stats["hisFleetSize"] += $fleet["size"];
+        }
+        $stats["FleetsTotalSize"] += $fleet["size"];
+    }
+    $stats["numFleetsHis"] = count($fleets) - $stats["numFleetsMine"];
+    $stats["numFleetsTotal"] = count($fleets);
 
-
+    return $stats;
 }
 
 function sendResult($result){

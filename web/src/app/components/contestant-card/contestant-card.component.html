@@ -6,7 +6,8 @@
     </figure>
     <div class="media-content">
         <h1 class="title is-3">
-            {{ competition.competition_name }} - {{ contestant?.id }}
+            {{ competition.competition_name }} - <span *ngIf="contestant &&  contestant.name">{{ contestant.name[0].name}}</span>
+            <span *ngIf="contestant && !contestant.name">{{ contestant.id }}</span>
         </h1>
         <div class="columns">
             <!-- author -->

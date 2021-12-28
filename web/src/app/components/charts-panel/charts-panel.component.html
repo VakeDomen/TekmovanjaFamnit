@@ -1,4 +1,4 @@
-<div class="columns is-desktop is-multiline">
+<div class="columns is-desktop is-multiline" *ngIf="submissions && submissions.length && matches && matches.length" >
     <div
         class="column"
     >
@@ -10,7 +10,7 @@
     </div>
 
     <div
-        class="column"
+        class="column is-full"
     >
         <h1 class="title is-3">Score</h1>
         <app-score-chart
@@ -18,4 +18,16 @@
             [submissions]=submissions
         ></app-score-chart>
     </div>
+</div>
+
+<div 
+    *ngIf="!submissions || !submissions.length" 
+    class="has-text-centered"
+>
+    <h1 class="title is-3">
+        No data to chart! 
+    </h1>
+    <h3 class="subtitle is-3">
+        You should submit your first player and wait for a match.
+    </h3>
 </div>

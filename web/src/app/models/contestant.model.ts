@@ -4,4 +4,5 @@ export interface Contestant {
     competition_id: string;
     created?: string;
     active_submission_id?: string;
+    name?: any[];
 }

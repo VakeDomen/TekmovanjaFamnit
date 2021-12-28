@@ -94,7 +94,7 @@ export class ScoreChartComponent implements OnChanges {
         roundData[match.round].score = 0;
         roundData[match.round].roundScore = 0;
       }
-      if (match.submission_id_1 == match.submission_id_winner) {
+      if (match.submission_id_2 != match.submission_id_winner) {
         roundData[match.round].roundScore++;
       } else {
         roundData[match.round].roundScore--;

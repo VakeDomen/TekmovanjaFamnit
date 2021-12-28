@@ -114,7 +114,7 @@ export class SubmissionWinRateChartComponent implements OnChanges {
     let wins = 0;
     let losses = 0;
     for (const match of this.matches) {
-      if (match.submission_id_1 == sub.id) {
+      if (match.submission_id_2 != sub.id) {
         if (match.submission_id_1 == match.submission_id_winner) {
           wins++;
         } else {
