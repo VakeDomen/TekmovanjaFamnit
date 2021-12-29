@@ -24,8 +24,9 @@ import { SubmissionsService } from 'src/app/services/submissions.service';
 })
 export class SubmissionComponent implements OnInit {
 
-  public dataReady: boolean = true;
+  public dataReady: boolean = false;
   public dataUnavalible: boolean = false;
+  public loadingPercent: number = 0;
 
   public game: Game | undefined;
   public competition: Competition | undefined;
@@ -235,5 +236,15 @@ export class SubmissionComponent implements OnInit {
       return 0;
     }
     return this.findSubmissionById(this.contestant.active_submission_id)?.version;
+  }
+
+  loading(event: number) {
+    if (this.matches.length) {
+      this.loadingPercent = Math.round((event / this.matches.length) * 100);
+    }
+  }
+
+  areChartsLoaded() {
+    return this.loadingPercent > 99;
   }
 }

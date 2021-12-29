@@ -70,8 +70,13 @@
                     <app-charts-panel
                         [matches]=matches
                         [submissions]=submissions
+                        (processingDone)="loading($event)"
                     ></app-charts-panel>
+                    <div class="has-text-centered" *ngIf="!areChartsLoaded()">
+                        <progress class="progress is-medium is-primary" max="100" value="loadingPercent"></progress>
+                    </div>
                 </div>
+
 
 
                 <div *ngIf="!submissions.length" class="box has-text-centered">
@@ -108,7 +113,7 @@
 
     </div>
     <div *ngIf="!dataReady && !dataUnavalible">
-        <div class="level has-text-centered">
+        <div class="has-text-centered">
             <progress class="progress is-medium is-primary" max="100"></progress>
         </div>
     </div>

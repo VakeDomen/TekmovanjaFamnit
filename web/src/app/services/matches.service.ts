@@ -4,20 +4,20 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Match } from '../models/match.model';
 import { ApiResponse } from '../models/response';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchesService {
-  
-  private apiUrl = environment.apiUrl + '/match';
-  
+    
   constructor(
-    private http: HttpClient
+    private cache: CacheService,
   ) { }
 
   getMatches(contestantId: string): Observable<ApiResponse<Match[]>> {
-    return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
+    return this.cache.getCached(`/match/contestant/${contestantId}`);
+    // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
   }
 }
 

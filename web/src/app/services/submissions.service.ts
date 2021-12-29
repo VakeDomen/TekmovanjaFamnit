@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Submission } from '../models/submission.model';
 import { ApiResponse } from '../models/response';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class SubmissionsService {
   
   constructor(
     private http: HttpClient,
+    private cache: CacheService,
   ) { }
 
   getSubmissions(): Observable<ApiResponse<Submission[]>> {
@@ -20,7 +22,7 @@ export class SubmissionsService {
   }
 
   getSubmissionsByContestant(contestantId: string): Observable<ApiResponse<Submission[]>> {
-    return this.http.get<ApiResponse<Submission[]>>(this.apiUrl + '?contestant_id=' + contestantId);
+    return this.cache.getCached("/submission/?contestant_id=" + contestantId);
   }
 
   getSubmission(id: string): Observable<ApiResponse<Submission[]>> {

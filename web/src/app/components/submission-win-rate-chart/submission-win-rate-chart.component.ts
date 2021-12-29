@@ -27,10 +27,9 @@ export type ChartOptions = {
 })
 export class SubmissionWinRateChartComponent implements OnChanges {
 
-  private MAX_RADIALS: number = 4;
 
-  @Input() public submissions: Submission[] | undefined;
-  @Input() public matches: Match[] | undefined;
+  @Input() public series: any[] = [];
+  @Input() public labels: string[] = [];
 
   public chartOptions: ChartOptions;
 
@@ -84,49 +83,7 @@ export class SubmissionWinRateChartComponent implements OnChanges {
     };
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.submissions)  {
-      return;
-    }
-    let i = 0;
-    while (this.chartOptions.series.length < this.MAX_RADIALS && i < this.submissions.length) {
-      const label = `Version ${this.submissions[i].version}`;
-      const value = this.getWinRate(i);
-
-      if (value != -1) {
-        this.chartOptions.labels.push(label);
-        this.chartOptions.series.push(value);
-      }
-      i++;
-    }
+    this.chartOptions.labels = this.labels;
+    this.chartOptions.series = this.series;
   }  
-
-  private getWinRate(index: number): number {
-    if (
-      !this.submissions || 
-      !this.submissions.length || 
-      index >= this.submissions.length || 
-      !this.matches || 
-      !this.matches.length
-    ) {
-      return -1;
-    }
-    const sub = this.submissions[index];
-    let wins = 0;
-    let losses = 0;
-    for (const match of this.matches) {
-      if (match.submission_id_1 == sub.id) {
-        if (match.submission_id_2 != match.submission_id_winner) {
-          wins++;
-        } else {
-          losses++;
-        }
-      }
-    }
-    if (wins == 0 && losses == 0) {
-      return -1;
-    }
-    return Math.round(wins / (wins + losses) * 100);
-  }
-
-
 }

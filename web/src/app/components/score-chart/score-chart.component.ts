@@ -1,6 +1,4 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { Match } from 'src/app/models/match.model';
-import { Submission } from 'src/app/models/submission.model';
 
 import {
   ApexAxisChartSeries,
@@ -28,9 +26,10 @@ export type ChartOptions = {
 })
 export class ScoreChartComponent implements OnChanges {
 
-  @Input() public submissions: Submission[] | undefined;
-  @Input() public matches: Match[] | undefined;
-
+  @Input() public series1: any[] = [];
+  @Input() public series2: any[] = [];
+  @Input() public labels: string[] = [];
+  
   public chartOptions: ChartOptions;
 
   constructor() { 
@@ -80,35 +79,8 @@ export class ScoreChartComponent implements OnChanges {
     };
   }
   ngOnChanges(changes: SimpleChanges): void {
-    if (!this.submissions || !this.submissions.length || !this.matches || !this.matches.length) {
-      return;
-    }
-    const roundData: any = {};
-    this.matches.sort((m1: Match, m2: Match) => m1.round < m2.round ? -1 : 1);
-    for (const match of this.matches) {
-      if (!match.round) {
-        continue;
-      }
-      if (!roundData[match.round]) {
-        roundData[match.round] = {};
-        roundData[match.round].score = 0;
-        roundData[match.round].roundScore = 0;
-      }
-      if (match.submission_id_2 != match.submission_id_winner) {
-        roundData[match.round].roundScore++;
-      } else {
-        roundData[match.round].roundScore--;
-      }
-    }
-    let prev = 0;
-    for (const rdi in roundData) {
-      roundData[rdi].score = prev + roundData[rdi].roundScore;
-      prev = roundData[rdi].score;
-    }
-    for (const rdi in roundData) {
-      this.chartOptions.labels.push(rdi);
-      this.chartOptions.series[0].data.push(roundData[rdi].roundScore);
-      this.chartOptions.series[1].data.push(roundData[rdi].score);
-    }
+    this.chartOptions.series[0].data = this.series1;
+    this.chartOptions.series[1].data = this.series2;
+    this.chartOptions.labels = this.labels;
   }
 }

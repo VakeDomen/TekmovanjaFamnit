@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Competition } from '../models/competition.model';
 import { ApiResponse } from '../models/response';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class CompetitionService {
   
   constructor(
     private http: HttpClient,
+    private cache: CacheService,
   ) { }
 
   getCompetitions(): Observable<ApiResponse<Competition[]>> {
@@ -24,7 +26,7 @@ export class CompetitionService {
   }
 
   getCompetition(id: string): Observable<ApiResponse<Competition[]>> {
-    return this.http.get<ApiResponse<Competition[]>>(this.apiUrl + "/" + id);
+    return this.cache.getCached("/competition/" + id);
   }
 
   submitCompetition(competition: Competition): Observable<ApiResponse<Competition>> {

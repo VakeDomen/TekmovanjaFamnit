@@ -19,4 +19,14 @@ export class Match extends DbItem {
         this.log_file_id = data.log_file_id;
         this.additional_data = data.additional_data;
 	}
+
+    export() {
+        return {
+            round: this.round,
+            submission_id_1: this.submission_id_1,
+            submission_id_2: this.submission_id_2,
+            submission_id_winner: this.submission_id_winner,
+            additional_data: this.additional_data,
+        }
+    }
 }
