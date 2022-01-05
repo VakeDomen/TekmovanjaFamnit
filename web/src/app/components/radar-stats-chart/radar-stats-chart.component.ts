@@ -60,6 +60,5 @@ export class RadarStatsChartComponent implements OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.chartOptions.series = this.series;
-    console.log(this.series)
   }
 }

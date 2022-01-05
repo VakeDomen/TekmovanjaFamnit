@@ -38,6 +38,7 @@ export class ChartsPanelComponent implements OnChanges {
 
   
   ngOnChanges(changes: SimpleChanges): void {
+    const t0 = new Date().getMilliseconds();
     /*
       data checks
     */
@@ -103,6 +104,8 @@ export class ChartsPanelComponent implements OnChanges {
       this.radarChartSeries.push(this.constructRadarChartSeriesElement(assocArrayOfSubmissionData, index));
     }
     this.dataReady = true;
+    const t1 = new Date().getMilliseconds();
+    console.log("t: ", t1 - t0);
   }
 
   addToWinRateData(data: any[], match: Match) {
@@ -124,7 +127,7 @@ export class ChartsPanelComponent implements OnChanges {
   }
   
   addToRoundScore(roundData: any[], match: Match) {
-    if (match.submission_id_2 != match.submission_id_winner) {
+    if (this.isWin(match)) {
       roundData[match.round as any].roundScore++;
     } else {
       roundData[match.round as any].roundScore--;

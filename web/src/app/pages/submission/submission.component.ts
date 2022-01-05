@@ -75,28 +75,25 @@ export class SubmissionComponent implements OnInit {
       if (resp.data[0].user_id != this.authService.getId() && !this.authService.isAdmin()) {
         this.router.navigate(["contestants"]);
       }
-      this.contestant = resp.data[0];
-
+      
       forkJoin({
-        compeitionsResponse:  this.competitionService.getCompetition(this.contestant.competition_id),
-        submissionsResponse:  this.submissionService.getSubmissionsByContestant(this.contestant.id ?? ''),
-        matchesResponse:      this.matchesService.getMatches(this.contestant.id ?? ''),
+        compeitionsResponse:  this.competitionService.getCompetition(resp.data[0].competition_id),
+        submissionsResponse:  this.submissionService.getSubmissionsByContestant(resp.data[0].id ?? ''),
+        matchesResponse:      this.matchesService.getMatches(resp.data[0].id ?? ''),
       }).subscribe(({compeitionsResponse, submissionsResponse, matchesResponse}) => {
-        
         if (!compeitionsResponse.data.length) {
           this.handleError(null, "Failed fetching competition!");
           return;
         }
-        
-        this.competition = compeitionsResponse.data[0];
-        this.submissions = this.sortSubmissions(submissionsResponse.data);
-        this.matches = matchesResponse.data;
-
-        this.gameService.getGame(this.competition.game_id ?? '').subscribe((gameResp: ApiResponse<Game[]>) => {
+        this.gameService.getGame(compeitionsResponse.data[0].game_id ?? '').subscribe((gameResp: ApiResponse<Game[]>) => {
           if (!gameResp.data.length) {
             this.handleError(null, "Failed fetching game");
             return;
           }
+          this.contestant = resp.data[0];
+          this.competition = compeitionsResponse.data[0];
+          this.submissions = this.sortSubmissions(submissionsResponse.data);
+          this.matches = matchesResponse.data;
           this.game = gameResp.data[0];
           this.game.submission_description = unescape(this.game.submission_description);
           this.dataReady = true;

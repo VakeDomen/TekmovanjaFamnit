@@ -5,7 +5,7 @@ import {
   ApexChart,
   ApexFill,
   ApexPlotOptions,
-  ApexXAxis
+  ApexXAxis,
 } from "ng-apexcharts";
 
 export type ChartOptions = {
@@ -48,7 +48,10 @@ export class ScoreChartComponent implements OnChanges {
       ],
       chart: {
         height: 350,
-        type: "line"
+        type: "line",
+        animations: {
+          enabled: false,
+        }
       },
       stroke: {
         width: [0, 4]
@@ -57,11 +60,13 @@ export class ScoreChartComponent implements OnChanges {
         type: ['solid']
       },
       dataLabels: {
-        enabled: true,
+        enabled: false,
         enabledOnSeries: [1]
       },
       labels: [],
-      xaxis: {},
+      xaxis: {
+        range: 20,
+      },
       plotOptions: {
         bar: {
           colors: {
