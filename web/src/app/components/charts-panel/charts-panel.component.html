@@ -1,9 +1,17 @@
 <div class="columns is-desktop is-multiline" *ngIf="submissions && submissions.length && matches && matches.length && dataReady" >
     <div class="column">
-        <h1 class="title is-3">Win rate</h1>
+        <h1 class="title is-3">Win rate (Top 4)</h1>
         <app-submission-win-rate-chart
             [series]=wrseries
             [labels]=wrlabels
+        ></app-submission-win-rate-chart>
+    </div>
+
+    <div class="column">
+        <h1 class="title is-3">Win rate (Latest 4)</h1>
+        <app-submission-win-rate-chart
+            [series]=wlrseries
+            [labels]=wlrlabels
         ></app-submission-win-rate-chart>
     </div>
 
@@ -13,19 +21,25 @@
             [series]="radarChartSeries"
         ></app-radar-stats-chart>
     </div>
-
+    <div class="column is-full">
+        <h1 class="title is-3">Rounds</h1>
+        <app-rounds-chart
+            [series1]=series1
+            [labels]=labels
+        ></app-rounds-chart>
+    </div>
     <div class="column is-full">
         <h1 class="title is-3">Score</h1>
         <app-score-chart
-            [series1]=series1
             [series2]=series2
+            [annotations]=subSwitchPoints
             [labels]=labels
         ></app-score-chart>
     </div>
 </div>
 
 <div 
-    *ngIf="!submissions || !submissions.length" 
+    *ngIf="!submissions || !submissions.length || !matches || !matches.length" 
     class="has-text-centered"
 >
     <h1 class="title is-3">

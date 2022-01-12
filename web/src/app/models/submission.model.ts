@@ -1,5 +1,6 @@
 export interface Submission {
-	id?: string;
+    id?: string;
+    name?: any;
     contestant_id: string;
     created?: string;
     version: number;

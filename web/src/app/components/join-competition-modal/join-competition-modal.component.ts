@@ -34,7 +34,6 @@ export class JoinCompetitionModalComponent implements OnInit {
     }
     const id = this.authService.getId();
     if (!id) {
-      console.log(id);
       this.toastr.error("Invalid player", "Failed");
       return;
     }

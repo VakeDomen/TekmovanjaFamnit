@@ -3,20 +3,24 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import {
   ApexAxisChartSeries,
   ApexChart,
-  ApexFill,
-  ApexPlotOptions,
   ApexXAxis,
+  ApexDataLabels,
+  ApexTitleSubtitle,
+  ApexStroke,
+  ApexGrid,
+  ApexMarkers,
+  ApexAnnotations
 } from "ng-apexcharts";
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
+  stroke: ApexStroke;
   xaxis: ApexXAxis;
-  labels: string[];
-  fill: ApexFill,
-  stroke: any; // ApexStroke;
-  dataLabels: any; // ApexDataLabels;
-  plotOptions: ApexPlotOptions;
+  // dataLabels: ApexDataLabels;
+  grid: ApexGrid;
+  colors: string[],
+  annotations: ApexAnnotations,
 };
 
 @Component({
@@ -26,9 +30,11 @@ export type ChartOptions = {
 })
 export class ScoreChartComponent implements OnChanges {
 
-  @Input() public series1: any[] = [];
+  MAX_DISPLAY_ROUNDS = 60;
+
   @Input() public series2: any[] = [];
   @Input() public labels: string[] = [];
+  @Input() public annotations: any[] = []; 
   
   public chartOptions: ChartOptions;
 
@@ -36,56 +42,49 @@ export class ScoreChartComponent implements OnChanges {
     this.chartOptions = {
       series: [
         {
-          name: "Round",
-          type: "column",
+          name: "Score",
           data: []
         },
-        {
-          name: "Total score",
-          type: "line",
-          data: []
-        }
       ],
       chart: {
         height: 350,
         type: "line",
         animations: {
           enabled: false,
-        }
+        },
+        zoom: {
+          enabled: true,
+          type: 'x',  
+          autoScaleYaxis: true,  
+        },
       },
       stroke: {
-        width: [0, 4]
+        curve: "smooth"
       },
-      fill: {
-        type: ['solid']
-      },
-      dataLabels: {
-        enabled: false,
-        enabledOnSeries: [1]
-      },
-      labels: [],
+      // dataLabels: {
+      //   enabled: false,
+      //   enabledOnSeries: [1]
+      // },
       xaxis: {
-        range: 20,
+        tickAmount: this.MAX_DISPLAY_ROUNDS / 5,
+        categories: []
       },
-      plotOptions: {
-        bar: {
-          colors: {
-            ranges: [
-              {
-                from: -1000,
-                to: 0,
-                color: "#F15B46"
-              }
-            ]
-          },
-          columnWidth: "80%"
+      grid: {
+        row: {
+          colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+          opacity: 0.5
         }
       },
+      colors: ["#50C878"],
+      annotations: {
+        points: [],
+      }
     };
   }
+  
   ngOnChanges(changes: SimpleChanges): void {
-    this.chartOptions.series[0].data = this.series1;
-    this.chartOptions.series[1].data = this.series2;
-    this.chartOptions.labels = this.labels;
+    this.chartOptions.series[0].data = this.series2.slice(-this.MAX_DISPLAY_ROUNDS);
+    this.chartOptions.xaxis.categories = this.labels.slice(-this.MAX_DISPLAY_ROUNDS);
+    this.chartOptions.annotations.points = this.annotations.sort((a1: any, a2: any) => +a1.x > +a2.x ? 1 : -1).filter((el: any) => +el.x >= +this.labels[0]);
   }
 }

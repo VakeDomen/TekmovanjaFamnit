@@ -44,9 +44,14 @@
                         class="select"
                         #versionSelect
                         (change)='selectVersion(versionSelect.value)'
-                        [value]="getActiveSubValue() ?? 0"
+                        [ngModel]="getActiveSubValue()"
                     >
-                        <option *ngFor="let submission of submissions">{{submission.version}}</option>
+                        <option 
+                            *ngFor="let submission of submissions" 
+                            value="{{submission.version}}"
+                        >
+                            {{submission.name}}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -88,7 +93,7 @@
                     <section class="accordions" *ngFor="let submission of submissions">
                         <article class="accordion" [ngClass]="{'is-active': openSubmissionAccordion == submission.id}">
                             <div class="accordion-header toggle" (click)="accordionToggle(submission.id)">
-                                <p>version {{submission.version}}</p>
+                                <p>Version {{ submission.name }}</p>
                             </div>
                             <div class="accordion-body">
                                 <div class="level">

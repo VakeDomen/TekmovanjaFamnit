@@ -148,7 +148,6 @@ export class GameComponent implements OnInit {
   }
   
   createCompetition(): void {
-    console.log(this.newCompetition);
     if (!this.newCompetition.competition_name) {
       this.toastr.error("Name missing", "Can not submit");
       return;

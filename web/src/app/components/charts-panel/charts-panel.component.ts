@@ -10,6 +10,7 @@ import { Submission } from 'src/app/models/submission.model';
 export class ChartsPanelComponent implements OnChanges {
 
   private MAX_RADIALS: number = 4;
+  private MAX_SCORE_ROUNDS = 40;
 
   @Input() submissions: Submission[] = [];
   @Input() matches: Match[] = [];
@@ -26,13 +27,16 @@ export class ChartsPanelComponent implements OnChanges {
   public series1: any[] = [];
   public series2: any[] = [];
   public labels: string[] = [];
-
+  public subSwitchPoints: any[] = [];
   /*
     win rate chart
   */
 
   public wrlabels: string[] = [];
   public wrseries: any[] = [];
+
+  public wlrlabels: string[] = [];
+  public wlrseries: any[] = [];
 
   constructor() { }
 
@@ -45,7 +49,7 @@ export class ChartsPanelComponent implements OnChanges {
     if (!this.submissions || !this.submissions.length || !this.matches || !this.matches.length) {
       return;
     }
-    this.matches.sort((m1: Match, m2: Match) => m1.round < m2.round ? -1 : 1);
+    this.matches.sort((m1: Match, m2: Match) => +m1.round < +m2.round ? -1 : 1);
   
     /*
       radar chart init
@@ -53,8 +57,10 @@ export class ChartsPanelComponent implements OnChanges {
     const assocArrayOfSubmissionData: any = {};
     const roundData: any = {};
     const winRateData: any = {};
+    const annot: any[] = [];
     let count = 0;
-    this.matches.forEach((match: Match) => {
+    let lastSub: string | undefined;
+    for (const match of this.matches) {
       /*
         radar chart
       */
@@ -66,6 +72,14 @@ export class ChartsPanelComponent implements OnChanges {
       /*
         score chart
       */
+      if (lastSub) {
+        if (lastSub != match.submission_id_1) {
+          annot.push(this.newPointAnnotations(match));
+          lastSub = match.submission_id_1;
+        }
+      } else {
+        lastSub = match.submission_id_1;
+      }
       this.initRoundDataScoreChart(roundData, match.round);
       this.addToRoundScore(roundData, match);
       /*
@@ -74,38 +88,85 @@ export class ChartsPanelComponent implements OnChanges {
       this.addToWinRateData(winRateData, match);
       count++;
       this.processingDone.emit(count);
-    });
+    };
     /*
       win rate chart
     */
     let series = Object.keys(winRateData).map(
-      (elIndex: string) => {return { data: winRateData[elIndex][0] / winRateData[elIndex][1], label: elIndex};}
+      (elIndex: string) => {
+        return { 
+          data: Math.round((winRateData[elIndex][0] / winRateData[elIndex][1]) * 100), 
+          label: elIndex
+        };
+      }
     );
-    series.sort((el: any, el1: any) => el.data < el1.data ? -1 : 1).slice(0, this.MAX_RADIALS).forEach((el: any) => {
-      this.wrlabels.push("Version " + this.findVersion(el.label));
-      this.wrseries.push(el.data);
-    }) ;
+    const w1l: string[] = [];
+    const w1s: any[] = [];
+    series.sort((el: any, el1: any) => el.data > el1.data ? -1 : 1).slice(0, this.MAX_RADIALS).forEach((el: any) => {
+      w1l.push(this.findVersion(el.label));
+      w1s.push(el.data);
+    });
+    this.wrlabels = w1l;
+    this.wrseries = w1s;
+
+    const w2l: string[] = [];
+    const w2s: any[] = [];
+    series.sort((el: any, el1: any) => this.findVersion(el.label) > this.findVersion(el1.label) ? -1 : 1).slice(-this.MAX_RADIALS).forEach((el: any) => {
+      w2l.push(this.findVersion(el.label));
+      w2s.push(el.data);
+    });
+    this.wlrlabels = w2l;
+    this.wlrseries = w2s;
+
     
     /*
       score chart
     */
     let prev = 0;
+    const labs1: string[] = [];
+    const s1: any[] = [];
+    const s2: any[] = []; 
     for (const rdi in roundData) {
       prev = prev + roundData[rdi].roundScore;
-      this.labels.push(rdi);
-      this.series1.push(roundData[rdi].roundScore);
-      this.series2.push(prev);
+      labs1.push(rdi);
+      s1.push(roundData[rdi].roundScore);
+      s2.push(prev);
     }
+    this.labels = labs1;
+    this.series1 = s1;
+    this.series2 = s2;
+    this.subSwitchPoints = annot;
     /*
       radar chart
     */
+    const rcs: any[] = [];
     for (const index in assocArrayOfSubmissionData) {
       this.averageRadar(assocArrayOfSubmissionData[index]);
-      this.radarChartSeries.push(this.constructRadarChartSeriesElement(assocArrayOfSubmissionData, index));
+      rcs.push(this.constructRadarChartSeriesElement(assocArrayOfSubmissionData, index));
     }
+    this.radarChartSeries = rcs;
     this.dataReady = true;
     const t1 = new Date().getMilliseconds();
-    console.log("t: ", t1 - t0);
+  }
+
+  newPointAnnotations(match: Match) {
+    return {
+      x: match.round,
+      marker: {
+        fillColor: "#50C878",
+        size: 5,
+        radius: 3,
+      },
+      label: {
+        borderColor: '#FF4560',
+        offsetY: 0,
+        style: {
+          color: '#fff',
+          background: '#FF4560',
+        },
+        text: this.findVersion(match.submission_id_1),
+      }
+    };
   }
 
   addToWinRateData(data: any[], match: Match) {
@@ -161,7 +222,7 @@ export class ChartsPanelComponent implements OnChanges {
     }
     for (const sub of this.submissions) {
       if (sub.id == id) {
-        return `${sub.version}`;
+        return `${sub.name}`;
       }
     }
     return '?';

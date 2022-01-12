@@ -2,7 +2,7 @@ import * as express from 'express';
 import { isValidAuthToken } from '../auth/jwt.authenticator';
 import { SuccessResponse } from '../models/core/success.response';
 import * as conf from '../database/database.config.json';
-import { fetch, insert, update } from '../database/database.handler';
+import { fetch, insert, query, update } from '../database/database.handler';
 import { Submission } from '../models/submission.model';
 import { ErrorResponse } from '../models/core/error.response';
 import { File } from '../models/file.model';
@@ -12,8 +12,20 @@ const router: express.Router = express.Router();
 module.exports = router;
 
 router.get("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
-    const data = await fetch(conf.tables.submissions, new Submission(req.query));
+    const data = await fetch(conf.tables.submissions, new Submission(req.query)).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
     return new SuccessResponse().setData(data).send(resp);
+});
+
+router.get("/api/submission/contestant/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        new SuccessResponse(404, 'No entries found!').send(resp);
+    }
+    const data = await query(getContestantSubmissionQuery(req.params['id'])).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    new SuccessResponse().setData(data).send(resp);
 });
 
 router.get("/api/submission/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
@@ -54,3 +66,18 @@ router.patch("/api/submission", isValidAuthToken, async (req: express.Request, r
     });
     return new SuccessResponse().setData(data).send(resp);
 });
+
+
+const getContestantSubmissionQuery = (contId: string) => {
+    return `
+        SELECT s.*, f.path as name
+        FROM files f
+        RIGHT JOIN (
+            SELECT * 
+            FROM submissions s
+            WHERE s.contestant_id = "${contId}"
+        ) s
+        ON s.file_id = f.id
+        
+    `;
+}

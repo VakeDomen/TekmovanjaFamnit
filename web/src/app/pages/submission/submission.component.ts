@@ -1,3 +1,4 @@
+import { splitNsName } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -36,6 +37,7 @@ export class SubmissionComponent implements OnInit {
 
   public openSubmissionAccordion: string | undefined;
   public openNewSubmissionModal: boolean = false;
+  public activeSubmission: number | undefined;
 
   public newSubmission: Submission = {
     contestant_id: '',
@@ -92,10 +94,11 @@ export class SubmissionComponent implements OnInit {
           }
           this.contestant = resp.data[0];
           this.competition = compeitionsResponse.data[0];
-          this.submissions = this.sortSubmissions(submissionsResponse.data);
+          this.submissions = this.nameSubmissions(this.sortSubmissions(submissionsResponse.data));
           this.matches = matchesResponse.data;
           this.game = gameResp.data[0];
           this.game.submission_description = unescape(this.game.submission_description);
+          this.activeSubmission = this.getActiveSubValue();
           this.dataReady = true;
 
         }, err => this.handleError(err, "Failed fetching game"));
@@ -139,6 +142,18 @@ export class SubmissionComponent implements OnInit {
     this.newSubmissionFiles = file;
   }
 
+  nameSubmissions(subs: Submission[]) {
+    return subs.map((s: Submission) => {
+      if(s.name) {
+        s.name = s.name.split("/");
+        s.name = s.name[s.name.length -1];
+        s.name = s.name.split(".");
+        s.name = s.name[0];
+      }
+      return s;
+    })
+  }
+
   saveSubmission(): void {
     if (!this.newSubmissionFiles) {
       this.toastr.error("No files to submit!", "Error!");
@@ -159,6 +174,7 @@ export class SubmissionComponent implements OnInit {
       this.newSubmission.file_id = resp.data.id;
       this.submissionService.submitSubmission(this.newSubmission).subscribe((resp: ApiResponse<Submission>) => {
         this.submissions = [resp.data, ...this.submissions];
+        this.activeSubmission = this.getActiveSubValue();
         this.newSubmission = {
           contestant_id: '',
           version: 0,
@@ -232,7 +248,11 @@ export class SubmissionComponent implements OnInit {
     if (!this.contestant || !this.contestant.active_submission_id) {
       return 0;
     }
-    return this.findSubmissionById(this.contestant.active_submission_id)?.version;
+    const sub = this.findSubmissionById(this.contestant.active_submission_id);
+    if (!sub) {
+      return 0;
+    }
+    return sub.version ?? 0;
   }
 
   loading(event: number) {
@@ -242,6 +262,6 @@ export class SubmissionComponent implements OnInit {
   }
 
   areChartsLoaded() {
-    return this.loadingPercent > 99;
+    return this.loadingPercent > 99 || this.matches.length == 0;
   }
 }
