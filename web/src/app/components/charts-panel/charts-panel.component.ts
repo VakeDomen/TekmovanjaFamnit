@@ -229,12 +229,19 @@ export class ChartsPanelComponent implements OnChanges {
   }
 
   averageRadar(el: any) {
-    el.myFleetSize = el.myFleetSize.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.myFleetSize.length;
-    el.hisFleetSize = el.hisFleetSize.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.hisFleetSize.length;
-    el.numFleetsMine = el.numFleetsMine.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.numFleetsMine.length;
-    el.FleetsTotalSize = el.FleetsTotalSize.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.FleetsTotalSize.length;
-    el.numFleetsHis = el.numFleetsHis.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.numFleetsHis.length;
-    el.numFleetsTotal = el.numFleetsTotal.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.numFleetsTotal.length;
+
+    const maxmyFleetSize = Math.max(...el.myFleetSize as number[]);
+    const maxhisFleetSize = Math.max(...el.hisFleetSize as number[]);
+    const maxnumFleetsMine = Math.max(...el.numFleetsMine as number[]);
+    const maxFleetsTotalSize = Math.max(...el.FleetsTotalSize as number[]);
+    const maxnumFleetsHis = Math.max(...el.numFleetsHis as number[]);
+    const maxnumFleetsTotal = Math.max(...el.numFleetsTotal as number[]);
+    el.myFleetSize = ((el.myFleetSize.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.myFleetSize.length) / maxmyFleetSize) * 100;
+    el.hisFleetSize = ((el.hisFleetSize.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.hisFleetSize.length) / maxhisFleetSize) * 100;
+    el.numFleetsMine = ((el.numFleetsMine.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.numFleetsMine.length) / maxnumFleetsMine) * 100;
+    el.FleetsTotalSize = ((el.FleetsTotalSize.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.FleetsTotalSize.length) / maxFleetsTotalSize) * 100;
+    el.numFleetsHis = ((el.numFleetsHis.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.numFleetsHis.length) / maxnumFleetsHis) * 100;
+    el.numFleetsTotal = ((el.numFleetsTotal.reduce((partial_sum: number, el: number) => partial_sum + el, 0) / el.numFleetsTotal.length) / maxnumFleetsTotal) * 100;
   }
 
   initAssocArray(els: any[], index: any) {

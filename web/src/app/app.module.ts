@@ -20,7 +20,6 @@ import { ToastrService } from 'ngx-toastr';
 import { GameComponent } from './pages/game/game.component';
 import { CompetitionsComponent } from './pages/competitions/competitions.component';
 import { CompetitionComponent } from './pages/competition/competition.component';
-import { ContestantComponent } from './pages/contestant/contestant.component';
 import { CompetitionCardComponent } from './components/competition-card/competition-card.component';
 import { JoinCompetitionModalComponent } from './components/join-competition-modal/join-competition-modal.component';
 import { SubmissionsComponent } from './pages/submissions/submissions.component';
@@ -44,7 +43,6 @@ import { RoundsChartComponent } from './components/rounds-chart/rounds-chart.com
     GameComponent,
     CompetitionsComponent,
     CompetitionComponent,
-    ContestantComponent,
     CompetitionCardComponent,
     JoinCompetitionModalComponent,
     SubmissionsComponent,
