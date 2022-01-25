@@ -4,11 +4,11 @@ require('dotenv').config();
 
 import express = require('express');
 
+const { Telegraf } = require('telegraf')
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const fs = require('fs');
 const path = require('path');
-
 console.log('Finished importing!')
 
 if (!process.env.PORT) {
@@ -39,14 +39,26 @@ if (!process.env.JWT_SECRET) {
 	console.log('JsonWebToken secret not specified in .env!');
 	process.exit(1);
 }
+
+if (!process.env.TELEGRAM_BOT_KEY) {
+	console.log('Telegram bot key not enterd! Bug reporting will not work!');
+}
 console.log('Initialising backend...');
 
 const app: express.Application = express();
+let botcontext;
+let botRoutes;
 
 app.use(myCors);
 app.use(fileUpload({ createParentPath: true }));
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
+
+if (!!process.env.TELEGRAM_BOT_KEY) {
+	const bot = new Telegraf(process.env.TELEGRAM_BOT_KEY)
+	bot.start((ctx) => startBot(ctx));
+	bot.launch();
+}
 
 const absPath = path.resolve(__dirname, '.');
 fs.readdir(absPath + '/routes/', async (err: Error, files: string[]) => {
@@ -56,7 +68,11 @@ fs.readdir(absPath + '/routes/', async (err: Error, files: string[]) => {
 	}
 	files.forEach((routeFileName: string) => {
 		console.log('Importing ' + routeFileName + '...');
-		app.use(require(absPath + '/routes/' + routeFileName));
+		const router = require(absPath + '/routes/' + routeFileName);
+		app.use(router);
+		if (routeFileName == 'bug.routes.js') {
+			botRoutes = router;
+		}
 	});
 	app.use((req: express.Request, res: express.Response, next: any) => {
 		const error = new Error('Not found');
@@ -79,4 +95,14 @@ function myCors(req, res, nxt) {
     } else {
         nxt();
     }
+}
+
+function startBot(ctx) {
+	if (botcontext) {
+		botcontext.reply("Someone hijacked context!! /start again!");
+		botcontext.reply("Hijacker: " + JSON.stringify(ctx.mesage));
+	}
+	botcontext = ctx;
+	botRoutes.initBot(botcontext);
+	botcontext.reply("Hello!");
 }

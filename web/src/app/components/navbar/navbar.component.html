@@ -14,22 +14,27 @@
     </div>
 
     <div #navMenu id="navMenu" class="navbar-menu">
-        <div class="navbar-start" *ngIf="isLoggedIn()">
-            <a class="navbar-item" [ngClass]="{'is-active': activeTab==='competitions'}"
+        <div class="navbar-start" >
+            <a *ngIf="isLoggedIn()" class="navbar-item" [ngClass]="{'is-active': activeTab==='competitions'}"
                 (click)="activeTab='competitions'; tab.emit('competitions') ; toggleNavbar();" [routerLink]="['/competitions']"
                 routerLinkActive="router-link-active">
                 Competitions
             </a>
 
-            <a class="navbar-item" [ngClass]="{'is-active': activeTab==='submissions'}"
+            <a *ngIf="isLoggedIn()" class="navbar-item" [ngClass]="{'is-active': activeTab==='submissions'}"
                 (click)="activeTab='submissions'; tab.emit('submissions') ; toggleNavbar();" [routerLink]="['/contestants']"
                 routerLinkActive="router-link-active">
                 Submissions
             </a>
-                <a class="navbar-item" [ngClass]="{'is-active': activeTab==='games'}"
+            <a *ngIf="isLoggedIn() && isAdmin()" class="navbar-item" [ngClass]="{'is-active': activeTab==='games'}"
                 (click)="activeTab='games'; tab.emit('games') ; toggleNavbar();" [routerLink]="['/games']"
-                routerLinkActive="router-link-active" *ngIf="isAdmin()">
+                routerLinkActive="router-link-active" >
                 Games
+            </a>
+            <a class="navbar-item" [ngClass]="{'is-active': activeTab==='about'}"
+                (click)="activeTab='about'; tab.emit('about') ; toggleNavbar();" [routerLink]="['/about']"
+                routerLinkActive="router-link-active">
+                About
             </a>
         </div>
 

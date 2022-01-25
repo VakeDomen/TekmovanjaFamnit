@@ -31,6 +31,7 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { ScoreChartComponent } from './components/score-chart/score-chart.component';
 import { RadarStatsChartComponent } from './components/radar-stats-chart/radar-stats-chart.component';
 import { RoundsChartComponent } from './components/rounds-chart/rounds-chart.component';
+import { AboutComponent } from './pages/about/about.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { RoundsChartComponent } from './components/rounds-chart/rounds-chart.com
     SubmissionWinRateChartComponent,
     ScoreChartComponent,
     RoundsChartComponent,
-    RadarStatsChartComponent
+    RadarStatsChartComponent,
+    AboutComponent
   ],
   imports: [
     CommonModule,

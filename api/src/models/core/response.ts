@@ -6,11 +6,13 @@ export class Response {
 		this.code = code;
 		this.message = message;
 	}
-	setMessage(message: string): void {
+	setMessage(message: string): Response {
 		this.message = message;
+		return this;
 	}
-	setCode(code: number): void {
+	setCode(code: number): Response {
 		this.code = code;
+		return this;
 	}
 	getCode(): number {
 		return this.code;

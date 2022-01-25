@@ -3,7 +3,8 @@
     <div class="level-left">
       <h1 class="title is-1 has-text-centered">Games</h1>
     </div>
-    <div class="level-right has-text-centered"><button class="button is-primary" (click)="modalOpen=true">Add</button></div>
+    <div class="level-right has-text-centered"><button class="button is-primary" (click)="modalOpen=true">Add</button>
+    </div>
   </div>
   <div class="block">
     <div class="has-text-centered" *ngIf="!games.length">
@@ -13,21 +14,21 @@
 
 
   <div class="block task-container columns is-multiline is-centered">
-      <div class="card column is-narrow hoverable pl-1 pr-1" *ngFor="let game of games" (click)="cardSelected(game)">
-        <div class="card-image">
-          <figure class="image is-4by3">
-            <img src="{{ getThumbnailUrl(game) }}" alt="Placeholder image">
-          </figure>
-        </div>
-        <div class="card-content">
-          <div class="media">
-            <div class="media-content">
-              <p class="title is-4 has-text-centered" >{{ game.name }}</p>
-            </div>
+    <div class="card column is-narrow hoverable pl-1 pr-1" *ngFor="let game of games" (click)="cardSelected(game)">
+      <div class="card-image">
+        <figure class="image is-4by3">
+          <img src="{{ getThumbnailUrl(game) }}" alt="Placeholder image">
+        </figure>
+      </div>
+      <div class="card-content">
+        <div class="media">
+          <div class="media-content">
+            <p class="title is-4 has-text-centered">{{ game.name }}</p>
           </div>
         </div>
       </div>
     </div>
+  </div>
 </div>
 
 

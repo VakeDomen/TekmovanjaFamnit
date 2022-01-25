@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
+import { AboutComponent } from './pages/about/about.component';
 import { CompetitionComponent } from './pages/competition/competition.component';
 import { CompetitionsComponent } from './pages/competitions/competitions.component';
 import { GameComponent } from './pages/game/game.component';
@@ -21,6 +22,10 @@ const routes: Routes = [
     path: '',
     component: CompetitionsComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: 'about',
+    component: AboutComponent,
   },
   {
     path: 'competitions',
