@@ -1,4 +1,3 @@
-import { splitNsName } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -172,15 +171,18 @@ export class SubmissionComponent implements OnInit {
         return;
       }
       this.newSubmission.file_id = resp.data.id;
-      this.submissionService.submitSubmission(this.newSubmission).subscribe((resp: ApiResponse<Submission>) => {
-        this.submissions = [resp.data, ...this.submissions];
+      this.submissionService.submitSubmission(this.newSubmission).subscribe((resp: ApiResponse<Submission[]>) => {
+        const sub = resp.data.pop();
+        this.submissions = this.nameSubmissions([sub as Submission, ...this.submissions]);
+        (this.contestant as Contestant).active_submission_id = (sub as Submission).id;
         this.activeSubmission = this.getActiveSubValue();
+        console.log(this.submissions);
         this.newSubmission = {
           contestant_id: '',
           version: 0,
           file_id: '',
         };
-        this.selectVersion(`${resp.data.version}`);
+        this.selectVersion(`${(sub as Submission).version}`);
         this.openNewSubmissionModal = false;
       });
     }, (err: any) => {
@@ -238,6 +240,7 @@ export class SubmissionComponent implements OnInit {
     delete this.contestant.created;
     this.contestantService.updateContestant(this.contestant).subscribe((resp: ApiResponse<Contestant>) => {
       this.toastr.success("Updated active version!", "Success!");
+      this.activeSubmission = this.getActiveSubValue();
     }, err => {
       console.log(err)
       this.toastr.error("Oops, somthing went wrong!", "Failed updating active version!");

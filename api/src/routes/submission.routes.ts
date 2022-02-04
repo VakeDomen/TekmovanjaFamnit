@@ -42,7 +42,10 @@ router.post("/api/submission", isValidAuthToken, async (req: express.Request, re
     await insert(conf.tables.submissions, submission).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });
-    return new SuccessResponse().setData(submission).send(resp);
+    const data = await query(getInsertedSubmissionQuery(submission.id ?? '')).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    new SuccessResponse().setData(data).send(resp);
 });
 
 router.post("/api/submission/upload/:contestant_id/:version", isValidAuthToken, async (req: any, resp: express.Response) => {
@@ -76,6 +79,20 @@ const getContestantSubmissionQuery = (contId: string) => {
             SELECT * 
             FROM submissions s
             WHERE s.contestant_id = "${contId}"
+        ) s
+        ON s.file_id = f.id
+        
+    `;
+}
+
+const getInsertedSubmissionQuery = (id: string) => {
+    return `
+        SELECT s.*, f.path as name
+        FROM files f
+        RIGHT JOIN (
+            SELECT * 
+            FROM submissions s
+            WHERE s.id = "${id}"
         ) s
         ON s.file_id = f.id
         

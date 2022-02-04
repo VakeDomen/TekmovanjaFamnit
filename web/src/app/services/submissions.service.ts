@@ -29,8 +29,8 @@ export class SubmissionsService {
     return this.http.get<ApiResponse<Submission[]>>(this.apiUrl + "/" + id);
   }
 
-  submitSubmission(submission: Submission): Observable<ApiResponse<Submission>> {
-    return this.http.post<ApiResponse<Submission>>(this.apiUrl, submission);
+  submitSubmission(submission: Submission): Observable<ApiResponse<Submission[]>> {
+    return this.http.post<ApiResponse<Submission[]>>(this.apiUrl, submission);
   }
 
   updateSubmission(submission: Submission): Observable<ApiResponse<Submission>> {
