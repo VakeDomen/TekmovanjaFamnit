@@ -73,7 +73,6 @@ export class AuthService {
         console.log("No resp from BE");
         return false;
       }
-      console.log("Resp", response);
       localStorage.setItem(
         this.token, 
         `Bearer ${response.data.token}`
@@ -86,7 +85,6 @@ export class AuthService {
         this.isAdminString, 
         JSON.stringify(response.data.admin)
       );
-      this.router.navigate(['/']);
     } catch (error) {
       console.log(error)
       return false;

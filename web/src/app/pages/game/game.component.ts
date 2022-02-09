@@ -10,6 +10,7 @@ import { RoundTypesService } from 'src/app/services/round-types.service';
 import { RoundType } from 'src/app/models/round-type.model';
 import { CompetitionService } from 'src/app/services/competition.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-game',
@@ -28,8 +29,8 @@ export class GameComponent implements OnInit {
   public sPreviewModalOpen: boolean = false;
   public competitionModalOpen: boolean = false;
 
-  public decriptionEdit: string | undefined;
-  public sDecriptionEdit: string | undefined;
+  public decriptionEdit: SafeHtml | undefined;
+  public sDecriptionEdit: SafeHtml | undefined;
   public newCompetition: Competition = {
     game_id: '',
     competition_name: '',
@@ -51,7 +52,12 @@ export class GameComponent implements OnInit {
     private competitionService: CompetitionService,
     private authService: AuthService,
     private router: Router,
+    private sanitizer: DomSanitizer,
   ) { }
+
+  transformYourHtml(htmlTextWithStyle: string) {
+    return this.sanitizer.bypassSecurityTrustHtml(htmlTextWithStyle);
+  }
 
   ngOnInit(): void {
     this.init();
@@ -72,8 +78,8 @@ export class GameComponent implements OnInit {
       this.game.game_description = unescape(this.game.game_description);
       this.game.submission_description = unescape(this.game.submission_description);
       this.newCompetition.game_id = this.game.id ?? '';
-      this.decriptionEdit = this.game.game_description;
-      this.sDecriptionEdit = this.game.submission_description;
+      this.decriptionEdit = this.transformYourHtml(this.game.game_description);
+      this.sDecriptionEdit = this.transformYourHtml(this.game.submission_description);
 
       this.roundservice.getRoundTypes().subscribe((resp: ApiResponse<RoundType[]>) => {
         
@@ -115,8 +121,8 @@ export class GameComponent implements OnInit {
     if (!this.game) {
       return;
     }
-    this.game.game_description = escape(this.decriptionEdit ?? '');
-    this.game.submission_description = escape(this.sDecriptionEdit ?? '');
+    this.game.game_description = escape(this.decriptionEdit as string ?? '');
+    this.game.submission_description = escape(this.sDecriptionEdit as string ?? '');
     this.gameService.updateGame(this.game).subscribe((resp: ApiResponse<Game>) => {
       if (this.game) {
         this.game.game_description = unescape(this.game.game_description);

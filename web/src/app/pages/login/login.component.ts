@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
     password: ''
   };
   
-  @Output() loginSuccess = new EventEmitter<boolean>();
+  @Output() loginSuccess = new EventEmitter();
 
   constructor(
     private auth: AuthService,

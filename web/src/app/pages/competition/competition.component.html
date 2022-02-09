@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <div class="edit" *ngIf="tab=='banner_edit' || !isAdmin()">
+        <div class="edit" *ngIf="tab=='banner_edit' && isAdmin()">
             <div class="columns">
                 <div class="column is-half">
                     <div [innerHTML]="bannerEdit ?? ''"></div>

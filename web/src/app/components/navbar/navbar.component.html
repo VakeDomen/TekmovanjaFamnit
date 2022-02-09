@@ -1,6 +1,6 @@
 <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <a class="navbar-logo ml-5 mr-3 " (click)="activeTab='competitions'; tab.emit('competitions')" [routerLink]="['/']">
+        <a class="navbar-logo ml-5 mr-3 " (click)="activeTab='home'; tab.emit('home') ; toggleNavbar()" [routerLink]="['/']">
             <!-- <img src="../../../assets/logo.png" width="35" height="35"> -->
             <div>
                 <p class="navbar-item-center-icon title is-3 mt-3">
@@ -62,7 +62,7 @@
             </a>
             <div class="navbar-item">
                 <div class="buttons">
-                    <app-local-auth [isPage]="false" (click)="toggleNavbar()"></app-local-auth>
+                    <app-local-auth [isPage]="false" (modalClosedEvent)="toggleNavbar()"></app-local-auth>
                 </div>
             </div>
         </div>

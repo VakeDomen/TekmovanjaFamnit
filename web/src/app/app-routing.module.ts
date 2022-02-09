@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
+import { LocalAuthComponent } from './components/local-auth/local-auth.component';
 import { AboutComponent } from './pages/about/about.component';
 import { CompetitionComponent } from './pages/competition/competition.component';
 import { CompetitionsComponent } from './pages/competitions/competitions.component';
@@ -59,7 +60,7 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginComponent,
+    component: LocalAuthComponent,
   },
 ];
 

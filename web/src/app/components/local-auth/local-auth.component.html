@@ -2,18 +2,18 @@
 <button class="button is-primary" (click)="logout()" *ngIf="authService.isLoggedIn() && !isPage">Logout</button>
 
 <div class="container" *ngIf="isPage">
-        <!-- tab content -->
-        <div class="container">
-            <app-login (loginSuccess)="handleLoginAttempt($event)"></app-login>
-        </div>    
+    <!-- tab content -->
+    <div class="container">
+        <app-login (loginSuccess)="handleLoginAttempt($event)"></app-login>
+    </div>
 </div>
 
 <!-- auth modal -->
 <div class="modal" [ngClass]="{'is-active': modalOpen}">
-    <div class="modal-background" (click)='modalOpen = false'></div>
+    <div class="modal-background" (click)='modalClose()'></div>
     <div class="modal-card">
         <!-- modal-body -->
-        
+
         <div class="content">
             <!-- tab selection -->
             <div class="container box">
@@ -22,9 +22,9 @@
                     <app-login (loginSuccess)="handleLoginAttempt($event)"></app-login>
                 </div>
             </div>
-        
+
             <!-- /modal body -->
         </div>
     </div>
-    <button class="modal-close is-large" aria-label="close" (click)='modalOpen = false'></button>
-  </div>
+    <button class="modal-close is-large" aria-label="close" (click)='modalClose()'></button>
+</div>
