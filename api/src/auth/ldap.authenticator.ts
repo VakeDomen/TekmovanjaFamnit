@@ -29,6 +29,7 @@ export async function authenticateLDAP(username: string, password: string) {
         attributes: ['dn', 'sn', 'cn']
       };
       client.search('dc=upr,dc=si', opts, (err, res) => {
+        let searchTriggered = false;
         /*
           LDAP error
         */
@@ -37,6 +38,7 @@ export async function authenticateLDAP(username: string, password: string) {
          network error
         */
         res.on('searchEntry', (entry) => {
+          searchTriggered = true;
           if (!entry.object) {
             reject("No user");
           }
@@ -46,11 +48,14 @@ export async function authenticateLDAP(username: string, password: string) {
               LDAP error
             */
             if (err) reject(err);
-          
+            
             resolve(entry.object)
           });
         });
         res.on('error', (err) => reject(err));
+        res.on('end', err => {
+          if (err && !searchTriggered) reject(err);
+        });
       });
     });
   })

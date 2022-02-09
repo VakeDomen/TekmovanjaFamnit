@@ -70,8 +70,10 @@ export class AuthService {
       console.log("Attempting login")
       const response: ApiResponse<AuthResp> | undefined = await this.http.post<ApiResponse<AuthResp>>(this.apiUrl, credentials).toPromise();
       if (!response) {
+        console.log("No resp from BE");
         return false;
       }
+      console.log("Resp", response);
       localStorage.setItem(
         this.token, 
         `Bearer ${response.data.token}`

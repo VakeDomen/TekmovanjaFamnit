@@ -5,11 +5,8 @@
                 <h1 class="title is-1 has-text-centered">{{ competition.competition_name }}</h1>
             </div>
             <div class="level-right has-text-centered">
-                <app-join-competition-modal 
-                    *ngIf="!myContestant" 
-                    [competition]="competition" 
-                    (newContestant)="contestantJoined($event)"
-                ></app-join-competition-modal>
+                <app-join-competition-modal *ngIf="!myContestant" [competition]="competition"
+                    (newContestant)="contestantJoined($event)"></app-join-competition-modal>
             </div>
         </div>
 
@@ -55,9 +52,43 @@
             </div>
         </div>
 
-        <div class="columns">
-            <div class="column">
-                <div [innerHTML]="game?.game_description ?? ''"></div>
+        <div class="tabs is-centered" *ngIf="isAdmin()">
+            <ul>
+                <li [ngClass]="{'is-active': tab=='open'}" (click)="tab='open'"><a>Competition</a></li>
+                <li [ngClass]="{'is-active': tab=='banner_edit'}" (click)="tab='banner_edit'"><a>Frontpage banner
+                        edit</a></li>
+            </ul>
+        </div>
+
+        <div class="description" *ngIf="(tab=='open' && isAdmin()) || !isAdmin()">
+            <div class="columns">
+                <div class="column">
+                    <div [innerHTML]="game?.game_description ?? ''"></div>
+                </div>
+            </div>
+        </div>
+        <div class="edit" *ngIf="tab=='banner_edit' || !isAdmin()">
+            <div class="columns">
+                <div class="column is-half">
+                    <div [innerHTML]="bannerEdit ?? ''"></div>
+                </div>
+                <div class="is-divider-vertical" data-content="OR" *ngIf="isAdmin()"></div>
+                <div class="column is-half box " *ngIf="isAdmin()">
+                    <div class="block" *ngIf="isAdmin()">
+                        <div class="level">
+                            <div class="level-item has-text-centered"><button class="button is-warning"
+                                    (click)="previewModalOpen=true">Preview</button></div>
+                            <div class="level-item has-text-centered"><button class="button is-primary"
+                                    [disabled]="bannerEdit == competition?.banner_page"
+                                    (click)="saveBannerTemplate()">Save</button></div>
+                        </div>
+                    </div>
+                    <div class="control block">
+                        <textarea class="textarea" placeholder="HTML template" rows="10" name="description"
+                            [(ngModel)]="bannerEdit"></textarea>
+                    </div>
+
+                </div>
             </div>
         </div>
 
@@ -72,4 +103,23 @@
             <h1 class="title is-3">No competition found!</h1>
         </div>
     </div>
+</div>
+
+<!--preview modal-->
+<div class="modal modal-fx-fadeInScale" [ngClass]="{'is-active': previewModalOpen}">
+    <div class="modal-background" (click)="previewModalOpen=false"></div>
+    <section class="modal-card-body modal-content is-huge">
+        <div class="level">
+            <div class="level-left has-text-centered">
+                <h1 class="title is-3">
+                    Template preview
+                </h1>
+            </div>
+            <div class="level-right has-text-centered">
+                <button class="delete is-large" (click)="previewModalOpen=false"></button>
+            </div>
+        </div>
+        <div class="is-divider" data-content=""></div>
+        <div [innerHTML]="bannerEdit ?? ''"></div>
+    </section>
 </div>

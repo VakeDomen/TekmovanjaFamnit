@@ -12,7 +12,7 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("/api/competition", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/competition", async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.competitions, new Competition(req.query));
     return new SuccessResponse().setData(data).send(resp);
 });

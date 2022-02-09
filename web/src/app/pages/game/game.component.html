@@ -37,8 +37,8 @@
 
         <div class="tabs is-centered" *ngIf="isAdmin()">
             <ul>
-                <li [ngClass]="{'is-active': tab=='description'}" (click)="tab='description'"><a>Description</a></li>
-                <li [ngClass]="{'is-active': tab=='s_description'}" (click)="tab='s_description'"><a>Description</a></li>
+                <li [ngClass]="{'is-active': tab=='description'}" (click)="tab='description'"><a>Game description</a></li>
+                <li [ngClass]="{'is-active': tab=='s_description'}" (click)="tab='s_description'"><a>Submission description</a></li>
                 <li [ngClass]="{'is-active': tab=='competitions'}" (click)="tab='competitions'"><a>Competitions</a></li>
             </ul>
         </div>

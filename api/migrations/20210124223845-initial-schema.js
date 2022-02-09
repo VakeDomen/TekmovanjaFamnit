@@ -134,6 +134,9 @@ const competition = {
     end: {
       type: 'string',
     },
+    banner_page: {
+      type: 'text',
+    },
     allowed_submissions: {
       type: 'int'
     },

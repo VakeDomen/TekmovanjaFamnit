@@ -3,6 +3,7 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './pages/about/about.component';
 import { CompetitionComponent } from './pages/competition/competition.component';
 import { CompetitionsComponent } from './pages/competitions/competitions.component';
+import { FrontComponent } from './pages/front/front.component';
 import { GameComponent } from './pages/game/game.component';
 import { GamesComponent } from './pages/games/games.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -20,8 +21,7 @@ const routerOptions: ExtraOptions = {
 const routes: Routes = [
   {
     path: '',
-    component: CompetitionsComponent,
-    canActivate: [AuthGuard],
+    component: FrontComponent,
   },
   {
     path: 'about',

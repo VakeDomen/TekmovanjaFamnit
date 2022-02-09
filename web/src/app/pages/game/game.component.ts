@@ -35,6 +35,7 @@ export class GameComponent implements OnInit {
     competition_name: '',
     start: '',
     end: '',
+    banner_page: '',
     allowed_submissions: 0,
     active_round_type_id: ''
   }
@@ -172,6 +173,7 @@ export class GameComponent implements OnInit {
         competition_name: '',
         start: '',
         end: '',
+        banner_page: '',
         allowed_submissions: 0,
         active_round_type_id: ''
       };

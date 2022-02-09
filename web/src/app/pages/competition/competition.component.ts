@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Competition } from 'src/app/models/competition.model';
@@ -20,6 +21,10 @@ export class CompetitionComponent implements OnInit {
 
   public dataReady: boolean = false;
   public dataUnavalible: boolean = false;
+  public tab: 'open' | 'banner_edit' = 'open';
+
+  public bannerEdit: SafeHtml | undefined;
+  public previewModalOpen: boolean = false;
 
   public competition: Competition | undefined;
   public myContestant: Contestant | undefined;
@@ -35,13 +40,20 @@ export class CompetitionComponent implements OnInit {
     private router: Router,
     private fileService: FileService,
     private authService: AuthService,
+    private sanitizer: DomSanitizer,
   ) { }
+
+  transformYourHtml(htmlTextWithStyle: string) {
+    return this.sanitizer.bypassSecurityTrustHtml(htmlTextWithStyle);
+  }
+
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     this.competitionService.getCompetition(id ?? '').subscribe((resp: ApiResponse<Competition[]>) => {
       if (resp.data.length) {
         this.competition = resp.data[0];
+        this.bannerEdit = this.transformYourHtml(unescape(this.competition.banner_page));
         this.contestatnService.getContestantsByCompetition(this.competition.id ?? '').subscribe((resp: ApiResponse<Contestant[]>) => {
           this.contestants = resp.data;
           this.myContestant = this.findMyContestant(this.contestants);
@@ -95,5 +107,29 @@ export class CompetitionComponent implements OnInit {
     if (this.competition && this.competition.contestants) {
       this.competition.contestants++;
     }
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+  
+
+  saveBannerTemplate() {
+    if (!this.competition) {
+      return;
+    }
+    this.competition.banner_page = escape(this.bannerEdit as string ?? '');
+    const tmp = this.competition.created;
+    delete this.competition.created;
+    this.competitionService.updateCompetition(this.competition).subscribe((resp: ApiResponse<Competition>) => {
+      if (this.competition) {
+        this.competition.banner_page = unescape(this.competition.banner_page);
+        this.competition.created = tmp;
+      }
+      this.tostr.success('Updated template', 'Success');
+    }, err => {
+      console.log(err);
+      this.tostr.error('Oops, something went wrong!', 'Error updating template!');
+    })
   }
 }

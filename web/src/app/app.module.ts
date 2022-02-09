@@ -32,6 +32,8 @@ import { ScoreChartComponent } from './components/score-chart/score-chart.compon
 import { RadarStatsChartComponent } from './components/radar-stats-chart/radar-stats-chart.component';
 import { RoundsChartComponent } from './components/rounds-chart/rounds-chart.component';
 import { AboutComponent } from './pages/about/about.component';
+import { FrontComponent } from './pages/front/front.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,9 @@ import { AboutComponent } from './pages/about/about.component';
     ScoreChartComponent,
     RoundsChartComponent,
     RadarStatsChartComponent,
-    AboutComponent
+    AboutComponent,
+    FrontComponent,
+    FooterComponent
   ],
   imports: [
     CommonModule,
