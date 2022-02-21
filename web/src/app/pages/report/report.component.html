@@ -1,0 +1,16 @@
+<div class="container content">
+    <div class="has-text-centered mt-3">
+        <h1 class="title is-4">Found something weird?</h1>
+    </div>
+    <div class="control block mt-3">
+        <textarea class="textarea" placeholder="Tell us about it" rows="10" name="description"
+            [(ngModel)]="report"></textarea>
+    </div>
+    <div class="level mb-3">
+        <div class="level-left"></div>
+        <div class="level-right">
+            <div><button class="button is-primary" [disabled]="!report" (click)="submitReport()">Report</button>
+            </div>
+        </div>
+    </div>
+</div>

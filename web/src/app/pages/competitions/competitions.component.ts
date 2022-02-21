@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Competition } from 'src/app/models/competition.model';
@@ -31,30 +31,24 @@ export class CompetitionsComponent implements OnInit {
     private toastr: ToastrService,
     private authService: AuthService,
     private router: Router,
+    private _ngZone: NgZone,
   ) { }
 
   ngOnInit(): void {
-    this.init();
-  }
-
-  init(): void {
     this.gameService.getGames().subscribe((resp: ApiResponse<Game[]>) => {
       this.games = resp.data;
       this.competitionService.getCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
-        this.competitions = this.filterOnRunning(resp.data);
-        if (this.autoRoute && this.competitions.length == 1) {
+        //this.competitions = this.filterOnRunning(resp.data);
+        this.competitions = resp.data;
+        if (this.autoRoute && this.competitions.length >= 1) {
           this.router.navigate(['competition', this.competitions[0].id ]);
+        } else {
+          this.dataReady = true;
         }
-        this.dataReady = true;
-      }, err => {
-        this.toastr.error("Oops, something went wrong!", "Failed fetching round types");
-        console.log(err)  
       });
-    }, err => {
-      this.toastr.error("Oops, something went wrong!", "Failed fething round types");
-      console.log(err)  
     });
   }
+
 
   getGameByCompetition(competition: Competition): Game | undefined {
     for (const game of this.games) {

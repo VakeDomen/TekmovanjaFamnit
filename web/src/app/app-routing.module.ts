@@ -8,6 +8,7 @@ import { FrontComponent } from './pages/front/front.component';
 import { GameComponent } from './pages/game/game.component';
 import { GamesComponent } from './pages/games/games.component';
 import { LoginComponent } from './pages/login/login.component';
+import { ReportComponent } from './pages/report/report.component';
 import { SubmissionComponent } from './pages/submission/submission.component';
 import { SubmissionsComponent } from './pages/submissions/submissions.component';
 import { AdminGuard } from './services/admin.guard';
@@ -27,6 +28,10 @@ const routes: Routes = [
   {
     path: 'about',
     component: AboutComponent,
+  },
+  {
+    path: 'report',
+    component: ReportComponent,
   },
   {
     path: 'competitions',

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterContentChecked, AfterViewChecked, AfterViewInit, Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -42,9 +42,20 @@ export class CompetitionComponent implements OnInit {
     private authService: AuthService,
     private sanitizer: DomSanitizer,
   ) { }
+  // ngAfterContentChecked(): void {
+  //   const element = <HTMLElement>document.querySelector('.boundHTML');
+  //   console.log(element)
+  //   element.innerHTML = element.innerHTML.replace('SafeValue must use [property]=binding: ', '');
+  //   element.innerHTML = element.innerHTML.replace(' (see https://g.co/ng/security#xss)', '');
+  // }
+  // ngAfterViewChecked(): void {
+    
+  // }
 
   transformYourHtml(htmlTextWithStyle: string) {
-    return this.sanitizer.bypassSecurityTrustHtml(htmlTextWithStyle);
+    return  (this.sanitizer.bypassSecurityTrustHtml(htmlTextWithStyle) as string);
+    //valHtml.replace('SafeValue must use [property]=binding: ', '').replace(' (see https://g.co/ng/security#xss)', '');
+    //return valHtml as SafeHtml
   }
 
 

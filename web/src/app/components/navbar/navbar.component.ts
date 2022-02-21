@@ -9,7 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class NavbarComponent implements OnInit {
   
-  activeTab: 'home' | 'games' | 'competitions' | 'submissions' | 'about' = 'home';
+  activeTab: 'home' | 'games' | 'competitions' | 'submissions' | 'about' | 'report' = 'home';
   @Output() tab = new EventEmitter<string>();
 
   @ViewChild('navBurger', {static: true}) navBurger?: ElementRef;
@@ -28,6 +28,11 @@ export class NavbarComponent implements OnInit {
   toggleNavbar() {
     this.navBurger ? this.navBurger.nativeElement.classList.toggle('is-active'):'';
     this.navMenu ? this.navMenu.nativeElement.classList.toggle('is-active') : '';
+  }
+
+  closeNavbar() {
+    this.navBurger ? this.navBurger.nativeElement.classList.remove('is-active'):'';
+    this.navMenu ? this.navMenu.nativeElement.classList.remove('is-active') : '';
   }
 
   isAdmin(): boolean {

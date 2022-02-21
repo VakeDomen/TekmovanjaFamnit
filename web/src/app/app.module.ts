@@ -34,6 +34,25 @@ import { RoundsChartComponent } from './components/rounds-chart/rounds-chart.com
 import { AboutComponent } from './pages/about/about.component';
 import { FrontComponent } from './pages/front/front.component';
 import { FooterComponent } from './components/footer/footer.component';
+import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
+import { ReportComponent } from './pages/report/report.component';
+
+const cookieConfig: NgcCookieConsentConfig = {
+  cookie: {
+    domain: 'tekmovanje.famnit.upr.si' // or 'your.domain.com' 
+  },
+  palette: {
+    popup: {
+      background: '#363636'
+    },
+    button: {
+      background: '#00D1B2'
+    }
+  },
+  theme: 'edgeless',
+  type: 'opt-out'
+};
+
 
 @NgModule({
   declarations: [
@@ -58,7 +77,8 @@ import { FooterComponent } from './components/footer/footer.component';
     RadarStatsChartComponent,
     AboutComponent,
     FrontComponent,
-    FooterComponent
+    FooterComponent,
+    ReportComponent
   ],
   imports: [
     CommonModule,
@@ -69,6 +89,7 @@ import { FooterComponent } from './components/footer/footer.component';
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    NgcCookieConsentModule.forRoot(cookieConfig)
   ],
   providers: [
     {

@@ -1,6 +1,6 @@
 <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-        <a class="navbar-logo ml-5 mr-3 " (click)="activeTab='home'; tab.emit('home') ; toggleNavbar()" [routerLink]="['/']">
+        <a class="navbar-logo ml-5 mr-3 " (click)="activeTab='home'; tab.emit('home') ; closeNavbar()" [routerLink]="['/']">
             <!-- <img src="../../../assets/logo.png" width="35" height="35"> -->
             <div>
                 <p class="navbar-item-center-icon title is-3 mt-3">
@@ -52,13 +52,13 @@
                 </span>
                 Games
             </a>
-            <a class="navbar-item navbar-item-center-icon" [ngClass]="{'is-active': activeTab==='about'}"
-                (click)="activeTab='about'; tab.emit('about') ; toggleNavbar();" [routerLink]="['/about']"
+            <a *ngIf="isLoggedIn()" class="navbar-item navbar-item-center-icon" [ngClass]="{'is-active': activeTab==='report'}"
+                (click)="activeTab='report'; tab.emit('report') ; toggleNavbar();" [routerLink]="['/report']"
                 routerLinkActive="router-link-active">
                 <span class="file-icon">
-                    <i class="far fa-address-card"></i>
+                    <i class="fas fa-bug"></i>
                 </span>
-                About
+                Report a bug
             </a>
             <div class="navbar-item">
                 <div class="buttons">

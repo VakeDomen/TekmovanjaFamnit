@@ -46,7 +46,8 @@ export class SubmissionsComponent implements OnInit {
     this.gameService.getGames().subscribe((resp: ApiResponse<Game[]>) => {
       this.games = resp.data;
       this.competitionService.getCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
-        this.competitions = this.filterOnRunning(resp.data);
+        // this.competitions = this.filterOnRunning(resp.data);
+        this.competitions = resp.data;
         this.contestantsService.getContestants().subscribe((resp: ApiResponse<Contestant[]>) => {
           this.contestants = resp.data;
           this.competitions = this.filterCompetitionsByContestants(this.competitions, this.contestants);
