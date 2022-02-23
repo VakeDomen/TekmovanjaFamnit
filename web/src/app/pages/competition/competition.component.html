@@ -63,14 +63,14 @@
         <div class="description" *ngIf="(tab=='open' && isAdmin()) || !isAdmin()">
             <div class="columns">
                 <div class="column">
-                    <div [innerHTML]="game?.game_description ?? ''"></div>
+                    <div [innerHTML]="descriptionDisplay ?? ''"></div>
                 </div>
             </div>
         </div>
         <div class="edit" *ngIf="tab=='banner_edit' && isAdmin()">
             <div class="columns">
                 <div class="column is-half">
-                    <div [innerHTML]="bannerEdit ?? ''"></div>
+                    <div [innerHTML]="bannerDisplay ?? ''"></div>
                 </div>
                 <div class="is-divider-vertical" data-content="OR" *ngIf="isAdmin()"></div>
                 <div class="column is-half box " *ngIf="isAdmin()">
@@ -85,7 +85,7 @@
                     </div>
                     <div class="control block">
                         <textarea class="textarea boundHTML" placeholder="HTML template" rows="10" name="description"
-                            [(ngModel)]="bannerEdit"></textarea>
+                            [ngModel]="bannerEdit" (ngModelChange)="refreshDisplayEdit($event)"></textarea>
                     </div>
 
                 </div>

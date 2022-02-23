@@ -48,7 +48,7 @@
                 
                 <div class="columns">
                     <div class="column is-half">
-                        <div [innerHTML]="decriptionEdit ?? ''"></div>
+                        <div [innerHTML]="decriptionDisplay ?? ''"></div>
                     </div>
                     <div class="is-divider-vertical" data-content="OR"  *ngIf="isAdmin()"></div>
                     <div class="column is-half box "  *ngIf="isAdmin()">
@@ -63,7 +63,7 @@
                         </div>
                         <div class="control block">
                             <textarea class="textarea" placeholder="HTML template" rows="10" name="description"
-                                [(ngModel)]="decriptionEdit"></textarea>
+                                [ngModel]="decriptionEdit" (ngModelChange)="refreshDisplayEdit($event)"></textarea>
                         </div>
                         
                     </div>
@@ -74,7 +74,7 @@
                 
                 <div class="columns">
                     <div class="column is-half">
-                        <div [innerHTML]="sDecriptionEdit ?? ''"></div>
+                        <div [innerHTML]="sDecriptionDisplay ?? ''"></div>
                     </div>
                     <div class="is-divider-vertical" data-content="OR"  *ngIf="isAdmin()"></div>
                     <div class="column is-half box "  *ngIf="isAdmin()">
@@ -89,7 +89,7 @@
                         </div>
                         <div class="control block">
                             <textarea class="textarea" placeholder="HTML template" rows="10" name="description"
-                                [(ngModel)]="sDecriptionEdit"></textarea>
+                            [ngModel]="sDecriptionEdit" (ngModelChange)="refreshSDisplayEdit($event)"></textarea>
                         </div>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
             </div>
         </div>
         <div class="is-divider" data-content=""></div>
-        <div [innerHTML]="decriptionEdit ?? ''"></div>
+        <div [innerHTML]="decriptionDisplay ?? ''"></div>
     </section>
 </div>
 
@@ -170,7 +170,7 @@
             </div>
         </div>
         <div class="is-divider" data-content=""></div>
-        <div [innerHTML]="sDecriptionEdit ?? ''"></div>
+        <div [innerHTML]="sDecriptionDisplay ?? ''"></div>
     </section>
 </div>
 

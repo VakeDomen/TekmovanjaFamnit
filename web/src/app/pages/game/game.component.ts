@@ -29,8 +29,12 @@ export class GameComponent implements OnInit {
   public sPreviewModalOpen: boolean = false;
   public competitionModalOpen: boolean = false;
 
-  public decriptionEdit: SafeHtml | undefined;
-  public sDecriptionEdit: SafeHtml | undefined;
+  public decriptionEdit: string | undefined;
+  public sDecriptionEdit: string | undefined;
+  public decriptionDisplay: SafeHtml | undefined;
+  public sDecriptionDisplay: SafeHtml | undefined;
+
+
   public newCompetition: Competition = {
     game_id: '',
     competition_name: '',
@@ -78,8 +82,10 @@ export class GameComponent implements OnInit {
       this.game.game_description = unescape(this.game.game_description);
       this.game.submission_description = unescape(this.game.submission_description);
       this.newCompetition.game_id = this.game.id ?? '';
-      this.decriptionEdit = this.transformYourHtml(this.game.game_description);
-      this.sDecriptionEdit = this.transformYourHtml(this.game.submission_description);
+      this.decriptionEdit = this.game.game_description;
+      this.sDecriptionEdit = this.game.submission_description;
+      this.decriptionDisplay = this.transformYourHtml(this.decriptionEdit);
+      this.sDecriptionDisplay = this.transformYourHtml(this.sDecriptionEdit);
 
       this.roundservice.getRoundTypes().subscribe((resp: ApiResponse<RoundType[]>) => {
         
@@ -106,6 +112,18 @@ export class GameComponent implements OnInit {
       console.log(err)
       this.dataUndefined = true;
     });
+  }
+
+  refreshDisplayEdit(event: any) {
+    this.decriptionEdit = event;
+    console.log(event)
+    this.decriptionDisplay = this.transformYourHtml(event);
+  }
+
+  refreshSDisplayEdit(event: any) {
+    this.sDecriptionEdit = event;
+    console.log(event)
+    this.sDecriptionDisplay = this.transformYourHtml(event);
   }
 
 

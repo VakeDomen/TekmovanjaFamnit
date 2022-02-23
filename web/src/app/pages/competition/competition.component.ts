@@ -23,7 +23,11 @@ export class CompetitionComponent implements OnInit {
   public dataUnavalible: boolean = false;
   public tab: 'open' | 'banner_edit' = 'open';
 
-  public bannerEdit: SafeHtml | undefined;
+  public bannerEdit: string | undefined;
+  public bannerDisplay: SafeHtml | undefined;
+
+  public descriptionDisplay: SafeHtml | undefined;
+
   public previewModalOpen: boolean = false;
 
   public competition: Competition | undefined;
@@ -64,7 +68,8 @@ export class CompetitionComponent implements OnInit {
     this.competitionService.getCompetition(id ?? '').subscribe((resp: ApiResponse<Competition[]>) => {
       if (resp.data.length) {
         this.competition = resp.data[0];
-        this.bannerEdit = this.transformYourHtml(unescape(this.competition.banner_page));
+        this.bannerEdit = unescape(this.competition.banner_page);
+        this.bannerDisplay = this.transformYourHtml(this.bannerEdit);
         this.contestatnService.getContestantsByCompetition(this.competition.id ?? '').subscribe((resp: ApiResponse<Contestant[]>) => {
           this.contestants = resp.data;
           this.myContestant = this.findMyContestant(this.contestants);
@@ -72,6 +77,7 @@ export class CompetitionComponent implements OnInit {
             if (resp.data.length) {
               this.game = resp.data[0];
               this.game.game_description = unescape(this.game.game_description);
+              this.descriptionDisplay = this.transformYourHtml(this.game?.game_description);
               this.dataReady = true;
             }
           }, err => {
@@ -93,6 +99,11 @@ export class CompetitionComponent implements OnInit {
       this.tostr.error("Oops, something went wrong", "Failed fetching competition");
       this.dataUnavalible = true;
     });
+  }
+
+  refreshDisplayEdit(event: string) {
+    this.bannerEdit = event;
+    this.bannerDisplay = this.transformYourHtml(event);
   }
 
   findMyContestant(contestants: Contestant[]): Contestant | undefined {
