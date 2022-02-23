@@ -116,13 +116,11 @@ export class GameComponent implements OnInit {
 
   refreshDisplayEdit(event: any) {
     this.decriptionEdit = event;
-    console.log(event)
     this.decriptionDisplay = this.transformYourHtml(event);
   }
 
   refreshSDisplayEdit(event: any) {
     this.sDecriptionEdit = event;
-    console.log(event)
     this.sDecriptionDisplay = this.transformYourHtml(event);
   }
 
