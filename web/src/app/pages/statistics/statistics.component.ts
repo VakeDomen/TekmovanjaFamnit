@@ -29,6 +29,10 @@ export class StatisticsComponent implements OnInit {
   private submissions: Submission[] = [];
   private matches: Match[] = [];
 
+  private contestantData: ContestantData[] | undefined;
+
+  public globalScoreSeries: number[][] = [];
+
   constructor(
     private gameService: GamesService,
     private competitionService: CompetitionService, 
@@ -108,11 +112,65 @@ export class StatisticsComponent implements OnInit {
           submissions: sumb
         } as ContestantData);
       }
+      
+      this.contestantData = final;
+      this.processScores();
+
       console.log(final);
+      this.chartsReady = true;
       
     });
   }
+
+  private processScores() {
+    if (!this.contestantData) {
+      return;
+    }
+    const series: any[] = [];
+
+    let seriesIndex = 0;
+    for (const contestantSubmissions of this.contestantData) {
+      const matchScores: number[] = [];
+      for (const subData of contestantSubmissions.submissions) {
+        for (const match of subData.matches) {
+          if (!matchScores[+match.round]) {
+            matchScores[+match.round] = 0;
+          }
+          if (match.submission_id_2 == match.submission_id_winner) {
+            matchScores[+match.round]--;
+          } else {
+            matchScores[+match.round]++;
+          }
+        }
+      }
+      series.push({
+        name: this.contestants[seriesIndex].name ? (this.contestants[seriesIndex].name as any[])[0].name : this.contestants[seriesIndex].user_id,
+        data: matchScores
+      });
+      seriesIndex++;
+    }
+    
+    this.globalScoreSeries = series.map((data: any) => {
+      let start: boolean = false;
+      for (let i  = 0 ; i < data.data.length ; i++) {
+        if (!data.data[i]) {
+          data.data[i] = null;
+        }
+        if (data.data && !start) {
+          start = true;
+        }
+
+        if (start == true && i > 0 && data.data[i-1]) {
+          data.data[i] += data.data[i-1];
+        }
+      }
+      return data;
+    });
+  }
+
 }
+
+
 
 interface ContestantData {
   contestant: Contestant;

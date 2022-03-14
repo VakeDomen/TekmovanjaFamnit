@@ -1,22 +1,30 @@
-<div class="container" *ngIf="competitionsReady">
-    <div class="select is-medium level" *ngIf="competitions.length">
+<div class="pt-2 pb-2 has-text-light has-background-dark" *ngIf="competitions.length">
+    <div class="container level">
         <div class="level-left">
-
-            <select 
-                class="select"    
-                #competitionSelect
-                (change)='selectCompetition(competitionSelect.value)'
-                >
-                <option *ngFor="let competition of competitions" value="{{ competition.competition_name }}">{{ competition.competition_name }}</option>
+            <select class="select is-medium" #competitionSelect (change)='selectCompetition(competitionSelect.value)'>
+                <option *ngFor="let competition of competitions" value="{{ competition.competition_name }}">{{
+                    competition.competition_name }}</option>
             </select>
         </div>
         <div class="level-right">
             <button class="button is-primary" (click)="startCharting()">Chart</button>
         </div>
-      </div>
-      <div class="level" *ngIf="!competitions.length">
-          <div class="level-item">
-              <h1 class="title is-2">No competitions to display!</h1>
-          </div>
-      </div>
+    </div>
+</div>
+<div class="level" *ngIf="!competitions.length">
+    <div class="level-item">
+        <h1 class="title is-2">No competitions to display!</h1>
+    </div>
+</div>
+
+<div class="container" *ngIf="chartsReady">
+    <section>
+        <app-score-chart-global [series]="globalScoreSeries"></app-score-chart-global>
+    </section>
+</div>
+
+<div class="container" *ngIf="!chartsReady">
+    <div class="level-item">
+        <h1 class="title is-2">Select competition</h1>
+    </div>
 </div>

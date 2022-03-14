@@ -26,17 +26,18 @@ import { SubmissionsComponent } from './pages/submissions/submissions.component'
 import { SubmissionComponent } from './pages/submission/submission.component';
 import { ContestantCardComponent } from './components/contestant-card/contestant-card.component';
 import { ChartsPanelComponent } from './components/charts-panel/charts-panel.component';
-import { SubmissionWinRateChartComponent } from './components/submission-win-rate-chart/submission-win-rate-chart.component';
+import { SubmissionWinRateChartComponent } from './components/charts/submission-win-rate-chart/submission-win-rate-chart.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
-import { ScoreChartComponent } from './components/score-chart/score-chart.component';
-import { RadarStatsChartComponent } from './components/radar-stats-chart/radar-stats-chart.component';
-import { RoundsChartComponent } from './components/rounds-chart/rounds-chart.component';
+import { ScoreChartComponent } from './components/charts/score-chart/score-chart.component';
+import { RadarStatsChartComponent } from './components/charts/radar-stats-chart/radar-stats-chart.component';
+import { RoundsChartComponent } from './components/charts/rounds-chart/rounds-chart.component';
 import { AboutComponent } from './pages/about/about.component';
 import { FrontComponent } from './pages/front/front.component';
 import { FooterComponent } from './components/footer/footer.component';
 import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
 import { ReportComponent } from './pages/report/report.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
+import { ScoreChartGlobalComponent } from './components/charts/score-chart-global/score-chart.component';
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
@@ -75,6 +76,7 @@ const cookieConfig: NgcCookieConsentConfig = {
     SubmissionWinRateChartComponent,
     ScoreChartComponent,
     RoundsChartComponent,
+    ScoreChartGlobalComponent,
     RadarStatsChartComponent,
     AboutComponent,
     FrontComponent,
