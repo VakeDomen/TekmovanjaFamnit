@@ -154,4 +154,8 @@ export class CompetitionComponent implements OnInit {
       this.tostr.error('Oops, something went wrong!', 'Error updating template!');
     })
   }
+
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
 }

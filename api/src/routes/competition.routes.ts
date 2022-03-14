@@ -17,7 +17,7 @@ router.get("/api/competition", async (req: express.Request, resp: express.Respon
     return new SuccessResponse().setData(data).send(resp);
 });
 
-router.get("/api/competition/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/competition/:id", async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }

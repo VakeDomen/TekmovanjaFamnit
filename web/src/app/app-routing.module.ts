@@ -36,12 +36,10 @@ const routes: Routes = [
   {
     path: 'competitions',
     component: CompetitionsComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'competition/:id',
     component: CompetitionComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'contestants',

@@ -27,7 +27,7 @@
         </div>
 
         <div class="navbar-end">
-            <a *ngIf="isLoggedIn()" class="navbar-item navbar-item-center-icon" [ngClass]="{'is-active': activeTab==='competitions'}"
+            <a class="navbar-item navbar-item-center-icon" [ngClass]="{'is-active': activeTab==='competitions'}"
                 (click)="activeTab='competitions'; tab.emit('competitions') ; toggleNavbar();" [routerLink]="['/competitions']"
                 routerLinkActive="router-link-active">
                 <span class="file-icon">

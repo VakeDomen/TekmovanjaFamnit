@@ -11,7 +11,7 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("/api/contestant", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/contestant", async (req: express.Request, resp: express.Response) => {
     const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
     let data;
     if (!isAdmin) {

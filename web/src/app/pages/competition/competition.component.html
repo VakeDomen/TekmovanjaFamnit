@@ -5,7 +5,7 @@
                 <h1 class="title is-1 has-text-centered">{{ competition.competition_name }}</h1>
             </div>
             <div class="level-right has-text-centered">
-                <app-join-competition-modal *ngIf="!myContestant" [competition]="competition"
+                <app-join-competition-modal *ngIf="!myContestant && isLoggedIn()" [competition]="competition"
                     (newContestant)="contestantJoined($event)"></app-join-competition-modal>
             </div>
         </div>

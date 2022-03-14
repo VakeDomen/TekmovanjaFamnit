@@ -11,12 +11,12 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("/api/game", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/game", async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.games, new Game(req.query));
     return new SuccessResponse().setData(data).send(resp);
 });
 
-router.get("/api/game/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.get("/api/game/:id", async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
