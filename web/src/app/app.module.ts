@@ -36,6 +36,7 @@ import { FrontComponent } from './pages/front/front.component';
 import { FooterComponent } from './components/footer/footer.component';
 import {NgcCookieConsentModule, NgcCookieConsentConfig} from 'ngx-cookieconsent';
 import { ReportComponent } from './pages/report/report.component';
+import { StatisticsComponent } from './pages/statistics/statistics.component';
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
@@ -78,7 +79,8 @@ const cookieConfig: NgcCookieConsentConfig = {
     AboutComponent,
     FrontComponent,
     FooterComponent,
-    ReportComponent
+    ReportComponent,
+    StatisticsComponent
   ],
   imports: [
     CommonModule,

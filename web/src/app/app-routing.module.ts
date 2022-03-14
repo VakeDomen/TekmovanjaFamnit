@@ -9,6 +9,7 @@ import { GameComponent } from './pages/game/game.component';
 import { GamesComponent } from './pages/games/games.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ReportComponent } from './pages/report/report.component';
+import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { SubmissionComponent } from './pages/submission/submission.component';
 import { SubmissionsComponent } from './pages/submissions/submissions.component';
 import { AdminGuard } from './services/admin.guard';
@@ -54,6 +55,11 @@ const routes: Routes = [
   {
     path: 'games',
     component: GamesComponent,
+    canActivate: [AdminGuard],
+  },
+  {
+    path: 'stats',
+    component: StatisticsComponent,
     canActivate: [AdminGuard],
   },
   {

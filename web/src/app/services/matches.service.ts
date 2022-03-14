@@ -19,5 +19,10 @@ export class MatchesService {
     return this.cache.getCached(`/match/contestant/${contestantId}`);
     // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
   }
+
+  getMatchesBySubmission(submissionId: string): Observable<ApiResponse<Match[]>> {
+    return this.cache.getCached(`/match/submission/${submissionId}`);
+    // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
+  }
 }
 

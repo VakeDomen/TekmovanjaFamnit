@@ -26,6 +26,18 @@ router.get("/api/match/contestant/:id", async (req: express.Request, resp: expre
     return new SuccessResponse().setData((data as any[]).map((d: any) => new Match(d).export())).send(resp); 
 });
 
+
+router.get("/api/match/submission/:id", async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        return new SuccessResponse(404, 'No entries found!').send(resp);
+    }
+    
+    const data = await fetch<Match>(conf.tables.matches, new Match({submission_id_1: req.params['id']})).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    return new SuccessResponse().setData((data as any[]).map((d: any) => new Match(d).export())).send(resp); 
+});
+
 router.get("/api/match/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         return new SuccessResponse(404, 'No entries found!').send(resp);
