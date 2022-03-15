@@ -4,7 +4,7 @@ chdir("/var/www/TekmovanjaFamnit/cli/");
 
 $competitionId = "c33ecdf8-1ff0-4d5d-836b-4dcb6bf53993";
 
-$ch = curl_init("https://tekmovanje.famnit.upr.si/api/round/competition/" . $competitionId);
+$ch = curl_init("https://tekmovanje.famnit.upr.si/api/round/competition/test/" . $competitionId);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
     'Authorization: Bearer asdfghjk'
 ));
@@ -34,7 +34,7 @@ $roundId = $result["data"]["round"]["round_type_id"];
 $roundType = $result["data"]["round"]["type"];
 $gamesPerPlayer = 5;
 $resourcePrefix = "/var/www/TekmovanjaFamnit/api";
-$dirName = "/var/www/TekmovanjaFamnit/cli/matches/" . $currentRound;
+$dirName = "/var/www/TekmovanjaFamnit/cli/matches/" . $currentRound . "test";
 
 colorLog("Current Round: " . $currentRound . " with id: " . $roundId);
 
@@ -48,6 +48,7 @@ foreach ($result["data"]["contestants"] as $id => $player) {
     array_push($players, $player);
 }
 colorLog("There are " . count($players) . " players in this round..");
+
 foreach ($players as $id => $player) {
     $playerFolder = $dirName . "/" . $player["active_submission_id"];
     mkdir($playerFolder);
@@ -90,9 +91,9 @@ foreach ($players as $id => $player) {
             "competition_id" => $competitionData["data"][0]["id"]
         );
         colorLog("Running game between submissions: " . $result["submission_id_1"] . " vs " . $result["submission_id_2"], "d");
-        
-        
+        //exec("/usr/bin/java -jar /var/www/TekmovanjaFamnit/cli/Evaluator.jar SpaceBattleship " . $gameFolder . "/A " . $gameFolder . "/B", $output);
         while (@ ob_end_flush()); // end all output buffers if any
+
         $proc = popen("/usr/bin/java -jar /var/www/TekmovanjaFamnit/cli/Evaluator.jar SpaceBattleship " . $gameFolder . "/A " . $gameFolder . "/B", 'r');
         $winner = "none";
         $output = array();
@@ -109,7 +110,10 @@ foreach ($players as $id => $player) {
 
         exec("pkill -9 -f 'SpaceBattleship'");
         exec("pkill -9 -f 'java Igralec'");
-
+        
+        //$lastLine = explode(" ", $output[count($output) - 1]);
+        //colorLog("/usr/bin/java -jar /var/www/TekmovanjaFamnit/cli/Evaluator.jar SpaceBattleship " . $gameFolder . "/A " . $gameFolder . "/B", 'e');
+        
         if (strcmp($winner, "A") == 0) {
             $result["submission_id_winner"] = $player["active_submission_id"];
         } else {
@@ -118,13 +122,13 @@ foreach ($players as $id => $player) {
 
         $result["additional_data"] = json_encode(parseLog($output));
         colorLog("Winner: " . $result["submission_id_winner"], "d");
-        sendResult($result);
+        //sendResult($result);
         colorLog("Results submitted", "s");
     }
 }
 
 //cleanup
-rmdir_recursive("./matches");
+//rmdir_recursive("./matches");
 
 
 class Planet
@@ -167,6 +171,7 @@ function findWinner($logLine) {
     
     return "none";
 }
+
 
 function compilePlayer($playerPath)
 {
