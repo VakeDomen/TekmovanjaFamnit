@@ -53,8 +53,9 @@ foreach ($players as $id => $player) {
     $playerFolder = $dirName . "/" . $player["active_submission_id"];
     mkdir($playerFolder);
     for ($i = 0; $i < $gamesPerPlayer; $i++) {
+        colorLog("*************** GAME START ***************");
         $opponent = $players[array_rand($players)];
-        $gameFolder = $playerFolder . "/" . $i . "-" . $opponent["active_submission_id"];
+        $gameFolder = $playerFolder . "/" . $i . "_" . $opponent["active_submission_id"];
         if (!file_exists($gameFolder)) {
             mkdir($gameFolder);
         }
@@ -108,12 +109,9 @@ foreach ($players as $id => $player) {
             }
         }
 
-        exec("pkill -9 -f 'SpaceBattleship'");
-        exec("pkill -9 -f 'java Igralec'");
-        
-        //$lastLine = explode(" ", $output[count($output) - 1]);
-        //colorLog("/usr/bin/java -jar /var/www/TekmovanjaFamnit/cli/Evaluator.jar SpaceBattleship " . $gameFolder . "/A " . $gameFolder . "/B", 'e');
-        
+        exec("/usr/bin/pkill -9 -f 'SpaceBattleship'");
+        exec("/usr/bin/pkill -9 -f 'java Igralec'");
+
         if (strcmp($winner, "A") == 0) {
             $result["submission_id_winner"] = $player["active_submission_id"];
         } else {
@@ -124,6 +122,7 @@ foreach ($players as $id => $player) {
         colorLog("Winner: " . $result["submission_id_winner"], "d");
         //sendResult($result);
         colorLog("Results submitted", "s");
+        colorLog("*****************************************\n");
     }
 }
 

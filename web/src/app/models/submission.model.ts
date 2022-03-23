@@ -6,4 +6,5 @@ export interface Submission {
     version: number;
     file_id: string;
     additional_data?: string;
+    submission_date?: Date;
 }

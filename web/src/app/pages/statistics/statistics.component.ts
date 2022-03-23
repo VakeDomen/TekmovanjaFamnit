@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Competition } from 'src/app/models/competition.model';
 import { Contestant } from 'src/app/models/contestant.model';
 import { Game } from 'src/app/models/game.model';
@@ -32,6 +33,8 @@ export class StatisticsComponent implements OnInit {
   private contestantData: ContestantData[] | undefined;
 
   public globalScoreSeries: number[][] = [];
+  public submissionCountSeries: any;
+  public statSubmissionTable: any[] = [];
 
   constructor(
     private gameService: GamesService,
@@ -39,6 +42,7 @@ export class StatisticsComponent implements OnInit {
     private contestantService: ContestantService,
     private submissionService: SubmissionsService,
     private matchesService: MatchesService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -114,12 +118,61 @@ export class StatisticsComponent implements OnInit {
       }
       
       this.contestantData = final;
+      
       this.processScores();
+      this.processSubmissionCount();
+      this.processSubmissionTable();
 
-      console.log(final);
       this.chartsReady = true;
       
     });
+  }
+
+  private processSubmissionTable() {
+    if (!this.contestantData) {
+      return;
+    }
+    const aggr: any = {};
+    const submissions: any[] = [];
+    for (const contestant of this.contestantData) {
+      contestant.submissions.forEach(sd => sd.submission.submission_date = new Date(sd.submission.created ?? ''))
+      submissions.push(...contestant.submissions.map(sd => { return { 
+        contestant: contestant.contestant,
+        submission: sd.submission, 
+        matches: sd.matches
+      }}));
+    }
+    submissions.sort((a: any, b: any) => -(a.submission.submission_date?.getTime() ?? 1) + (b.submission.submission_date?.getTime() ?? 1));
+    this.statSubmissionTable = submissions.splice(0,5);
+  }
+
+  private processSubmissionCount() {
+    if (!this.contestantData) {
+      return;
+    }
+    const aggr: any = {};
+    const submissions: Submission[] = [];
+    for (const contestant of this.contestantData) {
+      contestant.submissions.forEach(sd => sd.submission.submission_date = new Date(sd.submission.created ?? ''))
+      submissions.push(...contestant.submissions.map(sd => sd.submission));
+    }
+    submissions.sort((a: Submission, b: Submission) => (a.submission_date?.getTime() ?? 1) - (b.submission_date?.getTime() ?? 1));
+    
+    for (const sub of submissions) {
+      let date: string = (+(sub.submission_date?.getDate() ?? 0)) + ". " + (+(sub.submission_date?.getMonth() ?? 0) + 1) + ". " + sub.submission_date?.getFullYear();
+      if (!aggr[date]) {
+        aggr[date] = 1;
+      } else {
+        aggr[date]++;
+      }
+    }
+
+    const final = [];
+    for (const aggIndex in aggr) {
+      final.push({x: aggIndex, y: aggr[aggIndex]});
+    }
+
+    this.submissionCountSeries = final;
   }
 
   private processScores() {
@@ -167,6 +220,37 @@ export class StatisticsComponent implements OnInit {
       return data;
     });
   }
+
+  navigate(contestant: Contestant) {
+    this.router.navigate(["contestant", contestant.id]);
+  }
+
+  calcSubWins(mat: Match[]): number {
+    if (!mat.length) {
+      return 0;
+    }
+    let wins = 0;
+    for (const m of mat) {
+      if (m.submission_id_2 != m.submission_id_winner) {
+        wins++;
+      }
+    }
+    return wins;
+  }
+
+  calcSubWinLossRatio(mat: Match[]): string {
+    if (!mat.length) {
+      return '0';
+    }
+    let wins = 0;
+    for (const m of mat) {
+      if (m.submission_id_2 != m.submission_id_winner) {
+        wins++;
+      }
+    }
+    return (wins / mat.length).toFixed(2);
+  }
+
 
 }
 

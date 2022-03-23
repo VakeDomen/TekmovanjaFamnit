@@ -52,8 +52,9 @@ foreach ($players as $id => $player) {
     $playerFolder = $dirName . "/" . $player["active_submission_id"];
     mkdir($playerFolder);
     for ($i = 0; $i < $gamesPerPlayer; $i++) {
+        colorLog("*************** GAME START ***************");
         $opponent = $players[array_rand($players)];
-        $gameFolder = $playerFolder . "/" . $i . "-" . $opponent["active_submission_id"];
+        $gameFolder = $playerFolder . "/" . $i . "_" . $opponent["active_submission_id"];
         if (!file_exists($gameFolder)) {
             mkdir($gameFolder);
         }
@@ -107,8 +108,8 @@ foreach ($players as $id => $player) {
             }
         }
 
-        exec("pkill -9 -f 'SpaceBattleship'");
-        exec("pkill -9 -f 'java Igralec'");
+        exec("/usr/bin/pkill -9 -f 'SpaceBattleship'");
+        exec("/usr/bin/pkill -9 -f 'java Igralec'");
 
         if (strcmp($winner, "A") == 0) {
             $result["submission_id_winner"] = $player["active_submission_id"];
@@ -120,6 +121,7 @@ foreach ($players as $id => $player) {
         colorLog("Winner: " . $result["submission_id_winner"], "d");
         sendResult($result);
         colorLog("Results submitted", "s");
+        colorLog("*****************************************\n");
     }
 }
 

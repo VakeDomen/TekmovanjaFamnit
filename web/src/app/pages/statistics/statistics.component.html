@@ -1,4 +1,4 @@
-<div class="pt-2 pb-2 has-text-light has-background-dark" *ngIf="competitions.length">
+<div class="pt-2 pb-2 has-text-light has-background-dark has-text-centered" *ngIf="competitions.length">
     <div class="container level">
         <div class="level-left">
             <select class="select is-medium" #competitionSelect (change)='selectCompetition(competitionSelect.value)'>
@@ -19,7 +19,33 @@
 
 <div class="container" *ngIf="chartsReady">
     <section>
+        <h1 class="title is-1">Scores</h1>
         <app-score-chart-global [series]="globalScoreSeries"></app-score-chart-global>
+        <h1 class="title is-1">Submissions</h1>
+        <app-submission-count-chart [series]="submissionCountSeries"></app-submission-count-chart>
+        <h1 class="title is-2">Latest 5</h1>
+        <table class="table is-hoverable is-fullwidth mt-3 mb-4">
+            <thead>
+              <tr>
+                <th><abbr title="Uploaded">Date</abbr></th>
+                <th><abbr title="Contestant name">Name</abbr></th>
+                <th><abbr title="Submission version">Version</abbr></th>
+                <th><abbr title="Games played">Played</abbr></th>
+                <th><abbr title="Games won">Won</abbr></th>
+                <th><abbr title="W/L ratio">W/L</abbr></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sub of statSubmissionTable" (click)="navigate(sub.contestant)">
+                <th>{{sub.submission.submission_date | date: 'dd.mm.yyyy'}}</th>
+                <td>{{sub.contestant.name[0].name}}</td>
+                <td>{{sub.submission.version}} - {{sub.submission.name}}</td>
+                <td>{{sub.matches.length}}</td>
+                <td>{{calcSubWins(sub.matches)}}</td>
+                <td>{{calcSubWinLossRatio(sub.matches)}}</td>
+              </tr>
+            </tbody>
+          </table>
     </section>
 </div>
 
