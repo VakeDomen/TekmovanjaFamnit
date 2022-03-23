@@ -18,8 +18,12 @@ export async function isRequestAdmin(req: any): Promise<[boolean, string]> {
     if (!token) {
         return [false, ""];
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return [decoded.data.ldap_dn == 'Admin', decoded.data.id];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        return [decoded.data.ldap_dn == 'Admin', decoded.data.id];
+    } catch (error) {
+        return [false, ''];
+    }
 }
 
 /*
@@ -31,7 +35,6 @@ export function isValidAuthToken(req, resp, next) {
             if (token == process.env.ADMIN_PASSWORD) {
                 return next();
             }
-
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             if (decoded && decoded.data) {
                 console.log(`[Verify auth middleware] Request made by user: ${decoded.data.name}`);

@@ -45,6 +45,28 @@ router.patch("/api/competition", isValidAuthToken, async (req: express.Request, 
     return new SuccessResponse().setData(data).send(resp);
 });
 
+
+router.get("/api/round/competition/test/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        new SuccessResponse(404, 'No entries found!').send(resp);
+    }
+    const constestants = await query<any>(getConstestantsRoundQuery(req.params['id'])).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    let round = await query<any>(getLastRoundQuery).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    round = await query<any>(getLastRoundQuery).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+
+    const data = {
+        round: round[0],
+        contestants: constestants,
+    }
+    return new SuccessResponse().setData(data).send(resp);
+});
+
 router.get("/api/round/competition/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
@@ -68,6 +90,7 @@ router.get("/api/round/competition/:id", isValidAuthToken, async (req: express.R
     }
     return new SuccessResponse().setData(data).send(resp);
 });
+
 
 const getConstestantsRoundQuery = (competitionId: string) => { 
     return `

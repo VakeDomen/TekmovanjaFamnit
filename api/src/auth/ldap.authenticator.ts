@@ -54,6 +54,7 @@ export async function authenticateLDAP(username: string, password: string) {
         });
         res.on('error', (err) => reject(err));
         res.on('end', err => {
+          console.log("[AUTH] auth end: ", err);
           if (err && !searchTriggered) reject(err);
         });
       });

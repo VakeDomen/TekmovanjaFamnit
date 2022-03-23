@@ -14,18 +14,21 @@ module.exports = router;
 
 
 router.post('/api/auth/ldap', async (req: any, resp: any) => {
+
     /*
         MAKE THIS BETTER!! (ADMIN LOGIN)
     */
     if (req.body['password'] == process.env.ADMIN_PASSWORD && req.body['username'] == '') {
         const admin = await fetch<User>(conf.tables.users, new User({ name: "Admin"}));
         const token = signIn(admin[0]);
+        console.log("[AUTH] admin login");
         return new SuccessResponse().setData({user: admin[0], token: token, admin: true}).send(resp);
     }
     /*
         LDAP login
     */
     if (!req.body['username'] || !req.body['password']) {
+        console.log("[AUTH] no creds");
         return new ErrorResponse().send(resp);
     }
     const ldapResp: any = await authenticateLDAP(req.body['username'], req.body['password']).catch(err => {
