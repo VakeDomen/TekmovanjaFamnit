@@ -5,6 +5,7 @@ import * as conf from '../database/database.config.json';
 import { fetch, insert, update, query } from '../database/database.handler';
 import { Match } from '../models/match.model';
 import { ErrorResponse } from '../models/core/error.response';
+import { Competition } from '../models/competition.model';
 
 const router: express.Router = express.Router();
 
@@ -46,11 +47,24 @@ router.get("/api/match/:id", isValidAuthToken, async (req: express.Request, resp
     return new SuccessResponse().setData(data).send(resp);
 });
 
-router.get("/api/match/ranked/:competitionId", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
-    if (!req.params['competitionId']) {
+/**
+ * get all matches of a competition in a moving window
+ * id: competition id
+ */
+
+router.get("/api/match/ranked/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
         return new SuccessResponse(404, 'No entries found!').send(resp);
     }
-    const data = await fetch(conf.tables.matches, new Match({id: req.params['id']}));
+    const competitions = await fetch<any>(conf.tables.competitions, new Competition(req.params)).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    const competition = competitions?.pop();
+    if (!competition) {
+        return new ErrorResponse().setError("Competition does not exist").send(resp);
+    }
+    const minRound = competition.active_round - 25;
+    const data = await query<Match>(getMatchesInMovingWindowQuery(minRound));
     return new SuccessResponse().setData(data).send(resp);
 });
 
@@ -84,4 +98,12 @@ const constestantMatchQuery = (contestantId: string) => {
     ) s
     ON s.id=m.submission_id_1
     `;
+}
+
+const getMatchesInMovingWindowQuery = (minRound: number) => {
+    return `
+        SELECT * 
+        FROM matches m
+        WHERE m.round >= ${minRound}
+    `
 }
