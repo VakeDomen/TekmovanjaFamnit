@@ -6,7 +6,6 @@ import { fetch, insert, update, query } from '../database/database.handler';
 import { Competition } from '../models/competition.model';
 import { ErrorResponse } from '../models/core/error.response';
 import { Contestant } from '../models/contestant.model';
-import { Round } from '../models/round.model';
 
 const router: express.Router = express.Router();
 
@@ -51,47 +50,24 @@ router.patch("/api/competition", isValidAuthToken, async (req: express.Request, 
     return new SuccessResponse().setData(data).send(resp);
 });
 
-
-router.get("/api/round/competition/test/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
-    if (!req.params['id']) {
-        new SuccessResponse(404, 'No entries found!').send(resp);
-    }
-    const constestants = await query<any>(getConstestantsRoundQuery(req.params['id'])).catch(err => {
-        return new ErrorResponse().setError(err).send(resp);
-    });
-    let round = await query<any>(getLastRoundQuery).catch(err => {
-        return new ErrorResponse().setError(err).send(resp);
-    });
-    round = await query<any>(getLastRoundQuery).catch(err => {
-        return new ErrorResponse().setError(err).send(resp);
-    });
-
-    const data = {
-        round: round[0],
-        contestants: constestants,
-    }
-    return new SuccessResponse().setData(data).send(resp);
-});
-
 router.get("/api/round/competition/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
+    const competitions = await fetch<any>(conf.tables.competitions, new Competition(req.params)).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    const competition = competitions?.pop();
+    if (!competition) {
+        return new ErrorResponse().setError("Competition does not exist").send(resp);
+    }
+    competition.active_round++;
+    delete competition.created;
     const constestants = await query<any>(getConstestantsRoundQuery(req.params['id'])).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });
-    let round = await query<any>(getLastRoundQuery).catch(err => {
-        return new ErrorResponse().setError(err).send(resp);
-    });
-    await insert(conf.tables.rounds, new Round({ round_type_id: round[0]['round_type_id'] })).catch(err => {
-        return new ErrorResponse().setError(err).send(resp);
-    });
-    round = await query<any>(getLastRoundQuery).catch(err => {
-        return new ErrorResponse().setError(err).send(resp);
-    });
-
     const data = {
-        round: round[0],
+        round: competition.active_round,
         contestants: constestants,
     }
     return new SuccessResponse().setData(data).send(resp);
