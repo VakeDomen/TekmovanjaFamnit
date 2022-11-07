@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { OutletContext, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Competition } from 'src/app/models/competition.model';
 import { Game } from 'src/app/models/game.model';
@@ -28,6 +28,7 @@ export class SubmissionsComponent implements OnInit {
   public competitions: Competition[] = [];
 
   public dataReady: boolean = false;
+  public openAccordion: string | undefined;
 
   constructor(
     private gameService: GamesService,
@@ -42,33 +43,47 @@ export class SubmissionsComponent implements OnInit {
     this.init();
   }
 
-  init(): void {
-    this.gameService.getGames().subscribe((resp: ApiResponse<Game[]>) => {
-      this.games = resp.data;
-      this.competitionService.getRunningCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
-        this.competitions = resp.data;
-        this.contestantsService.getContestants().subscribe((resp: ApiResponse<Contestant[]>) => {
-          this.contestants = resp.data;
-          this.competitions = this.filterCompetitionsByContestants(this.competitions, this.contestants);
-          if (this.autoRoute && this.contestantsInActiveCompetitions(this.contestants).length == 1) {
-            this.router.navigate(['contestant', this.contestants[0].id]);
-          }
-          this.dataReady = true;
-        }, err => {
-          this.toastr.error("Oops, something went wrong!", "Failed fetching submissions");
-          console.log(err)
-        });
-      }, err => {
-        this.toastr.error("Oops, something went wrong!", "Failed fetching round types");
-        console.log(err)
-      });
-    }, err => {
-      this.toastr.error("Oops, something went wrong!", "Failed fething round types");
-      console.log(err)
-    });
+  async init(): Promise<void> {
+    // fetch games
+    const gamesResp = await this.gameService.getGames().toPromise();
+    if (!gamesResp) {
+      this.toastr.error("Oops, something went wrong!", "Failed fetching games");
+      return;
+    }
+    this.games = gamesResp.data;
+    
+    // fetch competitions (if admin, fetch all | if student, fetch ones i competed in)
+    let req = this.authService.isAdmin() ? 
+      this.competitionService.getCompetitions() :
+      this.competitionService.getCompetingCompetitions();
+
+    const competitionsResponse: ApiResponse<Competition[]> | undefined = await req.toPromise()
+    if (!competitionsResponse) {
+      this.toastr.error("Oops, something went wrong!", "Failed fetching competitions");
+      return;
+    }
+    this.competitions = competitionsResponse.data;
+    this.openAccordion = this.competitions[0].id;
+    
+    // fetch contestants (should be one per competition)
+    let contestantResponse = await this.contestantsService.getContestants().toPromise();
+    if (!contestantResponse) {
+      this.toastr.error("Oops, something went wrong!", "Failed fetching contestants");
+      return;
+    }
+    this.contestants = contestantResponse.data;
+
+    // if competing in only one competition -> route to contestant
+    if (this.competitions.length == 1 && this.contestants.length == 1) {
+      if (this.autoRoute) {
+        this.routeToSubmission(this.contestants[0]);
+      }
+    }
+    
+    this.dataReady = true;  
   }
 
-  contestantsInActiveCompetitions(contestants: Contestant[]): Contestant[] {
+  public contestantsInActiveCompetitions(contestants: Contestant[]): Contestant[] {
     const cont = [];
     for (const contestant of contestants) {
       if (this.getCompetitionByContestant(contestant)) {
@@ -78,11 +93,15 @@ export class SubmissionsComponent implements OnInit {
     return cont;
   }
 
-  filterCompetitionsByContestants(competitions: Competition[], contestants: Contestant[]): Competition[] {
-    return competitions.filter((comp: Competition) => contestants.map((cont: Contestant) => cont.competition_id).includes(comp.id ?? ''));
+  public contestantsInCompetition(comp: Competition): Contestant[] {
+    const out = [];
+    for (const cont of this.contestants) {
+      if (cont.competition_id == comp.id) out.push(cont);
+    }
+    return out;
   }
 
-  getGameByContestant(contestant: Contestant): Game | undefined {
+  public getGameByContestant(contestant: Contestant): Game | undefined {
     for (const comp of this.competitions) {
       if (contestant.competition_id != comp.id) {
         continue;
@@ -95,7 +114,7 @@ export class SubmissionsComponent implements OnInit {
     }
     return;
   }
-  getCompetitionByContestant(contestant: Contestant): Competition | undefined {
+  public getCompetitionByContestant(contestant: Contestant): Competition | undefined {
     for (const comp of this.competitions) {
       if (contestant.competition_id == comp.id) {
         return comp;
@@ -103,17 +122,20 @@ export class SubmissionsComponent implements OnInit {
     }
     return;
   }
-  routeToSubmission(cont: Contestant): void {
+  public routeToSubmission(cont: Contestant): void {
     this.router.navigate(['contestant', cont.id]);
   }
 
-  filterOnRunning(competitions: Competition[]) {
-    return competitions.filter((com: Competition) => this.isCompetitionRunning(com));
+  public isAdmin(): boolean {
+    return this.authService.isAdmin();
   }
 
-  isCompetitionRunning(competition: Competition): boolean {
-    return new Date().getTime() >= new Date(competition.start).getTime() &&
-      new Date().getTime() <= new Date(competition.end).getTime();
-  }  
+  public accordionToggle(id: string | undefined) {
+    if (this.openAccordion == id) {
+      this.openAccordion = undefined;
+    } else { 
+      this.openAccordion = id;
+    }
+  }
 }
 

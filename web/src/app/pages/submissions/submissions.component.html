@@ -6,14 +6,36 @@
             </h1>
         </div>
         <div class="hat-text-centered" *ngIf="contestants.length">
-            <app-contestant-card 
-                *ngFor="let contestant of contestantsInActiveCompetitions(contestants)"
-                class="block" 
-                [competition]="getCompetitionByContestant(contestant)"
-                [game]="getGameByContestant(contestant)" 
-                [contestant]="contestant"
-                (click)="routeToSubmission(contestant)"
-            ></app-contestant-card>
+            <!-- accordion -->
+            <ng-container *ngIf="isAdmin()">
+                <section class="accordions" *ngFor="let comp of competitions; let i = index;">
+                    <article class="accordion" [ngClass]="{'is-active': openAccordion == comp.id}">
+                        <div class="accordion-header toggle" (click)="accordionToggle(comp.id)">
+                            <p>{{ comp.competition_name }}</p>
+                        </div>
+                        <div class="accordion-body">
+                            <app-contestant-card 
+                                *ngFor="let contestant of contestantsInCompetition(comp)"
+                                class="block" 
+                                [competition]="getCompetitionByContestant(contestant)"
+                                [game]="getGameByContestant(contestant)" 
+                                [contestant]="contestant"
+                                (click)="routeToSubmission(contestant)"
+                            ></app-contestant-card>
+                        </div>
+                    </article>
+                </section>
+            </ng-container>
+            <ng-container *ngIf="!isAdmin()">
+                <app-contestant-card 
+                    *ngFor="let contestant of contestantsInActiveCompetitions(contestants)"
+                    class="block" 
+                    [competition]="getCompetitionByContestant(contestant)"
+                    [game]="getGameByContestant(contestant)" 
+                    [contestant]="contestant"
+                    (click)="routeToSubmission(contestant)"
+                ></app-contestant-card>
+            </ng-container>
         </div>
     </div>
 

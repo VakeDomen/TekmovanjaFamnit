@@ -39,7 +39,13 @@
                 <table class="table ml-auto mr-auto">
                     <tr><th>Rank</th><th>Bot name</th><th>Score</th></tr>
                     <tr *ngFor="let rank of ranking; let i = index">
-                        <td>{{ i + 1 }}</td>
+                        <td>
+                            <span *ngIf="i == 0">🥇</span>
+                            <span *ngIf="i == 1">🥈</span>
+                            <span *ngIf="i == 2">🥉</span>
+                            <span *ngIf="i > 2">{{ i + 1 }}</span>
+                            
+                        </td>
                         <td>{{ getSubmissionName(rank[1]) }}</td>
                         <td>{{ getSubmissionScore(rank) }}</td>
                     </tr>

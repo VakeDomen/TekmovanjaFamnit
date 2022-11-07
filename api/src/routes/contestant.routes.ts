@@ -14,31 +14,23 @@ module.exports = router;
 router.get("/api/contestant", refreshAuth, async (req: express.Request, resp: express.Response) => {
     const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
 
-    let data;
+    let cont = new Contestant(req.query);
     if (!isAdmin) {
-        const cont = new Contestant(req.query);
         cont.user_id = id;
-        data = await fetch<Contestant>(conf.tables.contestants, cont).catch(err => {
-            return new ErrorResponse().setError(err).send(resp);
-        });
-        if (data && data.length) {
-            const name = await query(getContestantNameQuery(data[0]?.name)).catch(err => {
-                return new ErrorResponse().setError(err).send(resp);
-            });
-            data[0].name = name;
-        }
-    } else {
-        data = await fetch<Contestant>(conf.tables.contestants, new Contestant(req.query)).catch(err => {
-            return new ErrorResponse().setError(err).send(resp);
-        });
-        data = await Promise.all(data.map(async (el: Contestant) => {
-            const name = await query(getContestantNameQuery(el.id as string)).catch(err => {
-                return new ErrorResponse().setError(err).send(resp);
-            });
-            (el as any).name = name; 
-            return el;
-        }));
     }
+    let data = await fetch<Contestant>(conf.tables.contestants, cont).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    if (!data) {
+        return new ErrorResponse(404, "No entries found!").send(resp);
+    }
+    data = await Promise.all(data.map(async (el: Contestant) => {
+        const name = await query(getContestantNameQuery(el.id as string)).catch(err => {
+            return new ErrorResponse().setError(err).send(resp);
+        });
+        (el as any).name = name; 
+        return el;
+    }));
     return new SuccessResponse().setData(data).send(resp);
 });
 
