@@ -128,7 +128,7 @@ export class SubmissionComponent implements OnInit {
     }
     let score = 0;
     for (const match of this.matches) {
-      if (match.submission_id_winner != match.submission_id_2) {
+      if (this.matchesService.isMatchWon(match)) {
         score++;
       } else {
         score--;

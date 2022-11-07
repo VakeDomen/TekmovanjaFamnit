@@ -64,7 +64,7 @@ router.get("/api/match/ranked/:id", isValidAuthToken, async (req: express.Reques
         return new ErrorResponse().setError("Competition does not exist").send(resp);
     }
     const minRound = competition.active_round - 25;
-    const data = await query<Match>(getMatchesInMovingWindowQuery(minRound));
+    const data = await query<Match>(getMatchesInMovingWindowQuery(competition.id, minRound));
     return new SuccessResponse().setData(data).send(resp);
 });
 
@@ -100,10 +100,11 @@ const constestantMatchQuery = (contestantId: string) => {
     `;
 }
 
-const getMatchesInMovingWindowQuery = (minRound: number) => {
+const getMatchesInMovingWindowQuery = (competitionId: string, minRound: number) => {
     return `
         SELECT * 
         FROM matches m
         WHERE m.round >= ${minRound}
-    `
+        AND competition_id = "${competitionId}"
+    `;
 }

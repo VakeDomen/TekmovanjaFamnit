@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { isValidAuthToken } from '../auth/jwt.authenticator';
+import { isRequestAdmin, isValidAuthToken } from '../auth/jwt.authenticator';
 import { SuccessResponse } from '../models/core/success.response';
 import * as conf from '../database/database.config.json';
 import { fetch, insert, update, query } from '../database/database.handler';
@@ -20,6 +20,12 @@ router.get("/api/competition", async (req: express.Request, resp: express.Respon
 router.get("/api/competition/running", async (req: express.Request, resp: express.Response) => {
     const data = await fetch<Competition>(conf.tables.competitions, new Competition(req.query));
     return new SuccessResponse().setData(data.filter((com: Competition) => isCompetitionRunning(com))).send(resp);
+});
+
+router.get("/api/competition/competing", async (req: express.Request, resp: express.Response) => {
+    const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
+    const data = await query<Competition>(getCompetingCometitionsQuery(id));
+    return new SuccessResponse().setData(data).send(resp);
 });
 
 router.get("/api/competition/:id", async (req: express.Request, resp: express.Response) => {
@@ -103,3 +109,16 @@ function isCompetitionRunning(competition: Competition): boolean {
     return new Date().getTime() >= new Date(competition.start).getTime() &&
         new Date().getTime() <= new Date(competition.end).getTime();
 }
+function getCompetingCometitionsQuery(userId: string): string {
+    return `
+    SELECT c.*
+    FROM competitions c
+    RIGHT JOIN (
+        SELECT *
+        FROM contestants cnt
+        WHERE cnt.user_id = "${userId}"
+    ) cnt
+    ON c.id = cnt.competition_id
+    `;
+}
+

@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { isValidAuthToken } from '../auth/jwt.authenticator';
+import { isRequestAdmin, isValidAuthToken } from '../auth/jwt.authenticator';
 import { SuccessResponse } from '../models/core/success.response';
 import * as conf from '../database/database.config.json';
 import { fetch, insert, query, update } from '../database/database.handler';
@@ -13,6 +13,24 @@ module.exports = router;
 
 router.get("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await fetch(conf.tables.submissions, new Submission(req.query)).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    return new SuccessResponse().setData(data).send(resp);
+});
+/**
+ * get all submissions of a specific competition
+ * admin only
+ */
+router.get("/api/submission/competition/:competition_id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    if (!req.params['competition_id']) {
+        return new SuccessResponse(404, 'No entries found!').send(resp);
+    }
+    const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
+    if (!isAdmin) {
+        return new SuccessResponse(403, "Not Allowed").send(resp);
+    }
+
+    const data = await query(getAllSubmissionsOfCompetitionsQuery(req.params['competition_id'])).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });
     return new SuccessResponse().setData(data).send(resp);
@@ -96,5 +114,24 @@ const getInsertedSubmissionQuery = (id: string) => {
         ) s
         ON s.file_id = f.id
         
+    `;
+}
+
+function getAllSubmissionsOfCompetitionsQuery(comId: string): string {
+    return `
+    SELECT s.*, f.path as name
+    FROM files f
+    RIGHT JOIN (
+        SELECT s.*
+        FROM submissions s 
+        INNER JOIN ( 
+            SELECT * 
+            FROM contestants c 
+            WHERE c.competition_id = "${comId}"
+        ) c 
+        ON s.contestant_id = c.id 
+        
+    ) s
+    ON s.file_id = f.id
     `;
 }

@@ -189,7 +189,7 @@ export class StatisticsComponent implements OnInit {
           if (!matchScores[+match.round]) {
             matchScores[+match.round] = 0;
           }
-          if (match.submission_id_2 == match.submission_id_winner) {
+          if (!this.matchesService.isMatchWon(match)) {
             matchScores[+match.round]--;
           } else {
             matchScores[+match.round]++;
@@ -236,7 +236,7 @@ export class StatisticsComponent implements OnInit {
     }
     let wins = 0;
     for (const m of mat) {
-      if (m.submission_id_2 != m.submission_id_winner) {
+      if (this.matchesService.isMatchWon(m)) {
         wins++;
       }
     }
@@ -249,7 +249,7 @@ export class StatisticsComponent implements OnInit {
     }
     let wins = 0;
     for (const m of mat) {
-      if (m.submission_id_2 != m.submission_id_winner) {
+      if (this.matchesService.isMatchWon(m)) {
         wins++;
       }
     }

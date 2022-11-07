@@ -44,7 +44,7 @@ router.get("/api/contestant", refreshAuth, async (req: express.Request, resp: ex
 
 router.get("/api/contestant/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        new SuccessResponse(404, 'No entries found!').send(resp);
+        return new SuccessResponse(404, 'No entries found!').send(resp);
     }
     const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
     let data;

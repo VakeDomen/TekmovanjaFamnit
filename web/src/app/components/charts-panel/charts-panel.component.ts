@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Match } from 'src/app/models/match.model';
 import { Submission } from 'src/app/models/submission.model';
+import { MatchesService } from 'src/app/services/matches.service';
 
 @Component({
   selector: 'app-charts-panel',
@@ -38,7 +39,9 @@ export class ChartsPanelComponent implements OnChanges {
   public wlrlabels: string[] = [];
   public wlrseries: any[] = [];
 
-  constructor() { }
+  constructor(
+    private matchService: MatchesService,
+  ) { }
 
   
   ngOnChanges(changes: SimpleChanges): void {
@@ -173,14 +176,10 @@ export class ChartsPanelComponent implements OnChanges {
     if (!data[match.submission_id_1 as any]) {
       this.initWinrateData(data, match);
     }
-    if (this.isWin(match)) {
+    if (this.matchService.isMatchWon(match)) {
       data[match.submission_id_1 as any][0]++;
     }
     data[match.submission_id_1 as any][1]++;
-  }
-
-  isWin(match: Match) {
-    return match.submission_id_2 != match.submission_id_winner;
   }
 
   initWinrateData(data: any[], match: Match) {
@@ -188,7 +187,7 @@ export class ChartsPanelComponent implements OnChanges {
   }
   
   addToRoundScore(roundData: any[], match: Match) {
-    if (this.isWin(match)) {
+    if (this.matchService.isMatchWon(match)) {
       roundData[match.round as any].roundScore++;
     } else {
       roundData[match.round as any].roundScore--;

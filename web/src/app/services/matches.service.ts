@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { Match } from '../models/match.model';
 import { ApiResponse } from '../models/response';
 import { CacheService } from './cache.service';
@@ -20,6 +18,11 @@ export class MatchesService {
     // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
   }
 
+  getRankedMatches(competitionId: string): Observable<ApiResponse<Match[]>> {
+    return this.cache.getCached(`/match/ranked/${competitionId}`);
+    // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
+  }
+
   getMatchesBySubmission(submissionId: string): Observable<ApiResponse<Match[]>> {
     return this.cache.getCached(`/match/submission/${submissionId}`);
     // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
@@ -28,6 +31,10 @@ export class MatchesService {
   getRankingMatches(competitionId: string): Observable<ApiResponse<Match[]>> {
     return this.cache.getCached(`/match/ranked/${competitionId}`);
     // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
+  }
+
+  isMatchWon(match: Match): boolean {
+    return match.submission_id_2 != match.submission_id_winner
   }
 }
 

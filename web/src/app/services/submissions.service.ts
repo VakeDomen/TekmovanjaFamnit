@@ -21,6 +21,10 @@ export class SubmissionsService {
     return this.http.get<ApiResponse<Submission[]>>(this.apiUrl);
   }
 
+  getSubmissionsByCompetition(competitionId: string): any {
+    return this.cache.getCached<ApiResponse<Submission[]>>("/submission/competition/" + competitionId);
+  }
+  
   getSubmissionsByContestant(contestantId: string): Observable<ApiResponse<Submission[]>> {
     return this.cache.getCached("/submission/contestant/" + contestantId);
   }

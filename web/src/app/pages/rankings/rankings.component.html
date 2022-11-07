@@ -1,11 +1,8 @@
-<div class="container">
-    <div class="block columns is-centered" *ngIf="!competitions.length">
-        <h1 class="title is-2 column has-text-centered">No competitions to rank</h1>
-    </div>
 
-    <div class="block columns is-centered" *ngIf="competitions.length">
+<div class="level has-background-dark" *ngIf="competitionsReady">
+    <div class="level-item has-text-centered">
         <select 
-            class="select is-medium" 
+            class="select is-medium m-2" 
             #competitionSelect 
             (change)='selectCompetition(competitionSelect.value)'
         >
@@ -16,7 +13,44 @@
                 {{ competition.competition_name }}
             </option>
         </select>
-        <h1 class="title is-2 column has-text-centered">No competitions to rank</h1>
+    </div>
+    <div class="level-item has-text-centered">
+        <button class="button is-primary m-2" (click)="fetchDataAndRankCompetition()">Rank</button>
+    </div>
+    
+</div>
+<div class="container" *ngIf="competitionsReady">
+    <div class="block columns is-centered" *ngIf="!competitions.length">
+        <h1 class="title column has-text-centered">No competitions to rank</h1>
     </div>
 
+    <div class="block columns is-centered" *ngIf="competitions.length">
+        <div class="block column" *ngIf="!rankingReady">
+            <div class="has-text-centered">
+                <progress class="progress is-medium is-primary" max="100"></progress>
+            </div>
+        </div>
+        
+        <div class="block column is-centered" *ngIf="rankingReady">
+            <div class="has-text-centered" *ngIf="!ranking.length">
+                <h1 class="title is-2">No matches</h1>
+            </div>
+            <div *ngIf="ranking.length" class="table-container">
+                <table class="table ml-auto mr-auto">
+                    <tr><th>Rank</th><th>Bot name</th><th>Score</th></tr>
+                    <tr *ngFor="let rank of ranking; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ getSubmissionName(rank[1]) }}</td>
+                        <td>{{ getSubmissionScore(rank) }}</td>
+                    </tr>
+                </table>
+              </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!competitionsReady">
+    <div class="has-text-centered">
+        <progress class="progress is-medium is-primary" max="100"></progress>
+    </div>
 </div>
