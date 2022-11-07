@@ -8,6 +8,7 @@ import { FrontComponent } from './pages/front/front.component';
 import { GameComponent } from './pages/game/game.component';
 import { GamesComponent } from './pages/games/games.component';
 import { LoginComponent } from './pages/login/login.component';
+import { RankingsComponent } from './pages/rankings/rankings.component';
 import { ReportComponent } from './pages/report/report.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { SubmissionComponent } from './pages/submission/submission.component';
@@ -70,6 +71,10 @@ const routes: Routes = [
   {
     path: 'login',
     component: LocalAuthComponent,
+  },
+  {
+    path: 'ranking',
+    component: RankingsComponent,
   },
 ];
 

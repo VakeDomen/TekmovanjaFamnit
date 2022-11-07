@@ -46,6 +46,15 @@ router.get("/api/match/:id", isValidAuthToken, async (req: express.Request, resp
     return new SuccessResponse().setData(data).send(resp);
 });
 
+router.get("/api/match/ranked/:competitionId", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    if (!req.params['competitionId']) {
+        return new SuccessResponse(404, 'No entries found!').send(resp);
+    }
+    const data = await fetch(conf.tables.matches, new Match({id: req.params['id']}));
+    return new SuccessResponse().setData(data).send(resp);
+});
+
+
 router.post("/api/match", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const match = new Match(req.body);
     match.generateId();

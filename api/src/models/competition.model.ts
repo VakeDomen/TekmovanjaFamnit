@@ -9,6 +9,7 @@ export class Competition extends DbItem {
     active_round_type_id: string;
     created: string;
     banner_page: string;
+    active_round: number;
 	
 	constructor(data: any) {
 		super(data);
@@ -20,5 +21,6 @@ export class Competition extends DbItem {
         this.active_round_type_id = data.active_round_type_id;
         this.created = data.created;
         this.banner_page = data.banner_page;
+        this.active_round = data.active_round;
 	}
 }

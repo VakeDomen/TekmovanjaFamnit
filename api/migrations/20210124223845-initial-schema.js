@@ -23,6 +23,7 @@ exports.up = function(db, callback) {
     db.createTable.bind(db, 'rounds', round),
     db.createTable.bind(db, 'round_types', roundType),
     db.createTable.bind(db, 'files', file),
+    db.createTable.bind(db, 'prog1scores', prog1scores),
   ], callback);
 };
 
@@ -60,6 +61,41 @@ const user = {
     created: {
       type: 'timestamp',
       defaultValue: new String('CURRENT_TIMESTAMP')
+    },
+  },
+  ifNotExists: true
+};
+
+const prog1scores = {
+  columns: {
+    id: {
+      type: 'string',
+      primaryKey: true,
+      autoIncrement: false
+    },
+    competition_id: {
+      type: 'string',
+    },
+    submission_id: {
+      type: 'string',
+    },
+    easy_wins: {
+      type: 'int',
+    },
+    easy_losses: {
+      type: 'int',
+    },
+    medium_wins: {
+      type: 'int',
+    },
+    medium_losses: {
+      type: 'int',
+    },
+    hard_wins: {
+      type: 'int',
+    },
+    hard_losses: {
+      type: 'int',
     },
   },
   ifNotExists: true
@@ -146,7 +182,10 @@ const competition = {
     created: {
       type: 'timestamp',
       defaultValue: new String('CURRENT_TIMESTAMP')
-    }
+    },
+    active_round: {
+      type: 'int'
+    },
   },
   ifNotExists: true
 };

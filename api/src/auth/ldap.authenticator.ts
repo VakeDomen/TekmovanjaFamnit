@@ -12,7 +12,6 @@ client.on('error', (err) => {
 })
 
 export async function authenticateLDAP(username: string, password: string) {
-
   return new Promise((resolve, reject) => {
     
     client.bind('', '', (err) => {

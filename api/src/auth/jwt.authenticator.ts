@@ -49,6 +49,15 @@ export function isValidAuthToken(req, resp, next) {
     })
 }
 
+
+export function refreshAuth(req, resp, next) {
+    if (req.headers.authorization) {
+        isValidAuthToken(req, resp, next);
+    } else {
+        next();
+    }
+}
+
 const extractToken = (req: any): string | null => {
     if (
         req.headers.authorization &&

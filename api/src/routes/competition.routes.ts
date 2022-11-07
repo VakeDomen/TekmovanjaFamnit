@@ -17,12 +17,18 @@ router.get("/api/competition", async (req: express.Request, resp: express.Respon
     return new SuccessResponse().setData(data).send(resp);
 });
 
+
+router.get("/api/competition/running", async (req: express.Request, resp: express.Response) => {
+    const data = await fetch<Competition>(conf.tables.competitions, new Competition(req.query));
+    return new SuccessResponse().setData(data.filter((com: Competition) => isCompetitionRunning(com))).send(resp);
+});
+
 router.get("/api/competition/:id", async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
         new SuccessResponse(404, 'No entries found!').send(resp);
     }
-    const data = await fetch<any>(conf.tables.competitions, new Competition({id: req.params['id']}));
-    const contestants = await fetch(conf.tables.contestants, new Contestant({competition_id: req.params['id']}));
+    const data = await fetch<any>(conf.tables.competitions, new Competition({ id: req.params['id'] }));
+    const contestants = await fetch(conf.tables.contestants, new Contestant({ competition_id: req.params['id'] }));
     if (data.length) {
         data[0].contestants = contestants.length;
     }
@@ -77,7 +83,7 @@ router.get("/api/round/competition/:id", isValidAuthToken, async (req: express.R
     let round = await query<any>(getLastRoundQuery).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });
-    await insert(conf.tables.rounds, new Round({round_type_id: round[0]['round_type_id']})).catch(err => {
+    await insert(conf.tables.rounds, new Round({ round_type_id: round[0]['round_type_id'] })).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });
     round = await query<any>(getLastRoundQuery).catch(err => {
@@ -92,7 +98,7 @@ router.get("/api/round/competition/:id", isValidAuthToken, async (req: express.R
 });
 
 
-const getConstestantsRoundQuery = (competitionId: string) => { 
+const getConstestantsRoundQuery = (competitionId: string) => {
     return `
     SELECT con.contestant_id, con.active_submission_id, f.path
     FROM (
@@ -116,3 +122,8 @@ const getLastRoundQuery = `
     INNER JOIN round_types as rt
     ON r.round_type_id = rt.id
 `;
+
+function isCompetitionRunning(competition: Competition): boolean {
+    return new Date().getTime() >= new Date(competition.start).getTime() &&
+        new Date().getTime() <= new Date(competition.end).getTime();
+}

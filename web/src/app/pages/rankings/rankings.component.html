@@ -1,1 +1,22 @@
-<p>rankings works!</p>
+<div class="container">
+    <div class="block columns is-centered" *ngIf="!competitions.length">
+        <h1 class="title is-2 column has-text-centered">No competitions to rank</h1>
+    </div>
+
+    <div class="block columns is-centered" *ngIf="competitions.length">
+        <select 
+            class="select is-medium" 
+            #competitionSelect 
+            (change)='selectCompetition(competitionSelect.value)'
+        >
+            <option 
+                *ngFor="let competition of competitions" 
+                value="{{ competition.competition_name }}"
+            >
+                {{ competition.competition_name }}
+            </option>
+        </select>
+        <h1 class="title is-2 column has-text-centered">No competitions to rank</h1>
+    </div>
+
+</div>

@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { isValidAuthToken, isRequestAdmin } from '../auth/jwt.authenticator';
+import { isValidAuthToken, isRequestAdmin, refreshAuth } from '../auth/jwt.authenticator';
 import { SuccessResponse } from '../models/core/success.response';
 import * as conf from '../database/database.config.json';
 import { fetch, insert, query, update } from '../database/database.handler';
@@ -11,8 +11,9 @@ const router: express.Router = express.Router();
 
 module.exports = router;
 
-router.get("/api/contestant", async (req: express.Request, resp: express.Response) => {
+router.get("/api/contestant", refreshAuth, async (req: express.Request, resp: express.Response) => {
     const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
+
     let data;
     if (!isAdmin) {
         const cont = new Contestant(req.query);

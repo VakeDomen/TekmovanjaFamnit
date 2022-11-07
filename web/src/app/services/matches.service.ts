@@ -24,5 +24,10 @@ export class MatchesService {
     return this.cache.getCached(`/match/submission/${submissionId}`);
     // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
   }
+
+  getRankingMatches(competitionId: string): Observable<ApiResponse<Match[]>> {
+    return this.cache.getCached(`/match/ranked/${competitionId}`);
+    // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
+  }
 }
 
