@@ -37,6 +37,8 @@ export class SubmissionComponent implements OnInit {
   public openSubmissionAccordion: string | undefined;
   public openNewSubmissionModal: boolean = false;
   public activeSubmission: number | undefined;
+  
+  public canUploadNewBot: boolean = true;
 
   public newSubmission: Submission = {
     contestant_id: '',
@@ -98,11 +100,20 @@ export class SubmissionComponent implements OnInit {
           this.game = gameResp.data[0];
           this.game.submission_description = unescape(this.game.submission_description);
           this.activeSubmission = this.getActiveSubValue();
+          this.canUploadNewBot = this.calcCanUploadNewBot();
           this.dataReady = true;
 
         }, err => this.handleError(err, "Failed fetching game"));
       }, err => this.handleError(err, "Failed fetching competition, submissions or matches"));
     }, err => this.handleError(err, "Failed fetching contestant"));
+  }
+  
+  calcCanUploadNewBot(): boolean {
+    if (!this.competition) {
+      return false;
+    }
+    return new Date().getTime() >= new Date(this.competition.start).getTime() &&
+        new Date().getTime() <= new Date(this.competition.end).getTime();
   }
 
   handleError(err: any, label: string): void {
@@ -132,12 +143,16 @@ export class SubmissionComponent implements OnInit {
     }
     const date1 = new Date(this.competition?.end);
     const date2 = new Date();
-    const diff = Math.abs(date1.getTime() - date2.getTime());
+    const diff = date1.getTime() - date2.getTime();
     const diffDays = Math.ceil(diff / (1000 * 3600 * 24)); 
     return diffDays;
   }
 
   prepareSubmission(file: File) {
+    if (!file.name.includes(".zip")) {
+      this.toastr.warning("Please submit a zip file", "Hmm...not a .zip file?");
+      return
+    }
     this.newSubmissionFiles = file;
   }
 

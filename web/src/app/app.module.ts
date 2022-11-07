@@ -39,6 +39,7 @@ import { ReportComponent } from './pages/report/report.component';
 import { StatisticsComponent } from './pages/statistics/statistics.component';
 import { ScoreChartGlobalComponent } from './components/charts/score-chart-global/score-chart.component';
 import { SubmissionCountChartComponent } from './components/charts/submission-count-chart/submission-count-chart.component';
+import { RankingsComponent } from './pages/rankings/rankings.component';
 
 const cookieConfig: NgcCookieConsentConfig = {
   cookie: {
@@ -84,7 +85,8 @@ const cookieConfig: NgcCookieConsentConfig = {
     FooterComponent,
     ReportComponent,
     StatisticsComponent,
-    SubmissionCountChartComponent
+    SubmissionCountChartComponent,
+    RankingsComponent
   ],
   imports: [
     CommonModule,

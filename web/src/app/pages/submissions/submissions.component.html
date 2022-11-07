@@ -2,13 +2,13 @@
     <div class="block" *ngIf="dataReady">
         <div class="block has-text-centered" *ngIf="!competitions.length">
             <h1 class="title is-3">
-                No competitions running
+                Not competing in any competition
             </h1>
         </div>
         <div class="hat-text-centered" *ngIf="contestants.length">
             <app-contestant-card 
+                *ngFor="let contestant of contestantsInActiveCompetitions(contestants)"
                 class="block" 
-                *ngFor="let contestant of contestants" 
                 [competition]="getCompetitionByContestant(contestant)"
                 [game]="getGameByContestant(contestant)" 
                 [contestant]="contestant"

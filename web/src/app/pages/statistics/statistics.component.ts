@@ -221,6 +221,11 @@ export class StatisticsComponent implements OnInit {
     });
   }
 
+  convertDate(date: string) {
+    console.log(date);
+    return new Date(date);
+  } 
+
   navigate(contestant: Contestant) {
     this.router.navigate(["contestant", contestant.id]);
   }

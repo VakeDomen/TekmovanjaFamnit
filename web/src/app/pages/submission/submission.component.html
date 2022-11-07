@@ -16,7 +16,8 @@
                 <div class="box">
                     <div class="title is-3">Days left</div>
                     <br>
-                    <div class="subtitle">{{ calcDaysLeft() }}</div>
+                    <div *ngIf="calcDaysLeft() >= 0" class="subtitle">{{ calcDaysLeft() }}</div>
+                    <div *ngIf="0 >= calcDaysLeft()" class="subtitle">Competition ended</div>
                 </div>
             </div>
             <div class="level-item">
@@ -36,6 +37,7 @@
                         #versionSelect
                         (change)='selectVersion(versionSelect.value)'
                         [ngModel]="activeSubmission"
+                        *ngIf="calcDaysLeft() >= 0"
                     >
                         <option 
                             *ngFor="let submission of submissions" 
@@ -44,6 +46,12 @@
                             {{submission.name}}
                         </option>
                     </select>
+                    <div 
+                        *ngIf="0 >= calcDaysLeft()" 
+                        class="subtitle"
+                    >
+                        Can't change after competition ends.
+                    </div>
                 </div>
             </div>
             
@@ -51,7 +59,8 @@
                 <div class="box">
                     <div class="title is-3">Submit new version</div>
                     <br>
-                    <button class="button is-primary" (click)="openNewSubmissionModal = true;">Submit</button>
+                    <button *ngIf="canUploadNewBot" class="button is-primary" (click)="openNewSubmissionModal = true;">Submit</button>
+                    <span *ngIf="!canUploadNewBot">Sorry, can't upload right now...</span>
                 </div>
             </div>
         </div>

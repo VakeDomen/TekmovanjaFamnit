@@ -45,13 +45,12 @@ export class SubmissionsComponent implements OnInit {
   init(): void {
     this.gameService.getGames().subscribe((resp: ApiResponse<Game[]>) => {
       this.games = resp.data;
-      this.competitionService.getCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
-        // this.competitions = this.filterOnRunning(resp.data);
+      this.competitionService.getRunningCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
         this.competitions = resp.data;
         this.contestantsService.getContestants().subscribe((resp: ApiResponse<Contestant[]>) => {
           this.contestants = resp.data;
           this.competitions = this.filterCompetitionsByContestants(this.competitions, this.contestants);
-          if (this.autoRoute && this.contestants.length == 1) {
+          if (this.autoRoute && this.contestantsInActiveCompetitions(this.contestants).length == 1) {
             this.router.navigate(['contestant', this.contestants[0].id]);
           }
           this.dataReady = true;
@@ -67,6 +66,16 @@ export class SubmissionsComponent implements OnInit {
       this.toastr.error("Oops, something went wrong!", "Failed fething round types");
       console.log(err)
     });
+  }
+
+  contestantsInActiveCompetitions(contestants: Contestant[]): Contestant[] {
+    const cont = [];
+    for (const contestant of contestants) {
+      if (this.getCompetitionByContestant(contestant)) {
+        cont.push(contestant);
+      }
+    }
+    return cont;
   }
 
   filterCompetitionsByContestants(competitions: Competition[], contestants: Contestant[]): Competition[] {
@@ -105,6 +114,6 @@ export class SubmissionsComponent implements OnInit {
   isCompetitionRunning(competition: Competition): boolean {
     return new Date().getTime() >= new Date(competition.start).getTime() &&
       new Date().getTime() <= new Date(competition.end).getTime();
-  }
-
+  }  
 }
+

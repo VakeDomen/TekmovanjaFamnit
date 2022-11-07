@@ -37,7 +37,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let sub of statSubmissionTable" (click)="navigate(sub.contestant)">
-                <th>{{sub.submission.submission_date | date: 'dd.mm.yyyy'}}</th>
+                <th>{{convertDate(sub.submission.submission_date) | date: 'dd.MM.yyyy'}}</th>
                 <td>{{sub.contestant.name[0].name}}</td>
                 <td>{{sub.submission.version}} - {{sub.submission.name}}</td>
                 <td>{{sub.matches.length}}</td>
