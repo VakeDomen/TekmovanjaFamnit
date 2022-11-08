@@ -6,6 +6,7 @@ import { fetch, insert, update, query } from '../database/database.handler';
 import { Match } from '../models/match.model';
 import { ErrorResponse } from '../models/core/error.response';
 import { Competition } from '../models/competition.model';
+import { Prog1scores } from '../models/prog1scores.model';
 
 const router: express.Router = express.Router();
 
@@ -76,6 +77,41 @@ router.post("/api/match", isValidAuthToken, async (req: express.Request, resp: e
         return new ErrorResponse().setError(err).send(resp);
     });
     return new SuccessResponse().setData(match).send(resp);
+});
+
+/**
+ * submit wins/losses versus the prog1 treshold bots
+ * id: submission id
+ */
+router.post("/api/match/prog1/:submission_id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    if (!req.params['submission_id']) {
+        return new SuccessResponse(400, 'Missing id param!').send(resp);
+    }
+    let existingScore = await fetch<Prog1scores>(conf.tables.prog1scores, new Prog1scores(req.params)).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    let scoreToModify
+    if (!existingScore || !existingScore.length) {
+        scoreToModify = new Prog1scores(req.body);
+        scoreToModify.generateId();
+        scoreToModify.submission_id = req.params['id']
+        await insert(conf.tables.prog1scores, scoreToModify).catch(err => {
+            return new ErrorResponse().setError(err).send(resp);
+        });
+    } else {
+        scoreToModify = new Prog1scores(existingScore.pop());
+        scoreToModify.easy_wins += req.body['easy_wins'];
+        scoreToModify.easy_losses += req.body['easy_losses'];
+        scoreToModify.medium_wins += req.body['medium_wins'];
+        scoreToModify.medium_losses += req.body['medium_losses'];
+        scoreToModify.hard_wins += req.body['hard_wins'];
+        scoreToModify.hard_losses += req.body['hard_losses'];
+        await update(conf.tables.prog1scores, scoreToModify).catch(err => {
+            return new ErrorResponse().setError(err).send(resp);
+        });
+    }
+    
+    return new SuccessResponse().send(resp);
 });
 
 router.patch("/api/match", isValidAuthToken, async (req: express.Request, resp: express.Response) => {

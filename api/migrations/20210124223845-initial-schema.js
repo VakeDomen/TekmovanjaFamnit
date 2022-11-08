@@ -73,9 +73,6 @@ const prog1scores = {
       primaryKey: true,
       autoIncrement: false
     },
-    competition_id: {
-      type: 'string',
-    },
     submission_id: {
       type: 'string',
     },

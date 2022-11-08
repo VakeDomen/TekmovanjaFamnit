@@ -8,7 +8,8 @@
       "submissions": "submissions",
       "rounds": "rounds",
       "round_types": "round_types",
-      "files": "files"
+      "files": "files",
+      "prog1scores": "prog1scores"
     },
     "log": true
   }
