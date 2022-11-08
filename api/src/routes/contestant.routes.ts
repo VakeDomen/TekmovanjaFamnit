@@ -39,28 +39,17 @@ router.get("/api/contestant/:id", isValidAuthToken, async (req: express.Request,
         return new SuccessResponse(404, 'No entries found!').send(resp);
     }
     const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
-    let data;
+    let cont = new Contestant(req.params);
     if (!isAdmin) {
-        const cont = new Contestant({});
         cont.user_id = id;
-        data = await fetch<Contestant>(conf.tables.contestants, cont).catch(err => {
-            return new ErrorResponse().setError(err).send(resp);
-        });
-        const name = await fetch<User>(conf.tables.users, new User({id: cont.user_id})).catch(err => {
-            return new ErrorResponse().setError(err).send(resp);
-        });
-        if (name && name.length) {
-            data[0].name = [{name: name[0].name}];
-        }
-    } else {
-        data = await fetch<Contestant>(conf.tables.contestants, new Contestant({id: req.params['id']})).catch(err => {
-            return new ErrorResponse().setError(err).send(resp);
-        });
-        const name = await query(getContestantNameQuery(req.params['id'] as string)).catch(err => {
-            return new ErrorResponse().setError(err).send(resp);
-        });
-        data[0].name = name;
     }
+    let data = await fetch<Contestant>(conf.tables.contestants, new Contestant({id: req.params['id']})).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    const name = await query(getContestantNameQuery(req.params['id'] as string)).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    data[0].name = name;
     return new SuccessResponse().setData(data).send(resp);
 });
 
