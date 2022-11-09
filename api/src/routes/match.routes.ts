@@ -28,6 +28,31 @@ router.get("/api/match/contestant/:id", async (req: express.Request, resp: expre
     return new SuccessResponse().setData((data as any[]).map((d: any) => new Match(d).export())).send(resp); 
 });
 
+/**
+ * gets all scores/"matches" against the prog1 treshold bots for specific contestant
+ * id: contestant_id
+ */
+router.get("/api/match/prog1/:id", async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        return new SuccessResponse(400, 'Missing id param!').send(resp);
+    }
+    
+    const data = await query<any>(constestantProg1scoresQuery(req.params['id'])).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    if (!data) {
+        return new SuccessResponse(404, 'No entries found!').send(resp);
+    }
+    console.log(data);
+    
+    for (const data_row of data) {
+        for (const index in data_row) {
+            if (!data_row[index]) data_row[index] = 0
+        }
+    }
+    return new SuccessResponse().setData(data).send(resp); 
+});
+
 
 router.get("/api/match/submission/:id", async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
@@ -142,5 +167,18 @@ const getMatchesInMovingWindowQuery = (competitionId: string, minRound: number) 
         FROM matches m
         WHERE m.round >= ${minRound}
         AND competition_id = "${competitionId}"
+    `;
+}
+
+function constestantProg1scoresQuery(contestantId: string): string {
+    return `
+        SELECT s.id, p.easy_wins, p.easy_losses, p.medium_wins, p.medium_losses, p.hard_wins, p.hard_losses 
+        FROM prog1scores p
+        RIGHT JOIN (
+            SELECT * 
+            FROM submissions s
+            WHERE s.contestant_id = "${contestantId}"
+        ) s
+        ON p.submission_id = s.id
     `;
 }

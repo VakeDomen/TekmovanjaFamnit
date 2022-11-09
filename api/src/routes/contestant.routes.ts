@@ -13,7 +13,6 @@ module.exports = router;
 
 router.get("/api/contestant", refreshAuth, async (req: express.Request, resp: express.Response) => {
     const [isAdmin, id]: [boolean, string] = await isRequestAdmin(req);
-
     let cont = new Contestant(req.query);
     if (!isAdmin) {
         cont.user_id = id;
