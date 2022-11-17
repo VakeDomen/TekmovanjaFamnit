@@ -23,7 +23,7 @@ export class AuthService {
   ) { }
 
   isLoggedIn(): boolean {
-    if (!localStorage.getItem(this.token)) {
+    if (!sessionStorage.getItem(this.token)) {
       return false;
     }
     return true;
@@ -33,7 +33,7 @@ export class AuthService {
     if (!this.isLoggedIn()) {
       return false;
     }
-    const val = localStorage.getItem(this.isAdminString);
+    const val = sessionStorage.getItem(this.isAdminString);
     if (!val) {
       return false;
     }
@@ -41,11 +41,11 @@ export class AuthService {
   }
 
   getJWTtoken(): string | null {
-    return localStorage.getItem(this.token);
+    return sessionStorage.getItem(this.token);
   }
 
   getName(): string | null {
-    const val = localStorage.getItem(this.userString);
+    const val = sessionStorage.getItem(this.userString);
     if (!val) {
       return null;
     }
@@ -53,7 +53,7 @@ export class AuthService {
   }
 
   getId(): string | null {
-    const val = localStorage.getItem(this.userString);
+    const val = sessionStorage.getItem(this.userString);
     if (!val) {
       return null;
     }
@@ -61,7 +61,7 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.token);
+    sessionStorage.removeItem(this.token);
     this.router.navigate(['/login'])
   }
 
@@ -73,15 +73,15 @@ export class AuthService {
         console.log("No resp from BE");
         return false;
       }
-      localStorage.setItem(
+      sessionStorage.setItem(
         this.token, 
         `Bearer ${response.data.token}`
       );
-      localStorage.setItem(
+      sessionStorage.setItem(
         this.userString, 
         JSON.stringify(response.data.user)
       );
-      localStorage.setItem(
+      sessionStorage.setItem(
         this.isAdminString, 
         JSON.stringify(response.data.admin)
       );

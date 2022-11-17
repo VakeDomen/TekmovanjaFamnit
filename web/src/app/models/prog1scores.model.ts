@@ -1,5 +1,5 @@
 export interface Prog1scores {
-        id: string;
+        submission_id: string;
         easy_wins: number;
         easy_losses: number;
         medium_wins: number;

@@ -172,7 +172,7 @@ const getMatchesInMovingWindowQuery = (competitionId: string, minRound: number) 
 
 function constestantProg1scoresQuery(contestantId: string): string {
     return `
-        SELECT s.id, p.easy_wins, p.easy_losses, p.medium_wins, p.medium_losses, p.hard_wins, p.hard_losses 
+        SELECT s.id as "submission_id", p.easy_wins, p.easy_losses, p.medium_wins, p.medium_losses, p.hard_wins, p.hard_losses 
         FROM prog1scores p
         RIGHT JOIN (
             SELECT * 

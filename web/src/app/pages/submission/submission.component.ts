@@ -7,6 +7,7 @@ import { Contestant } from 'src/app/models/contestant.model';
 import { FileModel } from 'src/app/models/file.model';
 import { Game } from 'src/app/models/game.model';
 import { Match } from 'src/app/models/match.model';
+import { Prog1scores } from 'src/app/models/prog1scores.model';
 import { ApiResponse } from 'src/app/models/response';
 import { Submission } from 'src/app/models/submission.model';
 import { AuthService } from 'src/app/services/auth.service';
@@ -33,6 +34,7 @@ export class SubmissionComponent implements OnInit {
   public contestant: Contestant | undefined;
   public submissions: Submission[] = [];
   public matches: Match[] = [];
+  public prog1scores: Prog1scores[] = [];
 
   public openSubmissionAccordion: string | undefined;
   public openNewSubmissionModal: boolean = false;
@@ -70,7 +72,7 @@ export class SubmissionComponent implements OnInit {
       return;
     }
 
-    this.contestantService.getContestant(id).subscribe((resp: ApiResponse<Contestant[]>) => {
+    this.contestantService.getContestant(id).subscribe(async (resp: ApiResponse<Contestant[]>) => {
       if (!resp.data[0]) {
         this.handleError(null, "Failed fetching contestant");
         return;
@@ -78,6 +80,14 @@ export class SubmissionComponent implements OnInit {
       if (resp.data[0].user_id != this.authService.getId() && !this.authService.isAdmin()) {
         this.router.navigate(["contestants"]);
       }
+
+      const prog1scoresResponse = await this.matchesService.getProg1Score(resp.data[0].id ?? '').toPromise();
+      if (!prog1scoresResponse) {
+        this.toastr.error("Something went wrong!", "Failed fetching prog 1 scores");
+        return;
+      }
+      this.prog1scores = prog1scoresResponse.data;
+      console.log(this.prog1scores);
       
       forkJoin({
         compeitionsResponse:  this.competitionService.getCompetition(resp.data[0].competition_id),
@@ -281,5 +291,23 @@ export class SubmissionComponent implements OnInit {
 
   areChartsLoaded() {
     return this.loadingPercent > 99 || this.matches.length == 0;
+  }
+
+  getProg1ScoreBySubmission(submission: Submission): Prog1scores | null {
+    for (const scr of this.prog1scores) {
+      if (scr.submission_id == submission.id) return scr;
+    } 
+    return null;
+  }
+
+  getProg1ScoreWinrateBySubmission(submission: Submission, difficulty: string): string {
+    const wins = `${difficulty}_wins`;
+    const losses = `${difficulty}_losses`;
+    const sub: any = this.getProg1ScoreBySubmission(submission);
+    if (!sub) return "0";
+    const sub_wins = sub[wins] as number;
+    const sub_losses = sub[losses] as number;
+    if (sub_losses == 0 && sub_wins == 0) return "0";
+    return ( (sub_wins / (sub_losses + sub_wins)) * 100 ).toFixed(2)
   }
 }

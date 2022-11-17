@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match } from '../models/match.model';
+import { Prog1scores } from '../models/prog1scores.model';
 import { ApiResponse } from '../models/response';
 import { CacheService } from './cache.service';
 
@@ -21,6 +22,10 @@ export class MatchesService {
   getRankedMatches(competitionId: string): Observable<ApiResponse<Match[]>> {
     return this.cache.getCached(`/match/ranked/${competitionId}`);
     // return this.http.get<ApiResponse<Match[]>>(`${this.apiUrl}/contestant/${contestantId}`);
+  }
+
+  getProg1Score(contestantId: string): Observable<ApiResponse<Prog1scores[]>> {
+    return this.cache.getCached(`/match/prog1/${contestantId}`);
   }
 
   getMatchesBySubmission(submissionId: string): Observable<ApiResponse<Match[]>> {

@@ -96,16 +96,34 @@
                                 <p>Version {{ submission.name }}</p>
                             </div>
                             <div class="accordion-body">
-                                <div class="level">
-                                    <div class="level-item">
-                                        <h1 class="title is-3 mt-2">Submission errors: </h1>
-                                    </div>
-                                    <div class="level-item"></div>
-                                    <div class="level-item">
-                                        <!-- <button class="button is-primary is-outlined mt-1"
-                                            (click)="downloadSubmission(submission.id)">Download submission</button> -->
-                                    </div>
+                                <div *ngIf="prog1scores.length">
+                                    <h1 class="title is-3 mt-2">Win rate versus the programming 1 grading bots</h1>
+                                    <div class="table-container">
+                                        <table class="table is-fullwidth is-striped">
+                                            <tr><th>Grading bot</th><th>Wins</th><th>Losses</th><th>%</th></tr>
+                                            <tr>
+                                                <th>Easy</th>
+                                                <td>{{ getProg1ScoreBySubmission(submission)?.easy_wins }}</td>
+                                                <td>{{ getProg1ScoreBySubmission(submission)?.easy_losses }}</td>
+                                                <td>{{ getProg1ScoreWinrateBySubmission(submission, "easy") }}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Medium</th> 
+                                                <td>{{ getProg1ScoreBySubmission(submission)?.medium_wins }}</td>
+                                                <td>{{ getProg1ScoreBySubmission(submission)?.medium_losses }}</td>
+                                                <td>{{ getProg1ScoreWinrateBySubmission(submission, "medium") }}%</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Hard</th>
+                                                <td>{{ getProg1ScoreBySubmission(submission)?.hard_wins }}</td>
+                                                <td>{{ getProg1ScoreBySubmission(submission)?.hard_losses }}</td>
+                                                <td>{{ getProg1ScoreWinrateBySubmission(submission, "hard") }}%</td>
+                                            </tr>
+                                        </table>
+                                      </div>
                                 </div>
+                                
+                                <h1 class="title is-3 mt-2">Submission errors: </h1>
                                 <div class="accordion-content">
                                     {{ submission.additional_data ?? 'No aditional data! (no errors)' }}
                                 </div>
