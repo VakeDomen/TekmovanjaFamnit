@@ -107,7 +107,7 @@ export class RankingsComponent implements OnInit {
       let points = this.matchesService.isMatchWonUnidentified(match, 0) ? 1 : -1;
       matchRankings.set(
         match.submission_id_1, 
-        (matchRankings.get(match.submission_id_2) ?? 0) + points
+        (matchRankings.get(match.submission_id_1) ?? 0) + points
       );
       matchRankings.set(
         match.submission_id_2, 
