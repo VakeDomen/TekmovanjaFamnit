@@ -59,20 +59,26 @@ export class ChartsPanelComponent implements OnChanges {
       radar chart init
     */
     const assocArrayOfSubmissionData: any = {};
-    const roundData: any = {};
-    const winRateData: any = {};
-    const annot: any[] = [];
+    /*
+      win rate chart init
+    */
     let count = 0;
+    const winRateData: any = {};
+    /*
+      score chart init
+    */
+    const roundData: any = {};
+    const annot: any[] = [];
     let lastSub: string | undefined;
     for (const match of this.matches) {
       const submissionIndex = match.me == 0 ? match.submission_id_1 : match.submission_id_2;
-    /*
+      /*
         radar chart
       */
       let aditionalData;
       try { aditionalData = JSON.parse(match.additional_data); }
       catch { return; }
-      this.pushToElement(assocArrayOfSubmissionData, submissionIndex, aditionalData);
+      this.pushToElement(assocArrayOfSubmissionData, submissionIndex, aditionalData, match.me);
 
       /*
         score chart
@@ -258,15 +264,25 @@ export class ChartsPanelComponent implements OnChanges {
     els[index].numFleetsTotal = [];
   }
 
-  pushToElement(arr: any[], index: any, aditionalData: any) {
+  pushToElement(arr: any[], index: any, aditionalData: any, me: 0 | 1) {
     if (!arr[index]) {
       this.initAssocArray(arr, index);
     }
-    arr[index].myFleetSize.push(aditionalData.myFleetSize);
-    arr[index].hisFleetSize.push(aditionalData.hisFleetSize);
-    arr[index].numFleetsMine.push(aditionalData.numFleetsMine);
-    arr[index].FleetsTotalSize.push(aditionalData.FleetsTotalSize);
-    arr[index].numFleetsHis.push(aditionalData.numFleetsHis);
-    arr[index].numFleetsTotal.push(aditionalData.numFleetsTotal);
+    // if i'm player two in a match swap mine/his, since "my" points to submission_id_1 in match
+    if (me == 0) {
+      arr[index].myFleetSize.push(aditionalData.myFleetSize);
+      arr[index].hisFleetSize.push(aditionalData.hisFleetSize);
+      arr[index].numFleetsMine.push(aditionalData.numFleetsMine);
+      arr[index].FleetsTotalSize.push(aditionalData.FleetsTotalSize);
+      arr[index].numFleetsHis.push(aditionalData.numFleetsHis);
+      arr[index].numFleetsTotal.push(aditionalData.numFleetsTotal);
+    } else {
+      arr[index].myFleetSize.push(aditionalData.hisFleetSize);
+      arr[index].hisFleetSize.push(aditionalData.myFleetSize);
+      arr[index].numFleetsMine.push(aditionalData.numFleetsHis);
+      arr[index].FleetsTotalSize.push(aditionalData.FleetsTotalSize);
+      arr[index].numFleetsHis.push(aditionalData.numFleetsMine);
+      arr[index].numFleetsTotal.push(aditionalData.numFleetsTotal);
+    }
   }
 }
