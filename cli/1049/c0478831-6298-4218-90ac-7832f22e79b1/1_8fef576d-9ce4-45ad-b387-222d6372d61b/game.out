@@ -1,0 +1,30 @@
+...
+U 100 100
+C /var/www/TekmovanjaFamnit/cli/1049/c0478831-6298-4218-90ac-7832f22e79b1/Challenger red
+C /var/www/TekmovanjaFamnit/cli/1049/c0478831-6298-4218-90ac-7832f22e79b1/1_8fef576d-9ce4-45ad-b387-222d6372d61b blue
+R 66 red
+R 66 blue
+P 0 78 0 0.6 66 red
+P 1 56 14 0.9 90 null
+P 2 15 28 1.0 100 null
+P 3 17 29 0.7 70 null
+P 4 32 9 1.0 100 null
+P 5 22 100 0.6 66 blue
+P 6 44 86 0.9 90 null
+P 7 85 72 1.0 100 null
+P 8 83 71 0.7 70 null
+P 9 68 91 1.0 100 null
+/var/www/TekmovanjaFamnit/cli/1049/c0478831-6298-4218-90ac-7832f22e79b1/Challenger>L exit
+L /var/www/TekmovanjaFamnit/cli/1049/c0478831-6298-4218-90ac-7832f22e79b1/Challenger Player sent:L exit
+R 72 red
+R 72 blue
+P 0 78 0 0.6 72 red
+P 1 56 14 0.9 90 null
+P 2 15 28 1.0 100 null
+P 3 17 29 0.7 70 null
+P 4 32 9 1.0 100 null
+P 5 22 100 0.6 72 blue
+P 6 44 86 0.9 90 null
+P 7 85 72 1.0 100 null
+P 8 83 71 0.7 70 null
+P 9 68 91 1.0 100 null

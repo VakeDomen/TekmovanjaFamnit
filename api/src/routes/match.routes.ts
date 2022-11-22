@@ -158,6 +158,7 @@ const constestantMatchQuery = (contestantId: string) => {
         WHERE c.id = "${contestantId}"
     ) s
     ON s.id=m.submission_id_1
+    OR s.id=m.submission_id_2    
     `;
 }
 
