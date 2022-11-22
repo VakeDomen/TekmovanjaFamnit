@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Competition } from 'src/app/models/competition.model';
 import { Contestant } from 'src/app/models/contestant.model';
 import { Game } from 'src/app/models/game.model';
+import { IdentifiedMatch } from 'src/app/models/identified-match.model';
 import { Match } from 'src/app/models/match.model';
 import { ApiResponse } from 'src/app/models/response';
 import { Submission } from 'src/app/models/submission.model';
@@ -19,25 +20,21 @@ import { SubmissionsService } from 'src/app/services/submissions.service';
 })
 export class StatisticsComponent implements OnInit {
 
+  public NUMBET_OF_LATEST_SUBMISSIONS_DISPLAYED = 7;
+
   public chartsReady: boolean = false;
 
   public competitionsReady: boolean = false;;
   public selectedCompetition: Competition | undefined;
-  
-  private games: Game[] = [];
   public competitions: Competition[] = [];
-  private contestants: Contestant[] = [];
-  private submissions: Submission[] = [];
-  private matches: Match[] = [];
-
-  private contestantData: ContestantData[] | undefined;
-
   public globalScoreSeries: number[][] = [];
   public submissionCountSeries: any;
   public statSubmissionTable: any[] = [];
+  
+  private contestants: Contestant[] = [];
+  private contestantData: ContestantData[] | undefined;
 
   constructor(
-    private gameService: GamesService,
     private competitionService: CompetitionService, 
     private contestantService: ContestantService,
     private submissionService: SubmissionsService,
@@ -46,15 +43,12 @@ export class StatisticsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.gameService.getGames().subscribe((resp: ApiResponse<Game[]>) => {
-      this.games = resp.data;
-      this.competitionService.getCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
-          this.competitions = resp.data;
-          if (this.competitions.length) {
-            this.selectedCompetition = resp.data[0];
-          }
-          this.competitionsReady = true;
-        });
+    this.competitionService.getCompetitions().subscribe((resp: ApiResponse<Competition[]>) => {
+      this.competitions = resp.data;
+      if (this.competitions.length) {
+        this.selectedCompetition = resp.data[0];
+      }
+      this.competitionsReady = true;
     });
   }
 
@@ -102,13 +96,14 @@ export class StatisticsComponent implements OnInit {
 
       const final: ContestantData[] = [];
       for (let i = 0 ; i < this.contestants.length ; i++) {
-       const sumbissions = contestantSubmissions[i] ?? [];
-       const matches = submissionsWithMatches[i] ?? [];
+        const sumbissions = contestantSubmissions[i] ?? [];
+        const matches = (submissionsWithMatches[i] ?? []);
         const sumb: SubmissionData[] = [];
         for (let j = 0 ; j < sumbissions.length ; j++) {
+          const submissionMatches = matches[j] ?? [];
           sumb.push({
             submission: sumbissions[j],
-            matches: matches[j]
+            identifiedMatches: this.matchesService.identifyMathces(submissionMatches, sumbissions)
           } as SubmissionData);
         }
         final.push({
@@ -139,11 +134,11 @@ export class StatisticsComponent implements OnInit {
       submissions.push(...contestant.submissions.map(sd => { return { 
         contestant: contestant.contestant,
         submission: sd.submission, 
-        matches: sd.matches
+        matches: sd.identifiedMatches
       }}));
     }
     submissions.sort((a: any, b: any) => -(a.submission.submission_date?.getTime() ?? 1) + (b.submission.submission_date?.getTime() ?? 1));
-    this.statSubmissionTable = submissions.splice(0,5);
+    this.statSubmissionTable = submissions.splice(0, this.NUMBET_OF_LATEST_SUBMISSIONS_DISPLAYED);
   }
 
   private processSubmissionCount() {
@@ -180,12 +175,13 @@ export class StatisticsComponent implements OnInit {
       return;
     }
     const series: any[] = [];
-
+    console.log(this.contestantData);
+    
     let seriesIndex = 0;
     for (const contestantSubmissions of this.contestantData) {
       const matchScores: number[] = [];
       for (const subData of contestantSubmissions.submissions) {
-        for (const match of subData.matches) {
+        for (const match of subData.identifiedMatches) {
           if (!matchScores[+match.round]) {
             matchScores[+match.round] = 0;
           }
@@ -222,7 +218,6 @@ export class StatisticsComponent implements OnInit {
   }
 
   convertDate(date: string) {
-    console.log(date);
     return new Date(date);
   } 
 
@@ -230,7 +225,7 @@ export class StatisticsComponent implements OnInit {
     this.router.navigate(["contestant", contestant.id]);
   }
 
-  calcSubWins(mat: Match[]): number {
+  calcSubWins(mat: IdentifiedMatch[]): number {
     if (!mat.length) {
       return 0;
     }
@@ -243,7 +238,7 @@ export class StatisticsComponent implements OnInit {
     return wins;
   }
 
-  calcSubWinLossRatio(mat: Match[]): string {
+  calcSubWinLossRatio(mat: IdentifiedMatch[]): string {
     if (!mat.length) {
       return '0';
     }
@@ -268,5 +263,5 @@ interface ContestantData {
 
 interface SubmissionData {
   submission: Submission;
-  matches: Match[]
+  identifiedMatches: IdentifiedMatch[]
 }

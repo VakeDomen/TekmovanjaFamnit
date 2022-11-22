@@ -23,7 +23,7 @@
         <app-score-chart-global [series]="globalScoreSeries"></app-score-chart-global>
         <h1 class="title is-1">Submissions</h1>
         <app-submission-count-chart [series]="submissionCountSeries"></app-submission-count-chart>
-        <h1 class="title is-2">Latest 5</h1>
+        <h1 class="title is-2">Latest {{ NUMBET_OF_LATEST_SUBMISSIONS_DISPLAYED }}</h1>
         <table class="table is-hoverable is-fullwidth mt-3 mb-4">
             <thead>
               <tr>

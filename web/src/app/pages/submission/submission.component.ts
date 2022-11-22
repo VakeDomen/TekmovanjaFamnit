@@ -6,6 +6,7 @@ import { Competition } from 'src/app/models/competition.model';
 import { Contestant } from 'src/app/models/contestant.model';
 import { FileModel } from 'src/app/models/file.model';
 import { Game } from 'src/app/models/game.model';
+import { IdentifiedMatch } from 'src/app/models/identified-match.model';
 import { Match } from 'src/app/models/match.model';
 import { Prog1scores } from 'src/app/models/prog1scores.model';
 import { ApiResponse } from 'src/app/models/response';
@@ -33,7 +34,8 @@ export class SubmissionComponent implements OnInit {
   public competition: Competition | undefined;
   public contestant: Contestant | undefined;
   public submissions: Submission[] = [];
-  public matches: Match[] = [];
+  // public matches: Match[] = [];
+  public matches: IdentifiedMatch[] = [];
   public prog1scores: Prog1scores[] = [];
 
   public openSubmissionAccordion: string | undefined;
@@ -87,7 +89,6 @@ export class SubmissionComponent implements OnInit {
         return;
       }
       this.prog1scores = prog1scoresResponse.data;
-      console.log(this.prog1scores);
       
       forkJoin({
         compeitionsResponse:  this.competitionService.getCompetition(resp.data[0].competition_id),
@@ -106,7 +107,7 @@ export class SubmissionComponent implements OnInit {
           this.contestant = resp.data[0];
           this.competition = compeitionsResponse.data[0];
           this.submissions = this.nameSubmissions(this.sortSubmissions(submissionsResponse.data));
-          this.matches = matchesResponse.data;
+          this.matches = this.matchesService.identifyMathces(matchesResponse.data, this.submissions);
           this.game = gameResp.data[0];
           this.game.submission_description = unescape(this.game.submission_description);
           this.activeSubmission = this.getActiveSubValue();
@@ -117,6 +118,8 @@ export class SubmissionComponent implements OnInit {
       }, err => this.handleError(err, "Failed fetching competition, submissions or matches"));
     }, err => this.handleError(err, "Failed fetching contestant"));
   }
+
+
   
   calcCanUploadNewBot(): boolean {
     if (!this.competition) {
@@ -201,7 +204,6 @@ export class SubmissionComponent implements OnInit {
         this.submissions = this.nameSubmissions([sub as Submission, ...this.submissions]);
         (this.contestant as Contestant).active_submission_id = (sub as Submission).id;
         this.activeSubmission = this.getActiveSubValue();
-        console.log(this.submissions);
         this.newSubmission = {
           contestant_id: '',
           version: 0,

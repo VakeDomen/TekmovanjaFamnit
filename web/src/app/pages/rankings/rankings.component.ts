@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Competition } from 'src/app/models/competition.model';
 import { Contestant } from 'src/app/models/contestant.model';
 import { Game } from 'src/app/models/game.model';
+import { IdentifiedMatch } from 'src/app/models/identified-match.model';
 import { Match } from 'src/app/models/match.model';
 import { ApiResponse } from 'src/app/models/response';
 import { Submission } from 'src/app/models/submission.model';
@@ -103,10 +104,14 @@ export class RankingsComponent implements OnInit {
   private rankMatches(matches: Match[]) {
     const matchRankings: Map<string, number> = new Map();
     for (const match of matches) {
-      let points = this.matchesService.isMatchWon(match) ? 1 : -1
+      let points = this.matchesService.isMatchWonUnidentified(match, 0) ? 1 : -1;
       matchRankings.set(
         match.submission_id_1, 
-        (matchRankings.get(match.submission_id_1) ?? 0) + points
+        (matchRankings.get(match.submission_id_2) ?? 0) + points
+      );
+      matchRankings.set(
+        match.submission_id_2, 
+        (matchRankings.get(match.submission_id_2) ?? 0) + -points
       );
     }
     const rankingArray: [number, string][] = [];

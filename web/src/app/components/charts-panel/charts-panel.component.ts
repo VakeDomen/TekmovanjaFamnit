@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { IdentifiedMatch } from 'src/app/models/identified-match.model';
 import { Match } from 'src/app/models/match.model';
 import { Submission } from 'src/app/models/submission.model';
 import { MatchesService } from 'src/app/services/matches.service';
@@ -14,7 +15,7 @@ export class ChartsPanelComponent implements OnChanges {
   private MAX_SCORE_ROUNDS = 40;
 
   @Input() submissions: Submission[] = [];
-  @Input() matches: Match[] = [];
+  @Input() matches: IdentifiedMatch[] = [];
 
   @Output() processingDone = new EventEmitter<number>();
   dataReady = false;
@@ -52,7 +53,7 @@ export class ChartsPanelComponent implements OnChanges {
     if (!this.submissions || !this.submissions.length || !this.matches || !this.matches.length) {
       return;
     }
-    this.matches.sort((m1: Match, m2: Match) => +m1.round < +m2.round ? -1 : 1);
+    this.matches.sort((m1: IdentifiedMatch, m2: IdentifiedMatch) => +m1.round < +m2.round ? -1 : 1);
   
     /*
       radar chart init
@@ -64,24 +65,25 @@ export class ChartsPanelComponent implements OnChanges {
     let count = 0;
     let lastSub: string | undefined;
     for (const match of this.matches) {
-      /*
+      const submissionIndex = match.me == 0 ? match.submission_id_1 : match.submission_id_2;
+    /*
         radar chart
       */
       let aditionalData;
       try { aditionalData = JSON.parse(match.additional_data); }
       catch { return; }
-      this.pushToElement(assocArrayOfSubmissionData, match.submission_id_1, aditionalData);
+      this.pushToElement(assocArrayOfSubmissionData, submissionIndex, aditionalData);
 
       /*
         score chart
       */
       if (lastSub) {
-        if (lastSub != match.submission_id_1) {
+        if (lastSub != submissionIndex) {
           annot.push(this.newPointAnnotations(match));
-          lastSub = match.submission_id_1;
+          lastSub = submissionIndex;
         }
       } else {
-        lastSub = match.submission_id_1;
+        lastSub = submissionIndex;
       }
       this.initRoundDataScoreChart(roundData, match.round);
       this.addToRoundScore(roundData, match);
@@ -152,7 +154,8 @@ export class ChartsPanelComponent implements OnChanges {
     const t1 = new Date().getMilliseconds();
   }
 
-  newPointAnnotations(match: Match) {
+  newPointAnnotations(match: IdentifiedMatch) {
+    const submissionIndex = match.me == 0 ? match.submission_id_1 : match.submission_id_2;
     return {
       x: match.round,
       marker: {
@@ -167,26 +170,28 @@ export class ChartsPanelComponent implements OnChanges {
           color: '#fff',
           background: '#FF4560',
         },
-        text: this.findVersion(match.submission_id_1),
+        text: this.findVersion(submissionIndex),
       }
     };
   }
 
-  addToWinRateData(data: any[], match: Match) {
-    if (!data[match.submission_id_1 as any]) {
+  addToWinRateData(data: any[], match: IdentifiedMatch) {
+    const submissionIndex = match.me == 0 ? match.submission_id_1 : match.submission_id_2;
+    if (!data[submissionIndex as any]) {
       this.initWinrateData(data, match);
     }
     if (this.matchService.isMatchWon(match)) {
-      data[match.submission_id_1 as any][0]++;
+      data[submissionIndex as any][0]++;
     }
-    data[match.submission_id_1 as any][1]++;
+    data[submissionIndex as any][1]++;
   }
 
-  initWinrateData(data: any[], match: Match) {
-    data[match.submission_id_1 as any] = [0, 0];
+  initWinrateData(data: any[], match: IdentifiedMatch) {
+    if (match.me == 0) data[match.submission_id_1 as any] = [0, 0];
+    else data[match.submission_id_2 as any] = [0, 0];
   }
   
-  addToRoundScore(roundData: any[], match: Match) {
+  addToRoundScore(roundData: any[], match: IdentifiedMatch) {
     if (this.matchService.isMatchWon(match)) {
       roundData[match.round as any].roundScore++;
     } else {
