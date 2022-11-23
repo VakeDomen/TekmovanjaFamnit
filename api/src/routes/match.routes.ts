@@ -7,6 +7,7 @@ import { Match } from '../models/match.model';
 import { ErrorResponse } from '../models/core/error.response';
 import { Competition } from '../models/competition.model';
 import { Prog1scores } from '../models/prog1scores.model';
+import { File } from '../models/file.model';
 
 const router: express.Router = express.Router();
 
@@ -19,7 +20,7 @@ router.get("/api/match", isValidAuthToken, async (req: express.Request, resp: ex
 
 router.get("/api/match/contestant/:id", async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        return new SuccessResponse(404, 'No entries found!').send(resp);
+        return new ErrorResponse(404, 'No entries found!').send(resp);
     }
     
     const data = await query<any>(constestantMatchQuery(req.params['id'])).catch(err => {
@@ -34,7 +35,7 @@ router.get("/api/match/contestant/:id", async (req: express.Request, resp: expre
  */
 router.get("/api/match/prog1/:id", async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        return new SuccessResponse(400, 'Missing id param!').send(resp);
+        return new ErrorResponse(400, 'Missing id param!').send(resp);
     }
     
     const data = await query<any>(constestantProg1scoresQuery(req.params['id'])).catch(err => {
@@ -56,7 +57,7 @@ router.get("/api/match/prog1/:id", async (req: express.Request, resp: express.Re
 
 router.get("/api/match/submission/:id", async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        return new SuccessResponse(404, 'No entries found!').send(resp);
+        return new ErrorResponse(404, 'No entries found!').send(resp);
     }
     
     const data = await fetch<Match>(conf.tables.matches, new Match({submission_id_1: req.params['id']})).catch(err => {
@@ -80,7 +81,7 @@ router.get("/api/match/:id", isValidAuthToken, async (req: express.Request, resp
 
 router.get("/api/match/ranked/:id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['id']) {
-        return new SuccessResponse(404, 'No entries found!').send(resp);
+        return new ErrorResponse(404, 'No entries found!').send(resp);
     }
     const competitions = await fetch<any>(conf.tables.competitions, new Competition(req.params)).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
@@ -96,6 +97,8 @@ router.get("/api/match/ranked/:id", isValidAuthToken, async (req: express.Reques
 
 
 router.post("/api/match", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    console.log(req.body);
+    
     const match = new Match(req.body);
     match.generateId();
     await insert(conf.tables.matches, match).catch(err => {
@@ -110,7 +113,7 @@ router.post("/api/match", isValidAuthToken, async (req: express.Request, resp: e
  */
 router.post("/api/match/prog1/:submission_id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     if (!req.params['submission_id']) {
-        return new SuccessResponse(400, 'Missing id param!').send(resp);
+        return new ErrorResponse(400, 'Missing id param!').send(resp);
     }
     let existingScore = await fetch<Prog1scores>(conf.tables.prog1scores, new Prog1scores(req.params)).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
@@ -136,6 +139,51 @@ router.post("/api/match/prog1/:submission_id", isValidAuthToken, async (req: exp
         });
     }
     
+    return new SuccessResponse().send(resp);
+});
+
+
+/**
+ * submit a recording of the match
+ * id: match id
+ * body: { "path": "resources/...." }
+ */
+ router.post("/api/match/recording/:match_id", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+    if (!req.params['match_id']) {
+        return new ErrorResponse(400, 'Missing id param!').send(resp);
+    }
+    const path = req.body['path'];
+    if (!path) {
+        return new ErrorResponse(400, 'Missing path attribute in body!').send(resp);
+    }
+    const matchData = await fetch<Match>(conf.tables.matches, new Match({id: req.params['match_id']})).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    if (!matchData || !matchData.length) {
+        return new ErrorResponse(400, 'Can not find the specified match!').send(resp);
+    }
+    const match = matchData.pop();
+    if (!match) {
+        return new ErrorResponse(400, 'Can not find the specified match!').send(resp);
+    }
+    const videoFile = new File({ path: path, open: 1});
+    videoFile.generateId();
+
+    await insert(conf.tables.files, videoFile).catch(err => {
+        console.log("ERROR in insert");
+        
+        return new ErrorResponse().setError(err).send(resp);
+    });
+    
+    match.log_file_id = videoFile.id as string;
+    console.log(match);
+    
+    await update(conf.tables.matches, new Match(match)).catch(err => {
+        console.log("ERROR in upadte");
+        
+        return new ErrorResponse().setError(err).send(resp);
+    });
+
     return new SuccessResponse().send(resp);
 });
 

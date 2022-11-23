@@ -27,6 +27,8 @@ export class DbItem {
 				if (key !== 'id') {
 					if (typeof this[key] === 'boolean') {
 						str.push(key + ' = ' + ((this[key])? 1 : 0));
+					} else if (this[key] === null) {
+						str.push(key + ' = NULL');
 					} else {
 						str.push(key + ' = \'' + this[key] + '\'');
 					}

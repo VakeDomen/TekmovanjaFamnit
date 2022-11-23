@@ -69,6 +69,9 @@ router.get("/api/round/competition/:id", isValidAuthToken, async (req: express.R
     }
     competition.active_round++;
     delete competition.created;
+    await update(conf.tables.competitions, new Competition(competition)).catch(err => {
+        return new ErrorResponse().setError(err).send(resp);
+    });
     const constestants = await query<any>(getConstestantsRoundQuery(req.params['id'])).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });
