@@ -81,7 +81,7 @@ router.post("/api/submission/upload/:contestant_id/:version", isValidAuthToken, 
     return new SuccessResponse().setData(file).send(resp);
 });
 
-router.patch("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
+router.put("/api/submission", isValidAuthToken, async (req: express.Request, resp: express.Response) => {
     const data = await update(conf.tables.submissions, new Submission(req.body)).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });
