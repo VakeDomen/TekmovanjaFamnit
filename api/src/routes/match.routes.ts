@@ -122,7 +122,7 @@ router.post("/api/match/prog1/:submission_id", isValidAuthToken, async (req: exp
     if (!existingScore || !existingScore.length) {
         scoreToModify = new Prog1scores(req.body);
         scoreToModify.generateId();
-        scoreToModify.submission_id = req.params['id']
+        scoreToModify.submission_id = req.params['submission_id']
         await insert(conf.tables.prog1scores, scoreToModify).catch(err => {
             return new ErrorResponse().setError(err).send(resp);
         });

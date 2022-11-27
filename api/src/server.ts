@@ -1,12 +1,14 @@
 console.log('Importing dependencies...')
 
 require('dotenv').config();
+require('console-stamp')(console, '[HH:MM:ss.l]');
 
 import express = require('express');
 
 const { Telegraf } = require('telegraf')
 const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
+const morgan = require('morgan')
 const fs = require('fs');
 const path = require('path');
 console.log('Finished importing!')
@@ -50,6 +52,7 @@ let botcontext;
 let botRoutes;
 
 app.use(myCors);
+app.use(morgan('tiny'));
 app.use(fileUpload({ createParentPath: true }));
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb'}));
