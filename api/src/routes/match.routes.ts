@@ -8,6 +8,7 @@ import { ErrorResponse } from '../models/core/error.response';
 import { Competition } from '../models/competition.model';
 import { Prog1scores } from '../models/prog1scores.model';
 import { File } from '../models/file.model';
+const fs = require('fs')
 
 const router: express.Router = express.Router();
 
@@ -74,6 +75,39 @@ router.get("/api/match/:id", isValidAuthToken, async (req: express.Request, resp
     return new SuccessResponse().setData(data).send(resp);
 });
 
+router.get("/api/video/match/:id", async (req: express.Request, resp: express.Response) => {
+    if (!req.params['id']) {
+        return new ErrorResponse(404, 'No entries found!').send(resp);
+    }
+    const data = await fetch<Match>(conf.tables.matches, new Match({id: req.params['id']}));
+    if (!data || !data.length) {
+        return new ErrorResponse(404, 'No entries found!').send(resp);
+    }
+    const match: Match | undefined = data.pop();
+    if (!match) {
+        return new ErrorResponse(404, 'No entries found!').send(resp);
+    }
+    const range = req.headers.range;
+    if (!range) {
+        return resp.status(400).send("Requires Range header");
+    }
+    const videoPath = match.log_file_id;
+    const videoSize = fs.statSync(videoPath).size;
+    const CHUNK_SIZE = 10 ** 6;
+    const start = Number(range.replace(/\D/g, ""));
+    const end = Math.min(start + CHUNK_SIZE, videoSize - 1);
+    const contentLength = end - start + 1;
+    const headers = {
+        "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": contentLength,
+        "Content-Type": "video/mp4",
+    };
+    resp.writeHead(206, headers);
+    const videoStream = fs.createReadStream(videoPath, { start, end });
+    videoStream.pipe(resp);
+});
+
 /**
  * get all matches of a competition in a moving window
  * id: competition id
@@ -90,7 +124,7 @@ router.get("/api/match/ranked/:id", isValidAuthToken, async (req: express.Reques
     if (!competition) {
         return new ErrorResponse().setError("Competition does not exist").send(resp);
     }
-    const minRound = competition.active_round - 25;
+    const minRound = competition.active_round - 15;
     const data = await query<Match>(getMatchesInMovingWindowQuery(competition.id, minRound));
     return new SuccessResponse().setData(data).send(resp);
 });
@@ -101,6 +135,9 @@ router.post("/api/match", isValidAuthToken, async (req: express.Request, resp: e
     
     const match = new Match(req.body);
     match.generateId();
+    if (!match.log_file_id) {
+        match.log_file_id = "No recording";
+    }
     await insert(conf.tables.matches, match).catch(err => {
         return new ErrorResponse().setError(err).send(resp);
     });

@@ -22,11 +22,13 @@ export class Match extends DbItem {
 
     export() {
         return {
+            id: this.id,
             round: this.round,
             submission_id_1: this.submission_id_1,
             submission_id_2: this.submission_id_2,
             submission_id_winner: this.submission_id_winner,
             additional_data: this.additional_data,
+            log_file_id: this.log_file_id,
         }
     }
 }
