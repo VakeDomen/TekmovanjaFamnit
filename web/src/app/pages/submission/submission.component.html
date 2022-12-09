@@ -32,34 +32,24 @@
                 <div class="box">
                     <div class="title is-3">Currently active</div>
                     <br>
-                    <select
-                        class="select"
-                        #versionSelect
-                        (change)='selectVersion(versionSelect.value)'
-                        [ngModel]="activeSubmission"
-                        *ngIf="calcDaysLeft() >= 0"
-                    >
-                        <option 
-                            *ngFor="let submission of submissions" 
-                            value="{{submission.version}}"
-                        >
+                    <select class="select" #versionSelect (change)='selectVersion(versionSelect.value)'
+                        [ngModel]="activeSubmission" *ngIf="calcDaysLeft() >= 0">
+                        <option *ngFor="let submission of submissions" value="{{submission.version}}">
                             {{submission.name}}
                         </option>
                     </select>
-                    <div 
-                        *ngIf="0 >= calcDaysLeft()" 
-                        class="subtitle"
-                    >
+                    <div *ngIf="0 >= calcDaysLeft()" class="subtitle">
                         Can't change after competition ends.
                     </div>
                 </div>
             </div>
-            
+
             <div class="level-item is-hidden-touch">
                 <div class="box">
                     <div class="title is-3">Submit new version</div>
                     <br>
-                    <button *ngIf="canUploadNewBot" class="button is-primary" (click)="openNewSubmissionModal = true;">Submit</button>
+                    <button *ngIf="canUploadNewBot" class="button is-primary"
+                        (click)="openNewSubmissionModal = true;">Submit</button>
                     <span *ngIf="!canUploadNewBot">Sorry, can't upload right now...</span>
                 </div>
             </div>
@@ -72,18 +62,12 @@
                 </div>
 
                 <div class="box">
-                    <app-charts-panel
-                        [matches]=matches
-                        [submissions]=submissions
-                        (processingDone)="loading($event)"
-                    ></app-charts-panel>
+                    <app-charts-panel [matches]=matches [submissions]=submissions (processingDone)="loading($event)">
+                    </app-charts-panel>
                     <div class="has-text-centered" *ngIf="!areChartsLoaded()">
                         <progress class="progress is-medium is-primary" max="100" value="loadingPercent"></progress>
                     </div>
                 </div>
-
-
-
                 <div *ngIf="!submissions.length" class="box has-text-centered">
                     <div class="title is-3">
                         No submissions yet!
@@ -93,14 +77,23 @@
                     <section class="accordions" *ngFor="let submission of submissions">
                         <article class="accordion" [ngClass]="{'is-active': openSubmissionAccordion == submission.id}">
                             <div class="accordion-header toggle" (click)="accordionToggle(submission.id)">
-                                <p>Version {{ submission.name }}</p>
+                                <p>
+                                    Version {{ submission.name }}
+                                    <span *ngIf="!!submission.additional_data" class="icon-span"><i
+                                            class="fas fa-exclamation-triangle"></i></span>
+                                </p>
                             </div>
                             <div class="accordion-body">
                                 <div *ngIf="prog1scores.length">
                                     <h1 class="title is-3 mt-2">Win rate versus the programming 1 grading bots</h1>
                                     <div class="table-container">
                                         <table class="table is-fullwidth is-striped">
-                                            <tr><th>Grading bot</th><th>Wins</th><th>Losses</th><th>%</th></tr>
+                                            <tr>
+                                                <th>Grading bot</th>
+                                                <th>Wins</th>
+                                                <th>Losses</th>
+                                                <th>%</th>
+                                            </tr>
                                             <tr>
                                                 <th>Easy</th>
                                                 <td>{{ getProg1ScoreBySubmission(submission)?.easy_wins }}</td>
@@ -108,7 +101,7 @@
                                                 <td>{{ getProg1ScoreWinrateBySubmission(submission, "easy") }}%</td>
                                             </tr>
                                             <tr>
-                                                <th>Medium</th> 
+                                                <th>Medium</th>
                                                 <td>{{ getProg1ScoreBySubmission(submission)?.medium_wins }}</td>
                                                 <td>{{ getProg1ScoreBySubmission(submission)?.medium_losses }}</td>
                                                 <td>{{ getProg1ScoreWinrateBySubmission(submission, "medium") }}%</td>
@@ -120,12 +113,45 @@
                                                 <td>{{ getProg1ScoreWinrateBySubmission(submission, "hard") }}%</td>
                                             </tr>
                                         </table>
-                                      </div>
+                                    </div>
                                 </div>
-                                
-                                <h1 class="title is-3 mt-2">Submission errors: </h1>
+
+                                <h1 class="title is-3 mt-2"><span *ngIf="!!submission.additional_data"
+                                        class="icon-span"><i class="fas fa-exclamation-triangle"></i></span> Submission
+                                    errors: </h1>
                                 <div class="accordion-content">
                                     {{ submission.additional_data ?? 'No aditional data! (no errors)' }}
+                                </div>
+
+                                <div class="box" *ngIf="isAdmin() && matchesBySubmission(submission).length">
+                                    <table class="table is-fullwidth is-striped">
+                                        <tr>
+                                            <th>Round</th>
+                                            <th>ID</th>
+                                            <th>You</th>
+                                            <th>Result</th>
+                                            <th>Recording</th>
+                                        </tr>
+                                        <tr *ngFor="let match of matchesBySubmission(submission)">
+                                            <td>{{ match.round }}</td>
+                                            <td>{{ match.id }}</td>
+                                            <td [ngClass]="{ 
+                                                'red': iAmPlayer(match) == 0,
+                                                'blue': iAmPlayer(match) == 1,
+                                                'green': iAmPlayer(match) == 2
+                                            }">{{ myPlayerString(match) }}</td>
+                                            <td [ngClass]="{ 
+                                                'green': isMatchWon(match),
+                                                'red': !isMatchWon(match)
+                                            }">{{ isMatchWonString(match) }}</td>
+                                            <td>
+                                                <i *ngIf="matchHasRecording(match)" class="pointer green fad fa-play-circle"
+                                                    (click)="matchToPlayVideo=match; openVideoModal=true;"></i>
+                                                <span *ngIf="!matchHasRecording(match)">{{ noRecordingPlaceholder(match)
+                                                    }}</span>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </article>
@@ -169,5 +195,20 @@
             <button class="button is-primary" (click)="saveSubmission()">Submit</button>
             <button class="button" (click)="openNewSubmissionModal=false">Cancel</button>
         </footer>
+    </div>
+</div>
+
+<!--play recording modal-->
+<div class="modal" [ngClass]="{'is-active': openVideoModal && matchToPlayVideo}">
+    <div class="modal-background" (click)="openVideoModal=false"></div>
+    <div class="modal-card">
+        <ng-container *ngFor="let match of this.matches">
+            <ng-container *ngIf="matchToPlayVideo?.id == match.id">
+                <video id="videoPlayer" width="100%" controls muted="muted" autoplay>
+                    <source src="https://tekmovanje.famnit.upr.si/api/video/match/{{matchToPlayVideo?.id ?? ''}}"
+                        type="video/mp4" />
+                </video>
+            </ng-container>
+        </ng-container>
     </div>
 </div>

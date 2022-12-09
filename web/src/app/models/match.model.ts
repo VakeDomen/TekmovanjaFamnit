@@ -5,6 +5,6 @@ export interface Match {
     submission_id_1: string;
     submission_id_2: string;
     submission_id_winner: string;
-    log_path: string;
+    log_file_id: string;
     additional_data: string;
 }

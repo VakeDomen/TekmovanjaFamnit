@@ -40,7 +40,9 @@ export class SubmissionComponent implements OnInit {
 
   public openSubmissionAccordion: string | undefined;
   public openNewSubmissionModal: boolean = false;
+  public openVideoModal: boolean = false;
   public activeSubmission: number | undefined;
+  public matchToPlayVideo: IdentifiedMatch | undefined;
   
   public canUploadNewBot: boolean = true;
 
@@ -312,4 +314,56 @@ export class SubmissionComponent implements OnInit {
     if (sub_losses == 0 && sub_wins == 0) return "0";
     return ( (sub_wins / (sub_losses + sub_wins)) * 100 ).toFixed(2)
   }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+
+  iAmPlayer(match: IdentifiedMatch): number {
+    if (match.submission_id_1 == match.submission_id_2) return 2
+    else return match.me;
+  }
+
+  myPlayerString(match: IdentifiedMatch): string {
+    switch (this.iAmPlayer(match)) {
+      case 0: return 'Player 1';
+      case 1: return 'Player 2';
+      case 2: return 'Both';
+      default: return 'Player 1';
+    }
+  }
+
+  isMatchWon(match: IdentifiedMatch): boolean {
+    return this.matchesService.isMatchWon(match);
+  }
+
+  isMatchWonString(match: IdentifiedMatch): string {
+    return this.matchesService.isMatchWon(match) ? 'Win' : "Loss";
+  }
+
+  matchHasRecording(match: IdentifiedMatch): boolean {
+    return match.log_file_id.includes("resources/");
+  }
+
+  noRecordingPlaceholder(match: IdentifiedMatch): string {
+    const additionalData = JSON.parse(match.additional_data);
+    if (additionalData && additionalData.error) {
+      return additionalData.error;
+    } else {
+      return match.log_file_id;
+    }
+  }
+
+  matchesBySubmission(submission: Submission): IdentifiedMatch[] {
+    const matches = [];
+    for (const match of this.matches) {
+      if (match.submission_id_1 == submission.id) {
+        matches.push(match);
+      } else if (match.submission_id_2 == submission.id) {
+        matches.push(match);
+      }
+    }
+    return matches.reverse();
+  }
+
 }
